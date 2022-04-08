@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.probe;
 
 import de.rub.nds.scanner.core.constants.ProbeType;
 import de.rub.nds.scanner.core.passive.StatsWriter;
+import de.rub.nds.scanner.core.probe.requirements.Requirement;
 import de.rub.nds.scanner.core.probe.result.ProbeResult;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.concurrent.Callable;
@@ -40,10 +41,6 @@ public abstract class ScannerProbe<Report extends ScanReport, Result extends Pro
 
     public abstract Result executeTest();
 
-    public abstract boolean canBeExecuted(Report report);
-
-    public abstract Result getCouldNotExecuteResult();
-
     public abstract void adjustConfig(Report report);
 
     @Override
@@ -67,6 +64,19 @@ public abstract class ScannerProbe<Report extends ScanReport, Result extends Pro
         Result result = this.call();
         result.merge(report);
     }
+    
+    /**
+     * Override for individual requirements.
+     * @param report
+     * @return ProbeRequirement object without requirements (default)
+     */
+    protected abstract Requirement getRequirements(Report report);
+
+    public boolean canBeExecuted(Report report) {
+        return getRequirements(report).evaluateRequirements();
+    }
+
+    public abstract Result getCouldNotExecuteResult();
 
     public StatsWriter getWriter() {
         return writer;
