@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name = "ratingInfluencers")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RatingInfluencers implements Serializable {
 
@@ -37,7 +37,7 @@ public class RatingInfluencers implements Serializable {
         return ratingInfluencers;
     }
 
-    public void setRatingInfluencers(LinkedList<RatingInfluencer> ratingInfluencers) {
+    public void setRatingInfluencer(LinkedList<RatingInfluencer> ratingInfluencers) {
         this.ratingInfluencers = ratingInfluencers;
     }
 
