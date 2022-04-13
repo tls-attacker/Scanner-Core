@@ -25,6 +25,7 @@ public enum TestResults implements TestResult {
     UNCERTAIN,
     UNSUPPORTED,
     NOT_TESTED_YET,
+    UNASSIGNED_ERROR,
     TIMEOUT;
 
     private TestResults() {
@@ -33,4 +34,9 @@ public enum TestResults implements TestResult {
     public static TestResults of(boolean value) {
         return value ? TRUE : FALSE;
     }
+
+	@Override
+	public TestResults getResultStatus() {
+		return this;
+	}
 }

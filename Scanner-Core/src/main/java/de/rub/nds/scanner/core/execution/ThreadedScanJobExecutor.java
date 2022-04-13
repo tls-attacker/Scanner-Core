@@ -29,7 +29,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -119,7 +118,6 @@ public class ThreadedScanJobExecutor<Report extends ScanReport> extends ScanJobE
                 }
             }
             futureResults.removeAll(finishedFutures);
-            int oldFutures = futureResults.size();
             // execute possible new probes
             update(report, this);
             if (futureResults.isEmpty()) {
@@ -187,7 +185,8 @@ public class ThreadedScanJobExecutor<Report extends ScanReport> extends ScanJobE
                 if (probe.canBeExecuted(report)) {
                     probe.adjustConfig(report);
                     LOGGER.debug("Scheduling: " + probe.getProbeName());
-                    Future<ProbeResult> future = executor.submit(probe);
+                    //Future<ProbeResult> future = executor.submit(probe);
+                    Future future = executor.submit(probe);
                     futureResults.add(future);
                 } else {
                     newNotSchedulesTasksList.add(probe);
