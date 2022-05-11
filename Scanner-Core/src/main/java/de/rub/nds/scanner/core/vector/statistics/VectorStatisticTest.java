@@ -7,13 +7,13 @@
  * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
 
-package de.rub.nds.scanner.core.vectorstatistics;
+package de.rub.nds.scanner.core.vector.statistics;
 
-import de.rub.nds.tlsattacker.attacks.general.Vector;
-import de.rub.nds.tlsattacker.attacks.padding.VectorResponse;
-import de.rub.nds.tlsattacker.attacks.util.response.EqualityError;
-import de.rub.nds.tlsattacker.attacks.util.response.FingerprintChecker;
-import de.rub.nds.tlsattacker.attacks.util.response.ResponseFingerprint;
+import de.rub.nds.scanner.core.vector.Vector;
+import de.rub.nds.scanner.core.vector.VectorResponse;
+import de.rub.nds.scanner.core.vector.response.EqualityError;
+import de.rub.nds.scanner.core.vector.response.ResponseFingerprint;
+import de.rub.nds.scanner.core.vector.response.FingerprintChecker;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
