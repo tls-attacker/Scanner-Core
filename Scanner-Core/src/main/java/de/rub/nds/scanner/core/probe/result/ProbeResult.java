@@ -6,30 +6,32 @@
  * Licensed under Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
-package de.rub.nds.scanner.core.report;
+package de.rub.nds.scanner.core.probe.result;
 
 import de.rub.nds.scanner.core.constants.ProbeType;
+import de.rub.nds.scanner.core.report.PerformanceData;
+import de.rub.nds.scanner.core.report.ScanReport;
 
-public class PerformanceData {
+public abstract class ProbeResult<T extends ScanReport> {
 
-    private ProbeType type;
+    private final ProbeType type;
     private long startTime;
     private long stopTime;
 
-    private PerformanceData() {}
-
-    public PerformanceData(ProbeType type, long startTime, long stopTime) {
+    public ProbeResult(ProbeType type) {
         this.type = type;
-        this.startTime = startTime;
-        this.stopTime = stopTime;
     }
 
     public ProbeType getType() {
         return type;
     }
 
-    public void setType(ProbeType type) {
-        this.type = type;
+    public String getProbeName() {
+        return type.getName();
+    }
+
+    public PerformanceData getPerformanceData() {
+        return new PerformanceData(type, startTime, stopTime);
     }
 
     public long getStartTime() {
@@ -47,4 +49,14 @@ public class PerformanceData {
     public void setStopTime(long stopTime) {
         this.stopTime = stopTime;
     }
+
+    public void merge(T report) {
+        if (startTime != 0 && stopTime != 0) {
+            report.getPerformanceList().add(getPerformanceData());
+        }
+        this.mergeData(report);
+        report.markAsChangedAndNotify();
+    }
+
+    protected abstract void mergeData(T report);
 }
