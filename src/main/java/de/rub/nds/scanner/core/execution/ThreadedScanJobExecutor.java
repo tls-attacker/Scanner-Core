@@ -29,14 +29,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ThreadedScanJobExecutor<
-                R extends ScanReport<R>, P extends ScannerProbe<R, P>, AP extends AfterProbe<R>>
+                R extends ScanReport<R>,
+                P extends ScannerProbe<R, P, S>,
+                AP extends AfterProbe<R>,
+                S>
         extends ScanJobExecutor<R> implements Observer {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ExecutorConfig config;
 
-    private final ScanJob<R, P, AP> scanJob;
+    private final ScanJob<R, P, AP, S> scanJob;
 
     private List<P> notScheduledTasks = new LinkedList<>();
 
@@ -48,7 +51,7 @@ public class ThreadedScanJobExecutor<
     private final Semaphore semaphore = new Semaphore(0);
 
     public ThreadedScanJobExecutor(
-            ExecutorConfig config, ScanJob<R, P, AP> scanJob, int threadCount, String prefix) {
+            ExecutorConfig config, ScanJob<R, P, AP, S> scanJob, int threadCount, String prefix) {
         long probeTimeout = config.getProbeTimeout();
         executor =
                 new ScannerThreadPoolExecutor(
@@ -58,7 +61,7 @@ public class ThreadedScanJobExecutor<
     }
 
     public ThreadedScanJobExecutor(
-            ExecutorConfig config, ScanJob<R, P, AP> scanJob, ThreadPoolExecutor executor) {
+            ExecutorConfig config, ScanJob<R, P, AP, S> scanJob, ThreadPoolExecutor executor) {
         this.executor = executor;
         this.config = config;
         this.scanJob = scanJob;
@@ -103,7 +106,7 @@ public class ThreadedScanJobExecutor<
                 if (result.isDone()) {
                     lastMerge = System.currentTimeMillis();
                     try {
-                        ScannerProbe<R, P> probeResult = result.get();
+                        ScannerProbe<R, P, S> probeResult = result.get();
                         LOGGER.info(probeResult.getType().getName() + " probe executed");
                         finishedFutures.add(result);
                         report.markProbeAsExecuted(result.get().getType());
