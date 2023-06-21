@@ -8,7 +8,6 @@
  */
 package de.rub.nds.scanner.core.guideline;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import de.rub.nds.scanner.core.constants.AnalyzedProperty;
 import de.rub.nds.scanner.core.constants.TestResult;
 import jakarta.xml.bind.annotation.*;
@@ -16,7 +15,6 @@ import java.util.List;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GuidelineCheckCondition {
 
     @XmlElement(name = "condition")
