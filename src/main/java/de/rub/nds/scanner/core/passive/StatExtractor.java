@@ -8,9 +8,7 @@
  */
 package de.rub.nds.scanner.core.passive;
 
-import de.rub.nds.tlsattacker.core.state.State;
-
-public abstract class StatExtractor<T> {
+public abstract class StatExtractor<S, T> {
 
     private final ExtractedValueContainer<T> container;
     private final TrackableValue valueType;
@@ -32,5 +30,5 @@ public abstract class StatExtractor<T> {
         return container;
     }
 
-    public abstract void extract(State state);
+    public abstract void extract(S state);
 }

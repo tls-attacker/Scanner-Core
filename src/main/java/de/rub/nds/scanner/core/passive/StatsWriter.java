@@ -8,13 +8,13 @@
  */
 package de.rub.nds.scanner.core.passive;
 
-import de.rub.nds.tlsattacker.core.state.State;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class StatsWriter {
+public class StatsWriter<S> {
 
-    private final List<StatExtractor<?>> extractorList;
+    private final List<StatExtractor<S, ?>> extractorList;
 
     private int stateCounter = 0;
 
@@ -22,23 +22,19 @@ public class StatsWriter {
         extractorList = new LinkedList<>();
     }
 
-    public void addExtractor(StatExtractor<?> extractor) {
+    public void addExtractor(StatExtractor<S, ?> extractor) {
         extractorList.add(extractor);
     }
 
-    public void extract(State state) {
-        for (StatExtractor<?> extractor : extractorList) {
+    public void extract(S state) {
+        for (StatExtractor<S, ?> extractor : extractorList) {
             extractor.extract(state);
         }
         stateCounter++;
     }
 
     public List<ExtractedValueContainer<?>> getCumulatedExtractedValues() {
-        List<ExtractedValueContainer<?>> containerList = new LinkedList<>();
-        for (StatExtractor<?> extractor : extractorList) {
-            containerList.add(extractor.getContainer());
-        }
-        return containerList;
+        return extractorList.stream().map(StatExtractor::getContainer).collect(Collectors.toList());
     }
 
     public int getStateCounter() {

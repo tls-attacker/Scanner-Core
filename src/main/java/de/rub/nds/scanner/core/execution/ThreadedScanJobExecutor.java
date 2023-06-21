@@ -14,7 +14,6 @@ import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.report.ScanReport;
-import de.rub.nds.tlsattacker.core.workflow.NamedThreadFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
