@@ -1,5 +1,5 @@
 /*
- * TLS-Scanner - A TLS configuration and analysis tool based on TLS-Attacker
+ * Scanner Core - A modular framework for probe definition, execution, and result analysis.
  *
  * Copyright 2017-2023 Ruhr University Bochum, Paderborn University, Technology Innovation Institute, and Hackmanit GmbH
  *
