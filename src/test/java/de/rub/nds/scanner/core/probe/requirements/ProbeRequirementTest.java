@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import de.rub.nds.scanner.core.TestReport;
 import de.rub.nds.scanner.core.constants.ProbeType;
 import org.junit.jupiter.api.Test;
 
