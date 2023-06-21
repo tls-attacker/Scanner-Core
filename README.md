@@ -46,9 +46,9 @@ several abstract methods to be overridden:
 - `getRequirements` - Returns a requirement which needs to be fulfilled for this probe to be executed. Several
   requirements can be found in the `de.rub.nds.scanner.core.probe.requirements` package.
 - `adjustConfig` - Performs any preliminary steps before probe execution. Usually this method is used to check for
-                   certain features in the scan report.
+  certain features in the scan report.
 - `executeTest` - Executes the probe.
-- `merge` - Implements the logic on how to merge the results obtained by the probes with the scan report. 
+- `merge` - Implements the logic on how to merge the results obtained by the probes with the scan report.
 
 *Hint: Methods are listed by their lifecycle order.*
 

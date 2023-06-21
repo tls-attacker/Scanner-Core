@@ -10,9 +10,8 @@ package de.rub.nds.scanner.core.probe.requirements;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import de.rub.nds.scanner.core.TestReport;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class AndRequirementTest {
