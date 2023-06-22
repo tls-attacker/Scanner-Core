@@ -22,14 +22,7 @@ import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Observable;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class ScanReport<R extends ScanReport<R>> extends Observable
@@ -104,9 +97,24 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
 
     public synchronized CollectionResult<?> getCollectionResult(String property) {
         TestResult result = resultMap.get(property);
-        return (result == null || !(result instanceof CollectionResult))
-                ? null
-                : (CollectionResult<?>) result;
+        return result instanceof CollectionResult ? (CollectionResult<?>) result : null;
+    }
+
+    public synchronized <T> CollectionResult<T> getCollectionResult(
+            AnalyzedProperty property, Class<T> valueClass) {
+        return getCollectionResult(property.getName(), valueClass);
+    }
+
+    public synchronized <T> CollectionResult<T> getCollectionResult(
+            String property, Class<T> valueClass) {
+        CollectionResult<?> result = getCollectionResult(property);
+        return result != null
+                ? new ListResult<>(
+                        result.getCollection().stream()
+                                .map(valueClass::cast)
+                                .collect(Collectors.toUnmodifiableList()),
+                        result.name())
+                : null;
     }
 
     public synchronized ListResult<?> getListResult(AnalyzedProperty property) {
@@ -115,7 +123,23 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
 
     public synchronized ListResult<?> getListResult(String property) {
         TestResult result = resultMap.get(property);
-        return (result == null || !(result instanceof ListResult)) ? null : (ListResult<?>) result;
+        return result instanceof ListResult ? (ListResult<?>) result : null;
+    }
+
+    public synchronized <T> ListResult<T> getListResult(
+            AnalyzedProperty property, Class<T> valueClass) {
+        return getListResult(property.getName(), valueClass);
+    }
+
+    public synchronized <T> ListResult<T> getListResult(String property, Class<T> valueClass) {
+        ListResult<?> result = getListResult(property);
+        return result != null
+                ? new ListResult<>(
+                        result.getList().stream()
+                                .map(valueClass::cast)
+                                .collect(Collectors.toUnmodifiableList()),
+                        result.name())
+                : null;
     }
 
     public synchronized MapResult<?, ?> getMapResult(AnalyzedProperty property) {
@@ -124,7 +148,36 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
 
     public synchronized MapResult<?, ?> getMapResult(String property) {
         TestResult result = resultMap.get(property);
-        return (result == null || !(result instanceof MapResult)) ? null : (MapResult<?, ?>) result;
+        return result instanceof MapResult ? (MapResult<?, ?>) result : null;
+    }
+
+    public synchronized <T> MapResult<?, T> getMapResult(
+            AnalyzedProperty property, Class<T> valueClass) {
+        return getMapResult(property.getName(), Object.class, valueClass);
+    }
+
+    public synchronized <T> MapResult<?, T> getMapResult(String property, Class<T> valueClass) {
+        return getMapResult(property, Object.class, valueClass);
+    }
+
+    public synchronized <S, T> MapResult<S, T> getMapResult(
+            AnalyzedProperty property, Class<S> keyClass, Class<T> valueClass) {
+        return getMapResult(property.getName(), keyClass, valueClass);
+    }
+
+    public synchronized <S, T> MapResult<S, T> getMapResult(
+            String property, Class<S> keyClass, Class<T> valueClass) {
+        MapResult<?, ?> result = getMapResult(property);
+        if (result == null) {
+            return null;
+        }
+        Map<S, T> typedMap = new HashMap<>();
+        result.getMap()
+                .forEach(
+                        (key, value) -> {
+                            typedMap.put(keyClass.cast(key), valueClass.cast(value));
+                        });
+        return new MapResult<>(Collections.unmodifiableMap(typedMap), result.name());
     }
 
     public synchronized SetResult<?> getSetResult(AnalyzedProperty property) {
@@ -133,7 +186,23 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
 
     public synchronized SetResult<?> getSetResult(String property) {
         TestResult result = resultMap.get(property);
-        return (result == null || !(result instanceof SetResult)) ? null : (SetResult<?>) result;
+        return result instanceof SetResult ? (SetResult<?>) result : null;
+    }
+
+    public synchronized <T> SetResult<T> getSetResult(
+            AnalyzedProperty property, Class<T> valueClass) {
+        return getSetResult(property.getName(), valueClass);
+    }
+
+    public synchronized <T> SetResult<T> getSetResult(String property, Class<T> valueClass) {
+        SetResult<?> result = getSetResult(property);
+        return result != null
+                ? new SetResult<>(
+                        result.getSet().stream()
+                                .map(valueClass::cast)
+                                .collect(Collectors.toUnmodifiableSet()),
+                        result.name())
+                : null;
     }
 
     public synchronized List<GuidelineReport> getGuidelineReports() {
