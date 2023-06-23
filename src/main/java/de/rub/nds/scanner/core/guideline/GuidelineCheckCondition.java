@@ -10,6 +10,7 @@ package de.rub.nds.scanner.core.guideline;
 
 import de.rub.nds.scanner.core.constants.AnalyzedProperty;
 import de.rub.nds.scanner.core.constants.TestResult;
+import de.rub.nds.scanner.core.constants.TestResults;
 import jakarta.xml.bind.annotation.*;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class GuidelineCheckCondition {
     @XmlAnyElement(lax = true)
     private AnalyzedProperty analyzedProperty;
 
-    @XmlAnyElement(lax = true)
+    @XmlElement(type = TestResults.class)
     private TestResult result;
 
     private GuidelineCheckCondition() {}
