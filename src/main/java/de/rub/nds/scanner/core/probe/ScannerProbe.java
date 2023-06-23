@@ -58,7 +58,7 @@ public abstract class ScannerProbe<R extends ScanReport<R>, P extends ScannerPro
         }
     }
 
-    protected final void put(AnalyzedProperty property, Object value) {
+    public final void put(AnalyzedProperty property, Object value) {
         TestResult result = null;
         if (value != null) {
             if (value instanceof TestResult) {
@@ -84,7 +84,32 @@ public abstract class ScannerProbe<R extends ScanReport<R>, P extends ScannerPro
         }
     }
 
-    protected final void setPropertiesCouldNotTest() {
+    protected final <T> void addToList(AnalyzedProperty property, List<T> result) {
+        if (property == null) {
+            LOGGER.error("Property to add (addToList) to in " + getClass() + " is null!");
+            return;
+        }
+        if (propertiesMap.containsKey(property)) {
+            if (result != null) {
+                if (propertiesMap.get(property) instanceof ListResult) {
+                    //noinspection unchecked
+                    result.addAll(((ListResult<T>) propertiesMap.get(property)).getList());
+                    put(property, new ListResult<>(result, property.getName()));
+                } else {
+                    put(property, new ListResult<>(result, property.getName()));
+                }
+            }
+        } else {
+            LOGGER.error(
+                    property.getName()
+                            + " was set in "
+                            + getClass()
+                            + " but had not been registered!");
+            propertiesMap.put(property, new ListResult<>(result, property.getName()));
+        }
+    }
+
+    protected final void setPropertiesToCouldNotTest() {
         for (AnalyzedProperty property : propertiesMap.keySet()) {
             if (propertiesMap.get(property) == TestResults.UNASSIGNED_ERROR) {
                 propertiesMap.put(property, TestResults.COULD_NOT_TEST);
@@ -109,7 +134,7 @@ public abstract class ScannerProbe<R extends ScanReport<R>, P extends ScannerPro
         }
     }
 
-    public final void extractStats(List<S> states) {
+    protected final void extractStats(List<S> states) {
         if (writer != null) {
             for (S state : states) {
                 getWriter().extract(state);
@@ -121,9 +146,9 @@ public abstract class ScannerProbe<R extends ScanReport<R>, P extends ScannerPro
 
     public abstract void adjustConfig(R report);
 
-    public abstract void executeTest();
+    protected abstract void executeTest();
 
-    public abstract void mergeData(R report);
+    protected abstract void mergeData(R report);
 
     public ProbeType getType() {
         return type;
