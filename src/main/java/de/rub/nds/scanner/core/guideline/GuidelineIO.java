@@ -9,14 +9,14 @@
 package de.rub.nds.scanner.core.guideline;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
-import de.rub.nds.scanner.core.io.JAXBIO;
+import de.rub.nds.scanner.core.util.JaxbSerializer;
 import de.rub.nds.scanner.core.report.ScanReport;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class GuidelineIO<ReportT extends ScanReport> extends JAXBIO<Guideline<ReportT>> {
+public final class GuidelineIO<ReportT extends ScanReport> extends JaxbSerializer<Guideline<ReportT>> {
 
     public GuidelineIO(
             Class<? extends AnalyzedProperty> analyzedPropertyClass,

@@ -9,11 +9,11 @@
 package de.rub.nds.scanner.core.report.rating;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
-import de.rub.nds.scanner.core.io.JAXBIO;
+import de.rub.nds.scanner.core.util.JaxbSerializer;
 import jakarta.xml.bind.JAXBException;
 import java.util.Set;
 
-public class RecommendationsIO extends JAXBIO<Recommendations> {
+public class RecommendationsIO extends JaxbSerializer<Recommendations> {
 
     public RecommendationsIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {
