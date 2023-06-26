@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** A simple requirement combining two or more requirements with a logical AND. */
-public final class AndRequirement<R extends ScanReport<R>> extends LogicalRequirement<R> {
+public final class AndRequirement<R extends ScanReport> extends LogicalRequirement<R> {
 
     private final List<Requirement<R>> requirements;
 

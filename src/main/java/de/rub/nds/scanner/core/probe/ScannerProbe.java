@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class ScannerProbe<R extends ScanReport<R>, S>
+public abstract class ScannerProbe<R extends ScanReport, S>
         implements Callable<ScannerProbe<R, S>> {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -119,8 +119,8 @@ public abstract class ScannerProbe<R extends ScanReport<R>, S>
 
     public final void merge(R report) {
         if (getStartTime() != 0 && getStopTime() != 0) {
-            report.getPerformanceList()
-                    .add(new PerformanceData(getType(), getStartTime(), getStopTime()));
+            report.recordProbePerformance(
+                    new PerformanceData(getType(), getStartTime(), getStopTime()));
         }
         mergeData(report);
         TestResult result;

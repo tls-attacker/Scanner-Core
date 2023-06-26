@@ -11,7 +11,7 @@ package de.rub.nds.scanner.core.report;
 import de.rub.nds.scanner.core.constants.AnalyzedProperty;
 import de.rub.nds.scanner.core.constants.ScannerDetail;
 
-public abstract class ReportPrinter<R extends ScanReport<R>> {
+public abstract class ReportPrinter<R extends ScanReport> {
 
     protected final ScannerDetail detail;
     private int depth;

@@ -16,7 +16,7 @@ import java.util.List;
 @XmlRootElement(name = "guideline")
 @XmlType(propOrder = {"name", "link", "checks"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Guideline<R extends ScanReport<R>> implements Serializable {
+public class Guideline<R extends ScanReport> implements Serializable {
 
     private String name;
     private String link;

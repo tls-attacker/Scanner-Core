@@ -11,7 +11,7 @@ package de.rub.nds.scanner.core.probe.requirements;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.List;
 
-public final class XorRequirement<R extends ScanReport<R>> extends LogicalRequirement<R> {
+public final class XorRequirement<R extends ScanReport> extends LogicalRequirement<R> {
 
     private final Requirement<R> a, b;
 

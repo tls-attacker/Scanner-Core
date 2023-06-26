@@ -29,7 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ThreadedScanJobExecutor<
-                R extends ScanReport<R>, P extends ScannerProbe<R, S>, AP extends AfterProbe<R>, S>
+                R extends ScanReport, P extends ScannerProbe<R, S>, AP extends AfterProbe<R>, S>
         extends ScanJobExecutor<R> implements Observer {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -86,7 +86,7 @@ public class ThreadedScanJobExecutor<
     private void updateSiteReportWithNotExecutedProbes(R report) {
         for (P probe : notScheduledTasks) {
             probe.merge(report);
-            report.markProbeAsUnexecuted(probe);
+            report.markProbeAsUnexecuted(probe.getType());
         }
     }
 
@@ -168,8 +168,8 @@ public class ThreadedScanJobExecutor<
             }
             stateCounter += probe.getWriter().getStateCounter();
         }
-        report.setPerformedTcpConnections(stateCounter);
-        report.setExtractedValueContainerMap(containerMap);
+        report.setPerformedConnections(stateCounter);
+        report.putAllExtractedValueContainers(containerMap);
         LOGGER.debug("Finished evaluation");
     }
 

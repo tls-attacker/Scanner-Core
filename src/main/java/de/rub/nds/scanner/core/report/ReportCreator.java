@@ -14,7 +14,7 @@ import de.rub.nds.scanner.core.report.container.KeyValueContainer;
 import de.rub.nds.scanner.core.report.container.ReportContainer;
 import de.rub.nds.scanner.core.report.container.TextContainer;
 
-public class ReportCreator<R extends ScanReport<R>> {
+public class ReportCreator<R extends ScanReport> {
 
     protected PrintingScheme printingScheme;
     protected ScannerDetail detail;

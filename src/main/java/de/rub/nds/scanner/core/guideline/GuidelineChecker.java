@@ -16,7 +16,7 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GuidelineChecker<R extends ScanReport<R>> {
+public class GuidelineChecker<R extends ScanReport> {
 
     protected static final Logger LOGGER = LogManager.getLogger();
 
@@ -27,10 +27,6 @@ public class GuidelineChecker<R extends ScanReport<R>> {
     }
 
     public void fillReport(R report) {
-        List<GuidelineReport> guidelineReports = report.getGuidelineReports();
-        if (guidelineReports == null) {
-            guidelineReports = new ArrayList<>();
-        }
         List<GuidelineCheckResult> results = new ArrayList<>();
         for (GuidelineCheck<R> check : guideline.getChecks()) {
             GuidelineCheckResult result;
@@ -79,8 +75,7 @@ public class GuidelineChecker<R extends ScanReport<R>> {
             result.setId(check.getId());
             results.add(result);
         }
-        guidelineReports.add(
+        report.addGuidelineReport(
                 new GuidelineReport(this.guideline.getName(), this.guideline.getLink(), results));
-        report.setGuidelineReports(guidelineReports);
     }
 }

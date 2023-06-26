@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @see FulfilledRequirement
  */
-public final class UnfulfillableRequirement<R extends ScanReport<R>> extends Requirement<R> {
+public final class UnfulfillableRequirement<R extends ScanReport> extends Requirement<R> {
 
     @Override
     public boolean evaluate(R report) {

@@ -20,93 +20,46 @@ import de.rub.nds.scanner.core.constants.TestResults;
 import de.rub.nds.scanner.core.guideline.GuidelineReport;
 import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
-import de.rub.nds.scanner.core.probe.ScannerProbe;
-import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class ScanReport<R extends ScanReport<R>> extends Observable
-        implements Serializable {
+public abstract class ScanReport extends Observable {
 
-    private final HashMap<String, TestResult> resultMap;
+    private final HashMap<AnalyzedProperty, TestResult> resultMap;
+    private final Map<TrackableValue, ExtractedValueContainer<?>> extractedValueContainerMap;
 
-    private List<GuidelineReport> guidelineReports;
+    private final List<GuidelineReport> guidelineReports;
 
     private final Set<ProbeType> executedProbes;
-    private final Set<ScannerProbe<R, ?>> unexecutedProbes;
+    private final Set<ProbeType> unexecutedProbes;
 
-    private final List<PerformanceData> performanceList;
-
-    private Map<TrackableValue, ExtractedValueContainer<?>> extractedValueContainerMap;
-
-    private int performedTcpConnections = 0;
+    private final List<PerformanceData> probePerformanceData;
+    private int performedConnections = 0;
 
     public ScanReport() {
-        performanceList = new LinkedList<>();
         resultMap = new HashMap<>();
+        extractedValueContainerMap = new HashMap<>();
+        guidelineReports = new ArrayList<>();
+        probePerformanceData = new ArrayList<>();
         executedProbes = new HashSet<>();
         unexecutedProbes = new HashSet<>();
-        extractedValueContainerMap = new HashMap<>();
     }
 
-    public synchronized int getPerformedTcpConnections() {
-        return performedTcpConnections;
-    }
-
-    public synchronized void setPerformedTcpConnections(int performedTcpConnections) {
-        this.performedTcpConnections = performedTcpConnections;
-    }
-
-    public synchronized Map<TrackableValue, ExtractedValueContainer<?>>
-            getExtractedValueContainerMap() {
-        return extractedValueContainerMap;
-    }
-
-    public synchronized ExtractedValueContainer<?> getExtractedValueContainer(
-            TrackableValue trackableValue) {
-        return extractedValueContainerMap.get(trackableValue);
-    }
-
-    public synchronized <T> ExtractedValueContainer<T> getExtractedValueContainer(
-            TrackableValue trackableValue, Class<T> valueClass) {
-        //noinspection unchecked
-        return (ExtractedValueContainer<T>) extractedValueContainerMap.get(trackableValue);
-    }
-
-    public synchronized void setExtractedValueContainerMap(
-            Map<TrackableValue, ExtractedValueContainer<?>> extractedValueContainerMap) {
-        this.extractedValueContainerMap = extractedValueContainerMap;
-    }
-
-    public synchronized HashMap<String, TestResult> getResultMap() {
-        return resultMap;
+    public synchronized Map<AnalyzedProperty, TestResult> getResultMap() {
+        return Collections.unmodifiableMap(resultMap);
     }
 
     public synchronized TestResult getResult(AnalyzedProperty property) {
-        return getResult(property.toString());
-    }
-
-    public synchronized TestResult getResult(String property) {
-        TestResult result = resultMap.get(property);
-        return (result == null) ? TestResults.NOT_TESTED_YET : result;
+        return resultMap.getOrDefault(property, TestResults.NOT_TESTED_YET);
     }
 
     public synchronized CollectionResult<?> getCollectionResult(AnalyzedProperty property) {
-        return getCollectionResult(property.getName());
-    }
-
-    public synchronized CollectionResult<?> getCollectionResult(String property) {
         TestResult result = resultMap.get(property);
         return result instanceof CollectionResult ? (CollectionResult<?>) result : null;
     }
 
-    public synchronized <T> CollectionResult<T> getCollectionResult(
-            AnalyzedProperty property, Class<T> valueClass) {
-        return getCollectionResult(property.getName(), valueClass);
-    }
-
-    public synchronized <T> CollectionResult<T> getCollectionResult(
-            String property, Class<T> valueClass) {
+    public synchronized <V> CollectionResult<V> getCollectionResult(
+            AnalyzedProperty property, Class<V> valueClass) {
         CollectionResult<?> result = getCollectionResult(property);
         return result != null
                 ? new ListResult<>(
@@ -118,20 +71,12 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
     }
 
     public synchronized ListResult<?> getListResult(AnalyzedProperty property) {
-        return getListResult(property.getName());
-    }
-
-    public synchronized ListResult<?> getListResult(String property) {
         TestResult result = resultMap.get(property);
         return result instanceof ListResult ? (ListResult<?>) result : null;
     }
 
-    public synchronized <T> ListResult<T> getListResult(
-            AnalyzedProperty property, Class<T> valueClass) {
-        return getListResult(property.getName(), valueClass);
-    }
-
-    public synchronized <T> ListResult<T> getListResult(String property, Class<T> valueClass) {
+    public synchronized <V> ListResult<V> getListResult(
+            AnalyzedProperty property, Class<V> valueClass) {
         ListResult<?> result = getListResult(property);
         return result != null
                 ? new ListResult<>(
@@ -143,35 +88,22 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
     }
 
     public synchronized MapResult<?, ?> getMapResult(AnalyzedProperty property) {
-        return getMapResult(property.getName());
-    }
-
-    public synchronized MapResult<?, ?> getMapResult(String property) {
         TestResult result = resultMap.get(property);
         return result instanceof MapResult ? (MapResult<?, ?>) result : null;
     }
 
-    public synchronized <T> MapResult<?, T> getMapResult(
-            AnalyzedProperty property, Class<T> valueClass) {
-        return getMapResult(property.getName(), Object.class, valueClass);
-    }
-
-    public synchronized <T> MapResult<?, T> getMapResult(String property, Class<T> valueClass) {
+    public synchronized <V> MapResult<?, V> getMapResult(
+            AnalyzedProperty property, Class<V> valueClass) {
         return getMapResult(property, Object.class, valueClass);
     }
 
-    public synchronized <S, T> MapResult<S, T> getMapResult(
-            AnalyzedProperty property, Class<S> keyClass, Class<T> valueClass) {
-        return getMapResult(property.getName(), keyClass, valueClass);
-    }
-
-    public synchronized <S, T> MapResult<S, T> getMapResult(
-            String property, Class<S> keyClass, Class<T> valueClass) {
+    public synchronized <K, V> MapResult<K, V> getMapResult(
+            AnalyzedProperty property, Class<K> keyClass, Class<V> valueClass) {
         MapResult<?, ?> result = getMapResult(property);
         if (result == null) {
             return null;
         }
-        Map<S, T> typedMap = new HashMap<>();
+        Map<K, V> typedMap = new HashMap<>();
         result.getMap()
                 .forEach(
                         (key, value) -> {
@@ -181,20 +113,12 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
     }
 
     public synchronized SetResult<?> getSetResult(AnalyzedProperty property) {
-        return getSetResult(property.getName());
-    }
-
-    public synchronized SetResult<?> getSetResult(String property) {
         TestResult result = resultMap.get(property);
         return result instanceof SetResult ? (SetResult<?>) result : null;
     }
 
     public synchronized <T> SetResult<T> getSetResult(
             AnalyzedProperty property, Class<T> valueClass) {
-        return getSetResult(property.getName(), valueClass);
-    }
-
-    public synchronized <T> SetResult<T> getSetResult(String property, Class<T> valueClass) {
         SetResult<?> result = getSetResult(property);
         return result != null
                 ? new SetResult<>(
@@ -205,20 +129,8 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
                 : null;
     }
 
-    public synchronized List<GuidelineReport> getGuidelineReports() {
-        return guidelineReports;
-    }
-
-    public synchronized void setGuidelineReports(List<GuidelineReport> guidelineReports) {
-        this.guidelineReports = guidelineReports;
-    }
-
-    public synchronized void removeResult(AnalyzedProperty property) {
-        resultMap.remove(property.toString());
-    }
-
     public synchronized void putResult(AnalyzedProperty property, TestResult result) {
-        resultMap.put(property.toString(), result);
+        resultMap.put(property, result);
     }
 
     public synchronized void putResult(AnalyzedProperty property, Boolean result) {
@@ -232,48 +144,89 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
     }
 
     public synchronized void putResult(AnalyzedProperty property, List<?> result) {
-        this.putResult(property, new ListResult<>((List<?>) result, property.getName()));
+        this.putResult(property, new ListResult<>(result, property.getName()));
     }
 
     public synchronized void putResult(AnalyzedProperty property, Set<?> result) {
-        this.putResult(property, new SetResult<>((Set<?>) result, property.getName()));
+        this.putResult(property, new SetResult<>(result, property.getName()));
     }
 
     public synchronized void putResult(AnalyzedProperty property, Map<?, ?> result) {
-        this.putResult(property, new MapResult<>((Map<?, ?>) result, property.getName()));
+        this.putResult(property, new MapResult<>(result, property.getName()));
     }
 
-    public synchronized void markAsChangedAndNotify() {
-        this.hasChanged();
-        this.notifyObservers();
+    public synchronized void removeResult(AnalyzedProperty property) {
+        resultMap.remove(property);
+    }
+
+    public synchronized Map<TrackableValue, ExtractedValueContainer<?>>
+            getExtractedValueContainerMap() {
+        return Collections.unmodifiableMap(extractedValueContainerMap);
+    }
+
+    public synchronized ExtractedValueContainer<?> getExtractedValueContainer(
+            TrackableValue trackableValue) {
+        return extractedValueContainerMap.get(trackableValue);
+    }
+
+    public synchronized <T> ExtractedValueContainer<T> getExtractedValueContainer(
+            TrackableValue trackableValue, Class<T> valueClass) {
+        //noinspection unchecked
+        return (ExtractedValueContainer<T>) extractedValueContainerMap.get(trackableValue);
+    }
+
+    public synchronized void putExtractedValueContainer(
+            TrackableValue trackableValue, ExtractedValueContainer<?> extractedValueContainer) {
+        extractedValueContainerMap.put(trackableValue, extractedValueContainer);
+    }
+
+    public synchronized void putAllExtractedValueContainers(
+            Map<TrackableValue, ExtractedValueContainer<?>> extractedValueContainerMap) {
+        this.extractedValueContainerMap.putAll(extractedValueContainerMap);
+    }
+
+    public synchronized List<GuidelineReport> getGuidelineReports() {
+        return Collections.unmodifiableList(guidelineReports);
+    }
+
+    public synchronized void addGuidelineReport(GuidelineReport guidelineReport) {
+        guidelineReports.add(guidelineReport);
     }
 
     public synchronized boolean isProbeAlreadyExecuted(ProbeType type) {
-        return executedProbes.stream().collect(Collectors.toSet()).contains(type);
+        return executedProbes.contains(type);
     }
 
     public synchronized void markProbeAsExecuted(ProbeType probe) {
         executedProbes.add(probe);
     }
 
-    public synchronized void markProbeAsUnexecuted(ScannerProbe<R, ?> probe) {
+    public synchronized void markProbeAsUnexecuted(ProbeType probe) {
         unexecutedProbes.add(probe);
     }
 
-    public synchronized List<PerformanceData> getPerformanceList() {
-        return performanceList;
+    public synchronized List<PerformanceData> getProbePerformanceData() {
+        return Collections.unmodifiableList(probePerformanceData);
     }
 
-    public synchronized Set<ProbeType> getUnexecutesProbeTypes() {
-        return unexecutedProbes.stream().map(probe -> probe.getType()).collect(Collectors.toSet());
+    public synchronized void recordProbePerformance(PerformanceData performanceData) {
+        probePerformanceData.add(performanceData);
     }
 
     public synchronized Set<ProbeType> getExecutedProbes() {
-        return executedProbes;
+        return Collections.unmodifiableSet(executedProbes);
     }
 
-    public synchronized Set<ScannerProbe<R, ?>> getUnexecutedProbes() {
-        return unexecutedProbes;
+    public synchronized Set<ProbeType> getUnexecutedProbes() {
+        return Collections.unmodifiableSet(unexecutedProbes);
+    }
+
+    public synchronized int getPerformedConnections() {
+        return performedConnections;
+    }
+
+    public synchronized void setPerformedConnections(int performedConnections) {
+        this.performedConnections = performedConnections;
     }
 
     public abstract String getFullReport(ScannerDetail detail, boolean printColorful);

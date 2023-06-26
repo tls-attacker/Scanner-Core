@@ -12,7 +12,7 @@ import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.List;
 
 /** A requirement combining one or more requirements using a logical operation. */
-public abstract class LogicalRequirement<R extends ScanReport<R>> extends Requirement<R> {
+public abstract class LogicalRequirement<R extends ScanReport> extends Requirement<R> {
     /**
      * @return A list of requirements contained in this logical requirement.
      */

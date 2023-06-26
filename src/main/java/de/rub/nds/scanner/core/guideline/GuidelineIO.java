@@ -16,7 +16,7 @@ import jakarta.xml.bind.JAXBException;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class GuidelineIO<R extends ScanReport<R>> extends JAXBIO<Guideline<R>> {
+public final class GuidelineIO<R extends ScanReport> extends JAXBIO<Guideline<R>> {
 
     public GuidelineIO(
             Class<? extends AnalyzedProperty> analyzedPropertyClass,

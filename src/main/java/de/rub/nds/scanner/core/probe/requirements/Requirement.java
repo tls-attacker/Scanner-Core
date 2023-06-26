@@ -17,7 +17,7 @@ import java.util.List;
  * return their respective "requirement", and which allow to retrieve the not yet fulfilled
  * requirements.
  */
-public abstract class Requirement<R extends ScanReport<R>> {
+public abstract class Requirement<R extends ScanReport> {
 
     /**
      * Evaluates this requirement.

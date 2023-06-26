@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** Represents a {@link Requirement} for required executed {@link ProbeType}s. */
-public class ProbeRequirement<R extends ScanReport<R>> extends PrimitiveRequirement<R, ProbeType> {
+public class ProbeRequirement<R extends ScanReport> extends PrimitiveRequirement<R, ProbeType> {
 
     public ProbeRequirement(List<ProbeType> probes) {
         super(probes);

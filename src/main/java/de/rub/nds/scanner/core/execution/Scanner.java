@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Scanner<
-        R extends ScanReport<R>, P extends ScannerProbe<R, S>, AP extends AfterProbe<R>, S> {
+        R extends ScanReport, P extends ScannerProbe<R, S>, AP extends AfterProbe<R>, S> {
     protected final List<P> probeList;
     protected final List<AP> afterList;
     protected final List<ProbeType> probeTypesToExecute;

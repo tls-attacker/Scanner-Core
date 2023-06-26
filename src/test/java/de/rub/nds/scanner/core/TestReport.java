@@ -12,11 +12,7 @@ import de.rub.nds.scanner.core.constants.ScannerDetail;
 import de.rub.nds.scanner.core.report.ScanReport;
 
 /** Implementation of ScanReport for tests */
-public class TestReport extends ScanReport<TestReport> {
-
-    public TestReport() {
-        super();
-    }
+public class TestReport extends ScanReport {
 
     @Override
     public String getFullReport(ScannerDetail detail, boolean printColorful) {

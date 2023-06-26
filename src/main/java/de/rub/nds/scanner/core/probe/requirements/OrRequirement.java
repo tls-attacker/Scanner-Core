@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class OrRequirement<R extends ScanReport<R>> extends LogicalRequirement<R> {
+public final class OrRequirement<R extends ScanReport> extends LogicalRequirement<R> {
 
     private final List<Requirement<R>> requirements;
 

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * directly to a boolean value. Requirements of this type contain one or more parameters of any
  * type.
  */
-public abstract class PrimitiveRequirement<R extends ScanReport<R>, T> extends Requirement<R> {
+public abstract class PrimitiveRequirement<R extends ScanReport, T> extends Requirement<R> {
     protected final List<T> parameters;
 
     protected PrimitiveRequirement(List<T> parameters) {

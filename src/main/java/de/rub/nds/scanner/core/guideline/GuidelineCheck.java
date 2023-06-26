@@ -15,7 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class GuidelineCheck<R extends ScanReport<R>> {
+public abstract class GuidelineCheck<R extends ScanReport> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
