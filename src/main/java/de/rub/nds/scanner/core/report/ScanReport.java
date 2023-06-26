@@ -8,7 +8,6 @@
  */
 package de.rub.nds.scanner.core.report;
 
-import de.rub.nds.scanner.core.config.ScannerDetail;
 import de.rub.nds.scanner.core.guideline.GuidelineReport;
 import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
@@ -23,7 +22,7 @@ import de.rub.nds.scanner.core.probe.result.TestResults;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class ScanReport extends Observable {
+public class ScanReport extends Observable {
 
     private final HashMap<AnalyzedProperty, TestResult> resultMap;
     private final Map<TrackableValue, ExtractedValueContainer<?>> extractedValueContainerMap;
@@ -225,6 +224,4 @@ public abstract class ScanReport extends Observable {
     public synchronized void setPerformedConnections(int performedConnections) {
         this.performedConnections = performedConnections;
     }
-
-    public abstract String getFullReport(ScannerDetail detail, boolean printColorful);
 }
