@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.report.rating;
 
-import de.rub.nds.scanner.core.constants.AnalyzedProperty;
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.io.JAXBIO;
 import jakarta.xml.bind.JAXBException;
 import java.util.Set;

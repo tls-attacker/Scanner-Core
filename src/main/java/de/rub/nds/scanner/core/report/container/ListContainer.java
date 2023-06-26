@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.report.container;
 
-import de.rub.nds.scanner.core.constants.ScannerDetail;
+import de.rub.nds.scanner.core.config.ScannerDetail;
 import java.util.LinkedList;
 import java.util.List;
 

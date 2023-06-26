@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core;
 
-import de.rub.nds.scanner.core.constants.ScannerDetail;
+import de.rub.nds.scanner.core.config.ScannerDetail;
 import de.rub.nds.scanner.core.report.ScanReport;
 
 /** Implementation of ScanReport for tests */

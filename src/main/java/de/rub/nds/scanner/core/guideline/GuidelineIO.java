@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.guideline;
 
-import de.rub.nds.scanner.core.constants.AnalyzedProperty;
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.io.JAXBIO;
 import de.rub.nds.scanner.core.report.ScanReport;
 import jakarta.xml.bind.JAXBContext;

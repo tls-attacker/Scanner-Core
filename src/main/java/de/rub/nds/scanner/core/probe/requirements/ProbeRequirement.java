@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.probe.requirements;
 
-import de.rub.nds.scanner.core.constants.ProbeType;
+import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.List;
 import java.util.stream.Collectors;
