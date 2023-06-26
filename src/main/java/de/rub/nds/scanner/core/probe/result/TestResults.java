@@ -8,8 +8,6 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -17,7 +15,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  * property.
  */
 @XmlRootElement(name = "result")
-@XmlAccessorType(XmlAccessType.FIELD)
 public enum TestResults implements TestResult {
     TRUE,
     FALSE,

@@ -8,9 +8,6 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Set;
 
 /**
@@ -18,8 +15,6 @@ import java.util.Set;
  *
  * @param <T> the type of which the SetResult consists.
  */
-@XmlRootElement(name = "result")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class SetResult<T> extends CollectionResult<T> {
 
     /**
