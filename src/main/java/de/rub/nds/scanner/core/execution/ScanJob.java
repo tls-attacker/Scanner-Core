@@ -14,7 +14,7 @@ import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.List;
 
 public class ScanJob<
-        R extends ScanReport<R>, P extends ScannerProbe<R, P, S>, AP extends AfterProbe<R>, S> {
+        R extends ScanReport<R>, P extends ScannerProbe<R, S>, AP extends AfterProbe<R>, S> {
 
     private final List<P> probeList;
     private final List<AP> afterList;

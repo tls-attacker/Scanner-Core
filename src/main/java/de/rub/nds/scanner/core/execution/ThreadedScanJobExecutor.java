@@ -29,10 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ThreadedScanJobExecutor<
-                R extends ScanReport<R>,
-                P extends ScannerProbe<R, P, S>,
-                AP extends AfterProbe<R>,
-                S>
+                R extends ScanReport<R>, P extends ScannerProbe<R, S>, AP extends AfterProbe<R>, S>
         extends ScanJobExecutor<R> implements Observer {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -43,7 +40,7 @@ public class ThreadedScanJobExecutor<
 
     private List<P> notScheduledTasks = new LinkedList<>();
 
-    private List<Future<P>> futureResults = new LinkedList<>();
+    private List<Future<ScannerProbe<R, S>>> futureResults = new LinkedList<>();
 
     private final ThreadPoolExecutor executor;
 
@@ -98,15 +95,14 @@ public class ThreadedScanJobExecutor<
     }
 
     private void executeProbesTillNoneCanBeExecuted(R report) {
-        while (true) {
+        boolean probesQueued = true;
+        while (probesQueued) {
             // handle all Finished Results
-            long lastMerge = System.currentTimeMillis();
-            List<Future<P>> finishedFutures = new LinkedList<>();
-            for (Future<P> result : futureResults) {
+            List<Future<ScannerProbe<R, S>>> finishedFutures = new LinkedList<>();
+            for (Future<ScannerProbe<R, S>> result : futureResults) {
                 if (result.isDone()) {
-                    lastMerge = System.currentTimeMillis();
                     try {
-                        ScannerProbe<R, P, S> probeResult = result.get();
+                        ScannerProbe<R, S> probeResult = result.get();
                         LOGGER.info(probeResult.getType().getName() + " probe executed");
                         finishedFutures.add(result);
                         report.markProbeAsExecuted(result.get().getType());
@@ -119,9 +115,8 @@ public class ThreadedScanJobExecutor<
                         finishedFutures.add(result);
                     } catch (CancellationException ex) {
                         LOGGER.info(
-                                "Could not retrieve a task because it was cancelled after "
-                                        + config.getProbeTimeout()
-                                        + " milliseconds");
+                                "Could not retrieve a task because it was cancelled after {} milliseconds",
+                                config.getProbeTimeout());
                         finishedFutures.add(result);
                     }
                 }
@@ -131,7 +126,7 @@ public class ThreadedScanJobExecutor<
             update(report, this);
             if (futureResults.isEmpty()) {
                 // nothing can be executed anymore
-                return;
+                probesQueued = false;
             } else {
                 try {
                     // wait for at least one probe to finish executing before checking again
@@ -200,7 +195,7 @@ public class ThreadedScanJobExecutor<
                 if (probe.canBeExecuted(report)) {
                     probe.adjustConfig(report);
                     LOGGER.debug("Scheduling: " + probe.getProbeName());
-                    Future<P> future = executor.submit(probe);
+                    Future<ScannerProbe<R, S>> future = executor.submit(probe);
                     futureResults.add(future);
                 } else {
                     newNotSchedulesTasksList.add(probe);

@@ -33,7 +33,7 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
     private List<GuidelineReport> guidelineReports;
 
     private final Set<ProbeType> executedProbes;
-    private final Set<ScannerProbe<R, ?, ?>> unexecutedProbes;
+    private final Set<ScannerProbe<R, ?>> unexecutedProbes;
 
     private final List<PerformanceData> performanceList;
 
@@ -256,7 +256,7 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
         executedProbes.add(probe);
     }
 
-    public synchronized void markProbeAsUnexecuted(ScannerProbe<R, ?, ?> probe) {
+    public synchronized void markProbeAsUnexecuted(ScannerProbe<R, ?> probe) {
         unexecutedProbes.add(probe);
     }
 
@@ -272,7 +272,7 @@ public abstract class ScanReport<R extends ScanReport<R>> extends Observable
         return executedProbes;
     }
 
-    public synchronized Set<ScannerProbe<R, ?, ?>> getUnexecutedProbes() {
+    public synchronized Set<ScannerProbe<R, ?>> getUnexecutedProbes() {
         return unexecutedProbes;
     }
 

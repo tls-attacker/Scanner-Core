@@ -21,8 +21,8 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class ScannerProbe<R extends ScanReport<R>, P extends ScannerProbe<R, P, S>, S>
-        implements Callable<P> {
+public abstract class ScannerProbe<R extends ScanReport<R>, S>
+        implements Callable<ScannerProbe<R, S>> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -38,14 +38,14 @@ public abstract class ScannerProbe<R extends ScanReport<R>, P extends ScannerPro
     }
 
     @Override
-    public P call() {
+    public ScannerProbe<R, S> call() {
         LOGGER.debug("Executing: {}", getProbeName());
         this.startTime = System.currentTimeMillis();
         executeTest();
         this.stopTime = System.currentTimeMillis();
 
         LOGGER.debug("Finished {} -  Took {}s", getProbeName(), (stopTime - startTime) / 1000);
-        return (P) this;
+        return this;
     }
 
     public final boolean canBeExecuted(R report) {
