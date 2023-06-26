@@ -13,7 +13,7 @@ import de.rub.nds.scanner.core.report.AnsiColor;
 
 public class HeadlineContainer extends ReportContainer {
 
-    private static int NUMBER_OF_DASHES_IN_H_LINE = 50;
+    private static final int NUMBER_OF_DASHES_IN_H_LINE = 50;
 
     private final String headline;
 
@@ -65,9 +65,7 @@ public class HeadlineContainer extends ReportContainer {
     }
 
     private void addHLine(StringBuilder builder) {
-        for (int i = 0; i < NUMBER_OF_DASHES_IN_H_LINE; i++) {
-            builder.append("-");
-        }
+        builder.append("-".repeat(Math.max(0, NUMBER_OF_DASHES_IN_H_LINE)));
         builder.append("\n");
     }
 }

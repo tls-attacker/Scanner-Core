@@ -21,22 +21,22 @@ public class AndRequirementTest {
         TestReport report = new TestReport();
         Requirement<TestReport>
                 requirement1 =
-                        new AndRequirement<TestReport>(
+                        new AndRequirement<>(
                                 List.of(
                                         new FulfilledRequirement<>(),
                                         new FulfilledRequirement<>())),
                 requirement2 =
-                        new AndRequirement<TestReport>(
+                        new AndRequirement<>(
                                 List.of(
                                         new FulfilledRequirement<>(),
                                         new UnfulfillableRequirement<>())),
                 requirement3 =
-                        new AndRequirement<TestReport>(
+                        new AndRequirement<>(
                                 List.of(
                                         new UnfulfillableRequirement<>(),
                                         new FulfilledRequirement<>())),
                 requirement4 =
-                        new AndRequirement<TestReport>(
+                        new AndRequirement<>(
                                 List.of(
                                         new UnfulfillableRequirement<>(),
                                         new UnfulfillableRequirement<>()));

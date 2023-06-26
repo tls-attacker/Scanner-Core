@@ -89,20 +89,18 @@ public class ScannerThreadPoolExecutor extends ScheduledThreadPoolExecutor {
 
     private void cancelFuture(Future<?> future) {
         this.schedule(
-                new Runnable() {
-                    public void run() {
-                        if (!future.isDone()) {
-                            future.cancel(true);
-                            if (future.isCancelled()) {
-                                LOGGER.error("Killed task {}", future);
-                            } else {
-                                LOGGER.error("Could not kill task {}", future);
-                            }
+                () -> {
+                    if (!future.isDone()) {
+                        future.cancel(true);
+                        if (future.isCancelled()) {
+                            LOGGER.error("Killed task {}", future);
                         } else {
-                            LOGGER.debug("Future already done! {}", future);
+                            LOGGER.error("Could not kill task {}", future);
                         }
-                        semaphore.release();
+                    } else {
+                        LOGGER.debug("Future already done! {}", future);
                     }
+                    semaphore.release();
                 },
                 timeout,
                 TimeUnit.MILLISECONDS);

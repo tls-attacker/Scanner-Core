@@ -19,9 +19,9 @@ public class SiteReportRater {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private RatingInfluencers influencers;
+    private final RatingInfluencers influencers;
 
-    private Recommendations recommendations;
+    private final Recommendations recommendations;
 
     public SiteReportRater(RatingInfluencers influencers, Recommendations recommendations) {
         this.influencers = influencers;

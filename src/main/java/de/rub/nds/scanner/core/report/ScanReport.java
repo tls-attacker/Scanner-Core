@@ -8,12 +8,12 @@
  */
 package de.rub.nds.scanner.core.report;
 
-import de.rub.nds.scanner.core.probe.AnalyzedProperty;
-import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.config.ScannerDetail;
 import de.rub.nds.scanner.core.guideline.GuidelineReport;
 import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
+import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.probe.result.CollectionResult;
 import de.rub.nds.scanner.core.probe.result.ListResult;
 import de.rub.nds.scanner.core.probe.result.MapResult;
@@ -105,10 +105,7 @@ public abstract class ScanReport extends Observable {
         }
         Map<K, V> typedMap = new HashMap<>();
         result.getMap()
-                .forEach(
-                        (key, value) -> {
-                            typedMap.put(keyClass.cast(key), valueClass.cast(value));
-                        });
+                .forEach((key, value) -> typedMap.put(keyClass.cast(key), valueClass.cast(value)));
         return new MapResult<>(Collections.unmodifiableMap(typedMap), result.getName());
     }
 

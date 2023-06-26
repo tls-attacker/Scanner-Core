@@ -10,53 +10,39 @@ package de.rub.nds.scanner.core.config;
 
 import com.beust.jcommander.Parameter;
 import de.rub.nds.scanner.core.probe.ProbeType;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 public final class ExecutorConfig {
 
-    @Parameter(
-            names = "-noColor",
-            required = false,
-            description = "If you use Windows or don't want colored text.")
+    @Parameter(names = "-noColor", description = "If you use Windows or don't want colored text.")
     private boolean noColor = false;
 
-    @Parameter(
-            names = "-scanDetail",
-            required = false,
-            description = "How detailed do you want to scan?")
+    @Parameter(names = "-scanDetail", description = "How detailed do you want to scan?")
     private ScannerDetail scanDetail = ScannerDetail.NORMAL;
 
-    @Parameter(
-            names = "-reportDetail",
-            required = false,
-            description = "How detailed do you want the report to be?")
+    @Parameter(names = "-reportDetail", description = "How detailed do you want the report to be?")
     private ScannerDetail reportDetail = ScannerDetail.NORMAL;
 
     @Parameter(
             names = "-outputFile",
-            required = false,
             description = "Specify a file to write the site report in JSON to")
     private String outputFile = null;
 
     @Parameter(
             names = "-probeTimeout",
-            required = false,
             description = "The timeout for each probe in ms (default 1800000)")
     private int probeTimeout = 1800000;
 
     @Parameter(
             names = "-parallelProbes",
-            required = false,
             description =
                     "Defines the number of threads responsible for different probes. If set to 1, only one specific probe can be run in time.")
     private int parallelProbes = 1;
 
     @Parameter(
             names = "-threads",
-            required = false,
             description =
                     "The maximum number of threads used to execute probes located in the queue.")
     private int overallThreads = 1;

@@ -21,22 +21,22 @@ public class OrRequirementTest {
         TestReport report = new TestReport();
         Requirement<TestReport>
                 requirement1 =
-                        new OrRequirement<TestReport>(
+                        new OrRequirement<>(
                                 List.of(
                                         new FulfilledRequirement<>(),
                                         new FulfilledRequirement<>())),
                 requirement2 =
-                        new OrRequirement<TestReport>(
+                        new OrRequirement<>(
                                 List.of(
                                         new FulfilledRequirement<>(),
                                         new UnfulfillableRequirement<>())),
                 requirement3 =
-                        new OrRequirement<TestReport>(
+                        new OrRequirement<>(
                                 List.of(
                                         new UnfulfillableRequirement<>(),
                                         new FulfilledRequirement<>())),
                 requirement4 =
-                        new OrRequirement<TestReport>(
+                        new OrRequirement<>(
                                 List.of(
                                         new UnfulfillableRequirement<>(),
                                         new UnfulfillableRequirement<>()));

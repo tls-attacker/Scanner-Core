@@ -17,6 +17,7 @@ import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.util.Objects;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -43,7 +44,7 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     @XmlElement(type = TestResults.class, name = "referencedPropertyResult")
     private TestResult referencedPropertyResult;
 
-    public PropertyResultRatingInfluencer() {}
+    private PropertyResultRatingInfluencer() {}
 
     public PropertyResultRatingInfluencer(TestResult result, Integer influence) {
         this.result = result;
@@ -115,7 +116,7 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
 
     @Override
     public int compareTo(PropertyResultRatingInfluencer t) {
-        if (this.getScoreCap() == t.getScoreCap()) {
+        if (Objects.equals(this.getScoreCap(), t.getScoreCap())) {
             return Integer.compare(this.getInfluence(), t.getInfluence());
         }
         if (this.getScoreCap() != null && t.getScoreCap() == null) {

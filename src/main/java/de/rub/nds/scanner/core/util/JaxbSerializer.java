@@ -78,7 +78,7 @@ public abstract class JaxbSerializer<T> {
         }
     }
 
-    public T read(InputStream inputStream) throws JAXBException, IOException, XMLStreamException {
+    public T read(InputStream inputStream) throws JAXBException, XMLStreamException {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         unmarshaller.setEventHandler(
                 event -> {

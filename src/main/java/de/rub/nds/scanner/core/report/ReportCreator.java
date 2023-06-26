@@ -8,16 +8,16 @@
  */
 package de.rub.nds.scanner.core.report;
 
-import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.config.ScannerDetail;
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.report.container.KeyValueContainer;
 import de.rub.nds.scanner.core.report.container.ReportContainer;
 import de.rub.nds.scanner.core.report.container.TextContainer;
 
 public class ReportCreator<ReportT extends ScanReport> {
 
-    protected PrintingScheme printingScheme;
-    protected ScannerDetail detail;
+    protected final PrintingScheme printingScheme;
+    protected final ScannerDetail detail;
 
     public ReportCreator(ScannerDetail detail, PrintingScheme scheme) {
         this.printingScheme = scheme;

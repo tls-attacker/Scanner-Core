@@ -13,5 +13,5 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public interface ProbeType {
-    public String getName();
+    String getName();
 }

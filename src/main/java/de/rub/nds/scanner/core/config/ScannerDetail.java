@@ -14,9 +14,9 @@ public enum ScannerDetail implements Comparable<ScannerDetail> {
     NORMAL(50),
     QUICK(25);
 
-    private int levelValue;
+    private final int levelValue;
 
-    private ScannerDetail(int levelValue) {
+    ScannerDetail(int levelValue) {
         this.levelValue = levelValue;
     }
 

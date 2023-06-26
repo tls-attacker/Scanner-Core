@@ -8,8 +8,8 @@
  */
 package de.rub.nds.scanner.core.report;
 
-import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.config.ScannerDetail;
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 
 public abstract class ReportPrinter<ReportT extends ScanReport> {
 
@@ -111,7 +111,7 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
 
     protected StringBuilder prettyAppend(
             StringBuilder builder, String name, Boolean value, AnsiColor color) {
-        return prettyAppend(builder, name, "" + value, color);
+        return prettyAppend(builder, name, String.valueOf(value), color);
     }
 
     protected StringBuilder prettyAppend(
@@ -167,7 +167,7 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
         return builder.append(addIndentations(name))
                 .append(": ")
                 .append(
-                        (printColorful == false
+                        (!printColorful
                                 ? AnsiColor.UNDERLINE.getCode() + value + AnsiColor.RESET.getCode()
                                 : value))
                 .append("\n");
@@ -225,9 +225,7 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
 
     protected String addIndentations(String value) {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            builder.append(" ");
-        }
+        builder.append(" ".repeat(Math.max(0, depth)));
         builder.append(value);
         if (value.length() + depth < 8) {
             builder.append("\t\t\t\t ");

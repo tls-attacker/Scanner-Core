@@ -41,9 +41,9 @@ public class ThreadedScanJobExecutor<
 
     private final ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob;
 
-    private List<ProbeT> notScheduledTasks = new LinkedList<>();
+    private List<ProbeT> notScheduledTasks;
 
-    private List<Future<ScannerProbe<ReportT, StateT>>> futureResults = new LinkedList<>();
+    private final List<Future<ScannerProbe<ReportT, StateT>>> futureResults;
 
     private final ThreadPoolExecutor executor;
 
@@ -61,6 +61,7 @@ public class ThreadedScanJobExecutor<
                         threadCount, new NamedThreadFactory(prefix), semaphore, probeTimeout);
         this.config = config;
         this.scanJob = scanJob;
+        this.futureResults = new LinkedList<>();
     }
 
     public ThreadedScanJobExecutor(
@@ -70,18 +71,17 @@ public class ThreadedScanJobExecutor<
         this.executor = executor;
         this.config = config;
         this.scanJob = scanJob;
-        this.notScheduledTasks = new ArrayList<>(scanJob.getProbeList());
+        this.futureResults = new LinkedList<>();
     }
 
     @Override
     public ReportT execute(ReportT report) {
-        this.notScheduledTasks = new ArrayList<>(scanJob.getProbeList());
-
+        notScheduledTasks = new ArrayList<>(scanJob.getProbeList());
         report.addObserver(this);
 
         checkForExecutableProbes(report);
         executeProbesTillNoneCanBeExecuted(report);
-        updateSiteReportWithNotExecutedProbes(report);
+        updateReportWithNotExecutedProbes(report);
         reportAboutNotExecutedProbes();
         collectStatistics(report);
         executeAfterProbes(report);
@@ -91,7 +91,7 @@ public class ThreadedScanJobExecutor<
         return report;
     }
 
-    private void updateSiteReportWithNotExecutedProbes(ReportT report) {
+    private void updateReportWithNotExecutedProbes(ReportT report) {
         for (ProbeT probe : notScheduledTasks) {
             probe.merge(report);
             report.markProbeAsUnexecuted(probe.getType());

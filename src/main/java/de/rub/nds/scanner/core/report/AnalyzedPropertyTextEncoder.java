@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class AnalyzedPropertyTextEncoder extends Encoder<AnalyzedProperty> {
 
-    private HashMap<AnalyzedProperty, String> map;
+    private final HashMap<AnalyzedProperty, String> map;
 
     public AnalyzedPropertyTextEncoder(HashMap<AnalyzedProperty, String> map) {
         this.map = map;

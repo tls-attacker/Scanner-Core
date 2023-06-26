@@ -13,7 +13,7 @@ import de.rub.nds.scanner.core.report.AnsiColor;
 
 public abstract class ReportContainer {
 
-    private ScannerDetail detail;
+    private final ScannerDetail detail;
 
     public ReportContainer(ScannerDetail detail) {
         this.detail = detail;
@@ -22,16 +22,12 @@ public abstract class ReportContainer {
     public abstract void print(StringBuilder builder, int depth, boolean useColor);
 
     protected StringBuilder addDepth(StringBuilder builder, int depth) {
-        for (int i = 0; i < depth; i++) {
-            builder.append("  ");
-        }
+        builder.append("  ".repeat(Math.max(0, depth)));
         return builder;
     }
 
     protected StringBuilder addHeadlineDepth(StringBuilder builder, int depth) {
-        for (int i = 0; i < depth; i++) {
-            builder.append("--");
-        }
+        builder.append("--".repeat(Math.max(0, depth)));
         if (depth > 0) {
             builder.append("|");
         }
