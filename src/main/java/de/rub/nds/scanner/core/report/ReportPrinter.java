@@ -11,7 +11,7 @@ package de.rub.nds.scanner.core.report;
 import de.rub.nds.scanner.core.constants.AnalyzedProperty;
 import de.rub.nds.scanner.core.constants.ScannerDetail;
 
-public abstract class ReportPrinter<R extends ScanReport> {
+public abstract class ReportPrinter<ReportT extends ScanReport> {
 
     protected final ScannerDetail detail;
     private int depth;
@@ -19,10 +19,13 @@ public abstract class ReportPrinter<R extends ScanReport> {
     private final PrintingScheme scheme;
     protected final boolean printColorful;
 
-    protected final R report;
+    protected final ReportT report;
 
     public ReportPrinter(
-            ScannerDetail detail, PrintingScheme scheme, boolean printColorful, R scanReport) {
+            ScannerDetail detail,
+            PrintingScheme scheme,
+            boolean printColorful,
+            ReportT scanReport) {
         this.detail = detail;
         this.scheme = scheme;
         this.printColorful = printColorful;

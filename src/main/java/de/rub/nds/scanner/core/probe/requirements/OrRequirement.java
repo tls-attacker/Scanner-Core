@@ -13,16 +13,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class OrRequirement<R extends ScanReport> extends LogicalRequirement<R> {
+public final class OrRequirement<ReportT extends ScanReport> extends LogicalRequirement<ReportT> {
 
-    private final List<Requirement<R>> requirements;
+    private final List<Requirement<ReportT>> requirements;
 
-    public OrRequirement(List<Requirement<R>> requirements) {
+    public OrRequirement(List<Requirement<ReportT>> requirements) {
         this.requirements = Collections.unmodifiableList(requirements);
     }
 
     @Override
-    public boolean evaluate(R report) {
+    public boolean evaluate(ReportT report) {
         return requirements.stream().anyMatch(requirement -> requirement.evaluate(report));
     }
 
@@ -34,7 +34,7 @@ public final class OrRequirement<R extends ScanReport> extends LogicalRequiremen
     }
 
     @Override
-    public List<Requirement<R>> getContainedRequirements() {
+    public List<Requirement<ReportT>> getContainedRequirements() {
         return requirements;
     }
 }

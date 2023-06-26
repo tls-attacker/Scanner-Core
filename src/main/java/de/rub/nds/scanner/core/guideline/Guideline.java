@@ -16,17 +16,17 @@ import java.util.List;
 @XmlRootElement(name = "guideline")
 @XmlType(propOrder = {"name", "link", "checks"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Guideline<R extends ScanReport> implements Serializable {
+public class Guideline<ReportT extends ScanReport> implements Serializable {
 
     private String name;
     private String link;
 
     @XmlAnyElement(lax = true)
-    private List<GuidelineCheck<R>> checks;
+    private List<GuidelineCheck<ReportT>> checks;
 
     private Guideline() {}
 
-    public Guideline(String name, String link, List<GuidelineCheck<R>> checks) {
+    public Guideline(String name, String link, List<GuidelineCheck<ReportT>> checks) {
         this.name = name;
         this.link = link;
         this.checks = checks;
@@ -48,11 +48,11 @@ public class Guideline<R extends ScanReport> implements Serializable {
         this.link = link;
     }
 
-    public List<GuidelineCheck<R>> getChecks() {
+    public List<GuidelineCheck<ReportT>> getChecks() {
         return checks;
     }
 
-    public void setChecks(List<GuidelineCheck<R>> checks) {
+    public void setChecks(List<GuidelineCheck<ReportT>> checks) {
         this.checks = checks;
     }
 }

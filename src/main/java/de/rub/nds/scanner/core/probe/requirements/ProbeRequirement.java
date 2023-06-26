@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** Represents a {@link Requirement} for required executed {@link ProbeType}s. */
-public class ProbeRequirement<R extends ScanReport> extends PrimitiveRequirement<R, ProbeType> {
+public class ProbeRequirement<ReportT extends ScanReport>
+        extends PrimitiveRequirement<ReportT, ProbeType> {
 
     public ProbeRequirement(List<ProbeType> probes) {
         super(probes);
@@ -25,7 +26,7 @@ public class ProbeRequirement<R extends ScanReport> extends PrimitiveRequirement
     }
 
     @Override
-    public boolean evaluate(R report) {
+    public boolean evaluate(ReportT report) {
         if (parameters.size() == 0) {
             return true;
         }

@@ -17,7 +17,7 @@ import java.util.List;
  * return their respective "requirement", and which allow to retrieve the not yet fulfilled
  * requirements.
  */
-public abstract class Requirement<R extends ScanReport> {
+public abstract class Requirement<ReportT extends ScanReport> {
 
     /**
      * Evaluates this requirement.
@@ -25,7 +25,7 @@ public abstract class Requirement<R extends ScanReport> {
      * @param report the {@link ScanReport}.
      * @return result of the evaluation of this requirement as boolean.
      */
-    public abstract boolean evaluate(R report);
+    public abstract boolean evaluate(ReportT report);
 
     /**
      * Creates a new {@link Requirement} which evaluates to true iff both requirements, this and
@@ -35,7 +35,7 @@ public abstract class Requirement<R extends ScanReport> {
      * @return a new requirement combining both individual requirements with a logical AND
      *     operation.
      */
-    public AndRequirement<R> and(Requirement<R> other) {
+    public AndRequirement<ReportT> and(Requirement<ReportT> other) {
         return and(other, true);
     }
 
@@ -48,15 +48,15 @@ public abstract class Requirement<R extends ScanReport> {
      * @return a new requirement combining both individual requirements with a logical AND
      *     operation.
      */
-    public AndRequirement<R> and(Requirement<R> other, boolean flatten) {
-        List<Requirement<R>> requirements = new ArrayList<>();
+    public AndRequirement<ReportT> and(Requirement<ReportT> other, boolean flatten) {
+        List<Requirement<ReportT>> requirements = new ArrayList<>();
         if (this instanceof AndRequirement && flatten) {
-            requirements.addAll(((AndRequirement<R>) this).getContainedRequirements());
+            requirements.addAll(((AndRequirement<ReportT>) this).getContainedRequirements());
         } else {
             requirements.add(this);
         }
         if (other instanceof AndRequirement && flatten) {
-            requirements.addAll(((AndRequirement<R>) other).getContainedRequirements());
+            requirements.addAll(((AndRequirement<ReportT>) other).getContainedRequirements());
         } else {
             requirements.add(other);
         }
@@ -70,7 +70,7 @@ public abstract class Requirement<R extends ScanReport> {
      * @param other other requirements to be met.
      * @return a new requirement combining the individual requirements with a logical OR operation.
      */
-    public OrRequirement<R> or(Requirement<R> other) {
+    public OrRequirement<ReportT> or(Requirement<ReportT> other) {
         return or(other, true);
     }
 
@@ -82,15 +82,15 @@ public abstract class Requirement<R extends ScanReport> {
      * @param flatten If set to false, the requirements will not be flattened.
      * @return a new requirement combining the individual requirements with a logical OR operation.
      */
-    public OrRequirement<R> or(Requirement<R> other, boolean flatten) {
-        List<Requirement<R>> requirements = new ArrayList<>();
+    public OrRequirement<ReportT> or(Requirement<ReportT> other, boolean flatten) {
+        List<Requirement<ReportT>> requirements = new ArrayList<>();
         if (this instanceof OrRequirement && flatten) {
-            requirements.addAll(((OrRequirement<R>) this).getContainedRequirements());
+            requirements.addAll(((OrRequirement<ReportT>) this).getContainedRequirements());
         } else {
             requirements.add(this);
         }
         if (other instanceof OrRequirement && flatten) {
-            requirements.addAll(((OrRequirement<R>) other).getContainedRequirements());
+            requirements.addAll(((OrRequirement<ReportT>) other).getContainedRequirements());
         } else {
             requirements.add(other);
         }
@@ -103,7 +103,7 @@ public abstract class Requirement<R extends ScanReport> {
      *
      * @return a new requirement which represents a logical NOT on this requirement.
      */
-    public Requirement<R> not() {
+    public Requirement<ReportT> not() {
         return not(true);
     }
 
@@ -113,9 +113,9 @@ public abstract class Requirement<R extends ScanReport> {
      * @param flatten If set to false, the requirement will not be flattened.
      * @return a new requirement which represents a logical NOT on this requirement.
      */
-    public Requirement<R> not(boolean flatten) {
+    public Requirement<ReportT> not(boolean flatten) {
         if (this instanceof NotRequirement && flatten) {
-            return ((NotRequirement<R>) this).getContainedRequirements().get(0);
+            return ((NotRequirement<ReportT>) this).getContainedRequirements().get(0);
         }
         return new NotRequirement<>(this);
     }
@@ -128,7 +128,7 @@ public abstract class Requirement<R extends ScanReport> {
      * @return a new requirement combining both individual requirements with a logical XOR
      *     operation.
      */
-    public XorRequirement<R> xor(Requirement<R> other) {
+    public XorRequirement<ReportT> xor(Requirement<ReportT> other) {
         return new XorRequirement<>(this, other);
     }
 
@@ -140,7 +140,7 @@ public abstract class Requirement<R extends ScanReport> {
      * @param report the ScanReport.
      * @return a list of requirements to be met for this requirement to evaluate to true.
      */
-    public List<Requirement<R>> getUnfulfilledRequirements(R report) {
+    public List<Requirement<ReportT>> getUnfulfilledRequirements(ReportT report) {
         return evaluate(report) ? List.of() : List.of(this);
     }
 }

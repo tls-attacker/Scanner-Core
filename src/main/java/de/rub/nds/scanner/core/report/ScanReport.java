@@ -117,8 +117,8 @@ public abstract class ScanReport extends Observable {
         return result instanceof SetResult ? (SetResult<?>) result : null;
     }
 
-    public synchronized <T> SetResult<T> getSetResult(
-            AnalyzedProperty property, Class<T> valueClass) {
+    public synchronized <V> SetResult<V> getSetResult(
+            AnalyzedProperty property, Class<V> valueClass) {
         SetResult<?> result = getSetResult(property);
         return result != null
                 ? new SetResult<>(

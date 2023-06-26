@@ -29,18 +29,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ThreadedScanJobExecutor<
-                R extends ScanReport, P extends ScannerProbe<R, S>, AP extends AfterProbe<R>, S>
-        extends ScanJobExecutor<R> implements Observer {
+                ReportT extends ScanReport,
+                ProbeT extends ScannerProbe<ReportT, StateT>,
+                AfterProbeT extends AfterProbe<ReportT>,
+                StateT>
+        extends ScanJobExecutor<ReportT> implements Observer {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ExecutorConfig config;
 
-    private final ScanJob<R, P, AP, S> scanJob;
+    private final ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob;
 
-    private List<P> notScheduledTasks = new LinkedList<>();
+    private List<ProbeT> notScheduledTasks = new LinkedList<>();
 
-    private List<Future<ScannerProbe<R, S>>> futureResults = new LinkedList<>();
+    private List<Future<ScannerProbe<ReportT, StateT>>> futureResults = new LinkedList<>();
 
     private final ThreadPoolExecutor executor;
 
@@ -48,7 +51,10 @@ public class ThreadedScanJobExecutor<
     private final Semaphore semaphore = new Semaphore(0);
 
     public ThreadedScanJobExecutor(
-            ExecutorConfig config, ScanJob<R, P, AP, S> scanJob, int threadCount, String prefix) {
+            ExecutorConfig config,
+            ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob,
+            int threadCount,
+            String prefix) {
         long probeTimeout = config.getProbeTimeout();
         executor =
                 new ScannerThreadPoolExecutor(
@@ -58,7 +64,9 @@ public class ThreadedScanJobExecutor<
     }
 
     public ThreadedScanJobExecutor(
-            ExecutorConfig config, ScanJob<R, P, AP, S> scanJob, ThreadPoolExecutor executor) {
+            ExecutorConfig config,
+            ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob,
+            ThreadPoolExecutor executor) {
         this.executor = executor;
         this.config = config;
         this.scanJob = scanJob;
@@ -66,7 +74,7 @@ public class ThreadedScanJobExecutor<
     }
 
     @Override
-    public R execute(R report) {
+    public ReportT execute(ReportT report) {
         this.notScheduledTasks = new ArrayList<>(scanJob.getProbeList());
 
         report.addObserver(this);
@@ -83,26 +91,26 @@ public class ThreadedScanJobExecutor<
         return report;
     }
 
-    private void updateSiteReportWithNotExecutedProbes(R report) {
-        for (P probe : notScheduledTasks) {
+    private void updateSiteReportWithNotExecutedProbes(ReportT report) {
+        for (ProbeT probe : notScheduledTasks) {
             probe.merge(report);
             report.markProbeAsUnexecuted(probe.getType());
         }
     }
 
-    private void checkForExecutableProbes(R report) {
+    private void checkForExecutableProbes(ReportT report) {
         update(report, null);
     }
 
-    private void executeProbesTillNoneCanBeExecuted(R report) {
+    private void executeProbesTillNoneCanBeExecuted(ReportT report) {
         boolean probesQueued = true;
         while (probesQueued) {
             // handle all Finished Results
-            List<Future<ScannerProbe<R, S>>> finishedFutures = new LinkedList<>();
-            for (Future<ScannerProbe<R, S>> result : futureResults) {
+            List<Future<ScannerProbe<ReportT, StateT>>> finishedFutures = new LinkedList<>();
+            for (Future<ScannerProbe<ReportT, StateT>> result : futureResults) {
                 if (result.isDone()) {
                     try {
-                        ScannerProbe<R, S> probeResult = result.get();
+                        ScannerProbe<ReportT, StateT> probeResult = result.get();
                         LOGGER.info(probeResult.getType().getName() + " probe executed");
                         finishedFutures.add(result);
                         report.markProbeAsExecuted(result.get().getType());
@@ -140,17 +148,17 @@ public class ThreadedScanJobExecutor<
 
     private void reportAboutNotExecutedProbes() {
         LOGGER.debug("Did not execute the following probes:");
-        for (P probe : notScheduledTasks) {
+        for (ProbeT probe : notScheduledTasks) {
             LOGGER.debug(probe.getProbeName());
         }
     }
 
-    private void collectStatistics(R report) {
+    private void collectStatistics(ReportT report) {
         LOGGER.debug("Evaluating executed handshakes...");
-        List<P> allProbes = scanJob.getProbeList();
+        List<ProbeT> allProbes = scanJob.getProbeList();
         HashMap<TrackableValue, ExtractedValueContainer<?>> containerMap = new HashMap<>();
         int stateCounter = 0;
-        for (P probe : allProbes) {
+        for (ProbeT probe : allProbes) {
             List<ExtractedValueContainer<?>> tempContainerList =
                     probe.getWriter().getCumulatedExtractedValues();
             for (ExtractedValueContainer<?> tempContainer : tempContainerList) {
@@ -173,9 +181,9 @@ public class ThreadedScanJobExecutor<
         LOGGER.debug("Finished evaluation");
     }
 
-    private void executeAfterProbes(R report) {
+    private void executeAfterProbes(ReportT report) {
         LOGGER.debug("Analyzing data...");
-        for (AfterProbe<R> afterProbe : scanJob.getAfterList()) {
+        for (AfterProbe<ReportT> afterProbe : scanJob.getAfterList()) {
             afterProbe.analyze(report);
         }
         LOGGER.debug("Finished analysis");
@@ -189,13 +197,13 @@ public class ThreadedScanJobExecutor<
     @Override
     public synchronized void update(Observable o, Object o1) {
         if (o instanceof ScanReport) {
-            R report = (R) o;
-            List<P> newNotSchedulesTasksList = new LinkedList<>();
-            for (P probe : notScheduledTasks) {
+            ReportT report = (ReportT) o;
+            List<ProbeT> newNotSchedulesTasksList = new LinkedList<>();
+            for (ProbeT probe : notScheduledTasks) {
                 if (probe.canBeExecuted(report)) {
                     probe.adjustConfig(report);
                     LOGGER.debug("Scheduling: " + probe.getProbeName());
-                    Future<ScannerProbe<R, S>> future = executor.submit(probe);
+                    Future<ScannerProbe<ReportT, StateT>> future = executor.submit(probe);
                     futureResults.add(future);
                 } else {
                     newNotSchedulesTasksList.add(probe);

@@ -14,9 +14,9 @@ import java.util.Set;
 
 public class CollectionUtils {
 
-    public static <E> Set<E> mergeCollectionsIntoSet(Collection<E>... collections) {
-        Set<E> mergeResult = new HashSet<>();
-        for (Collection<E> currentCollection : collections) {
+    public static <T> Set<T> mergeCollectionsIntoSet(Collection<T>... collections) {
+        Set<T> mergeResult = new HashSet<>();
+        for (Collection<T> currentCollection : collections) {
             if (currentCollection == null) {
                 continue;
             }

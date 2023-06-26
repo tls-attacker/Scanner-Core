@@ -94,12 +94,12 @@ public class ScannerThreadPoolExecutor extends ScheduledThreadPoolExecutor {
                         if (!future.isDone()) {
                             future.cancel(true);
                             if (future.isCancelled()) {
-                                LOGGER.error("Killed task ", future);
+                                LOGGER.error("Killed task {}", future);
                             } else {
-                                LOGGER.error("Could not kill task ", future);
+                                LOGGER.error("Could not kill task {}", future);
                             }
                         } else {
-                            LOGGER.debug("Future already done! ", future);
+                            LOGGER.debug("Future already done! {}", future);
                         }
                         semaphore.release();
                     }
