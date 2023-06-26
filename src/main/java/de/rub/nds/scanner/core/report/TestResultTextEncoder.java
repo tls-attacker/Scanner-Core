@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.report;
 
-import de.rub.nds.scanner.core.constants.TestResult;
+import de.rub.nds.scanner.core.probe.result.TestResult;
 import java.util.HashMap;
 
 public class TestResultTextEncoder extends Encoder<TestResult> {

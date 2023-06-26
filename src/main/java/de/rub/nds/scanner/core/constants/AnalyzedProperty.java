@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public interface AnalyzedProperty {
 
-    public AnalyzedPropertyCategory getCategory();
+    AnalyzedPropertyCategory getCategory();
 
-    public String getName();
+    String getName();
 }

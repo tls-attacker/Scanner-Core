@@ -9,7 +9,7 @@
 package de.rub.nds.scanner.core.report.rating;
 
 import de.rub.nds.scanner.core.constants.AnalyzedProperty;
-import de.rub.nds.scanner.core.constants.TestResult;
+import de.rub.nds.scanner.core.probe.result.TestResult;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.apache.logging.log4j.LogManager;

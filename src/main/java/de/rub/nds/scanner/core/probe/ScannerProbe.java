@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.probe;
 import de.rub.nds.scanner.core.constants.*;
 import de.rub.nds.scanner.core.passive.StatsWriter;
 import de.rub.nds.scanner.core.probe.requirements.Requirement;
+import de.rub.nds.scanner.core.probe.result.*;
 import de.rub.nds.scanner.core.report.PerformanceData;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.HashMap;
