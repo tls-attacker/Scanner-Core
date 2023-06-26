@@ -23,7 +23,7 @@ import java.util.Set;
 public class SetResult<T> extends CollectionResult<T> {
 
     /**
-     * The constructor for the SetResult. Use property.name() for the name parameter.
+     * The constructor for the SetResult. Use property.getName() for the name parameter.
      *
      * @param set The result set.
      * @param name The name of the SetResult object.

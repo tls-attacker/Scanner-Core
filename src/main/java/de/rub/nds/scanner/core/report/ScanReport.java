@@ -9,17 +9,17 @@
 package de.rub.nds.scanner.core.report;
 
 import de.rub.nds.scanner.core.constants.AnalyzedProperty;
-import de.rub.nds.scanner.core.probe.result.CollectionResult;
-import de.rub.nds.scanner.core.probe.result.ListResult;
-import de.rub.nds.scanner.core.probe.result.MapResult;
 import de.rub.nds.scanner.core.constants.ProbeType;
 import de.rub.nds.scanner.core.constants.ScannerDetail;
-import de.rub.nds.scanner.core.probe.result.SetResult;
-import de.rub.nds.scanner.core.probe.result.TestResult;
-import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.guideline.GuidelineReport;
 import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
+import de.rub.nds.scanner.core.probe.result.CollectionResult;
+import de.rub.nds.scanner.core.probe.result.ListResult;
+import de.rub.nds.scanner.core.probe.result.MapResult;
+import de.rub.nds.scanner.core.probe.result.SetResult;
+import de.rub.nds.scanner.core.probe.result.TestResult;
+import de.rub.nds.scanner.core.probe.result.TestResults;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -66,7 +66,7 @@ public abstract class ScanReport extends Observable {
                         result.getCollection().stream()
                                 .map(valueClass::cast)
                                 .collect(Collectors.toUnmodifiableList()),
-                        result.name())
+                        result.getName())
                 : null;
     }
 
@@ -83,7 +83,7 @@ public abstract class ScanReport extends Observable {
                         result.getList().stream()
                                 .map(valueClass::cast)
                                 .collect(Collectors.toUnmodifiableList()),
-                        result.name())
+                        result.getName())
                 : null;
     }
 
@@ -109,7 +109,7 @@ public abstract class ScanReport extends Observable {
                         (key, value) -> {
                             typedMap.put(keyClass.cast(key), valueClass.cast(value));
                         });
-        return new MapResult<>(Collections.unmodifiableMap(typedMap), result.name());
+        return new MapResult<>(Collections.unmodifiableMap(typedMap), result.getName());
     }
 
     public synchronized SetResult<?> getSetResult(AnalyzedProperty property) {
@@ -125,7 +125,7 @@ public abstract class ScanReport extends Observable {
                         result.getSet().stream()
                                 .map(valueClass::cast)
                                 .collect(Collectors.toUnmodifiableSet()),
-                        result.name())
+                        result.getName())
                 : null;
     }
 

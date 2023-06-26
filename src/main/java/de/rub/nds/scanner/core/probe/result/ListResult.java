@@ -23,7 +23,7 @@ import java.util.List;
 public class ListResult<T> extends CollectionResult<T> {
 
     /**
-     * The constructor for the ListResult. Use property.name() for the name parameter.
+     * The constructor for the ListResult. Use property.getName() for the name parameter.
      *
      * @param list the list of the ListResult.
      * @param name the name of the ListResult.

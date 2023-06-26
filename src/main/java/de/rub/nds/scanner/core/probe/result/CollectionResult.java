@@ -22,7 +22,7 @@ public class CollectionResult<T> implements TestResult, Serializable {
     protected final Collection<T> collection;
 
     /**
-     * The constructor for the CollectionResult. Use property.name() for the name parameter.
+     * The constructor for the CollectionResult. Use property.getName() for the name parameter.
      *
      * @param collection The result collection.
      * @param name The name of the CollectionResult object.
@@ -40,7 +40,7 @@ public class CollectionResult<T> implements TestResult, Serializable {
     }
 
     @Override
-    public String name() {
+    public String getName() {
         return name;
     }
 }

@@ -31,7 +31,10 @@ public enum TestResults implements TestResult {
     UNASSIGNED_ERROR,
     TIMEOUT;
 
-    private TestResults() {}
+    @Override
+    public String getName() {
+        return name();
+    }
 
     /**
      * @param value evaluation of a boolean to TestResults.

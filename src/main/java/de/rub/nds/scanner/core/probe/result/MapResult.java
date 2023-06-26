@@ -26,7 +26,7 @@ public class MapResult<S, T> extends CollectionResult<S> {
     private final Map<S, T> map;
 
     /**
-     * The constructor for the MapResult. Use property.name() for the name parameter.
+     * The constructor for the MapResult. Use property.getName() for the name parameter.
      *
      * @param map the map.
      * @param name the name of the MapResult.

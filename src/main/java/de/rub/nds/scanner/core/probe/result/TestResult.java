@@ -14,5 +14,5 @@ public interface TestResult {
     /**
      * @return the name of the TestResult.
      */
-    String name();
+    String getName();
 }

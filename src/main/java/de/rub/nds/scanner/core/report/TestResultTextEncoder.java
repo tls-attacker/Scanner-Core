@@ -28,11 +28,11 @@ public class TestResultTextEncoder extends Encoder<TestResult> {
     @Override
     public String encode(TestResult result) {
         if (textEncodingMap == null) {
-            return result.name();
+            return result.getName();
         }
         String string = textEncodingMap.get(result);
         if (string == null) {
-            return result.name();
+            return result.getName();
         } else {
             return string;
         }
