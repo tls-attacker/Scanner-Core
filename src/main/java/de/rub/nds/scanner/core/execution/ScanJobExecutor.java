@@ -12,7 +12,7 @@ import de.rub.nds.scanner.core.report.ScanReport;
 
 public abstract class ScanJobExecutor<ReportT extends ScanReport> {
 
-    public abstract ReportT execute(ReportT report);
+    public abstract void execute(ReportT report);
 
     public abstract void shutdown();
 }

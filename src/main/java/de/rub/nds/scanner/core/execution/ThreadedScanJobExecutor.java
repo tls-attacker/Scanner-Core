@@ -75,7 +75,7 @@ public class ThreadedScanJobExecutor<
     }
 
     @Override
-    public ReportT execute(ReportT report) {
+    public void execute(ReportT report) {
         notScheduledTasks = new ArrayList<>(scanJob.getProbeList());
         report.addObserver(this);
 
@@ -88,7 +88,6 @@ public class ThreadedScanJobExecutor<
 
         LOGGER.info("Finished scan");
         report.deleteObserver(this);
-        return report;
     }
 
     private void updateReportWithNotExecutedProbes(ReportT report) {
