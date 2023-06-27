@@ -10,7 +10,7 @@ package de.rub.nds.scanner.core.probe.result;
 
 import java.io.Serializable;
 
-public class ObjectResult<T> implements TestResult, Serializable{
+public class ObjectResult<T> implements TestResult, Serializable {
 
     private final String name;
     protected final T value;
