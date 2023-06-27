@@ -24,6 +24,10 @@ public class ObjectResult<T> implements TestResult, Serializable {
         return value;
     }
 
+    public <S> S getValue(Class<S> valueClass) {
+        return valueClass.cast(value);
+    }
+
     @Override
     public String getName() {
         return name;
