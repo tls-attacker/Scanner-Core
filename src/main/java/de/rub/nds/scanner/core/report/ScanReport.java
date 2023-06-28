@@ -13,6 +13,7 @@ import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.ProbeType;
+import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.probe.result.*;
 import de.rub.nds.scanner.core.report.rating.ScoreReport;
 import java.math.BigInteger;
@@ -28,8 +29,8 @@ public class ScanReport extends Observable {
     private int score;
     private ScoreReport scoreReport;
 
-    private final Set<ProbeType> executedProbes;
-    private final Set<ProbeType> unexecutedProbes;
+    private final Set<ScannerProbe<?, ?>> executedProbes;
+    private final Set<ScannerProbe<?, ?>> unexecutedProbes;
 
     private final List<PerformanceData> probePerformanceData;
     private int performedConnections;
@@ -260,15 +261,7 @@ public class ScanReport extends Observable {
     }
 
     public synchronized boolean isProbeAlreadyExecuted(ProbeType type) {
-        return executedProbes.contains(type);
-    }
-
-    public synchronized void markProbeAsExecuted(ProbeType probe) {
-        executedProbes.add(probe);
-    }
-
-    public synchronized void markProbeAsUnexecuted(ProbeType probe) {
-        unexecutedProbes.add(probe);
+        return getExecutedProbeTypes().contains(type);
     }
 
     public synchronized List<PerformanceData> getProbePerformanceData() {
@@ -279,12 +272,32 @@ public class ScanReport extends Observable {
         probePerformanceData.add(performanceData);
     }
 
-    public synchronized Set<ProbeType> getExecutedProbes() {
+    public synchronized void markProbeAsExecuted(ScannerProbe<?, ?> probe) {
+        executedProbes.add(probe);
+    }
+
+    public synchronized void markProbeAsUnexecuted(ScannerProbe<?, ?> probe) {
+        unexecutedProbes.add(probe);
+    }
+
+    public synchronized Set<ScannerProbe<?, ?>> getExecutedProbes() {
         return Collections.unmodifiableSet(executedProbes);
     }
 
-    public synchronized Set<ProbeType> getUnexecutedProbes() {
+    public synchronized Set<ProbeType> getExecutedProbeTypes() {
+        return executedProbes.stream()
+                .map(ScannerProbe::getType)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    public synchronized Set<ScannerProbe<?, ?>> getUnexecutedProbes() {
         return Collections.unmodifiableSet(unexecutedProbes);
+    }
+
+    public synchronized Set<ProbeType> getUnexecutedProbeTypes() {
+        return unexecutedProbes.stream()
+                .map(ScannerProbe::getType)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     public int getPerformedConnections() {
