@@ -93,7 +93,7 @@ public class ThreadedScanJobExecutor<
     private void updateReportWithNotExecutedProbes(ReportT report) {
         for (ProbeT probe : notScheduledTasks) {
             probe.merge(report);
-            report.markProbeAsUnexecuted(probe.getType());
+            report.markProbeAsUnexecuted(probe);
         }
     }
 
@@ -112,7 +112,7 @@ public class ThreadedScanJobExecutor<
                         ScannerProbe<ReportT, StateT> probeResult = result.get();
                         LOGGER.info(probeResult.getType().getName() + " probe executed");
                         finishedFutures.add(result);
-                        report.markProbeAsExecuted(result.get().getType());
+                        report.markProbeAsExecuted(result.get());
                         probeResult.merge(report);
                     } catch (InterruptedException | ExecutionException ex) {
                         LOGGER.error(

@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.rub.nds.scanner.core.TestProbeType;
 import de.rub.nds.scanner.core.probe.ProbeType;
+import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.report.ScanReport;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,7 @@ public class ProbeRequirementTest {
     @Test
     public void testProbeRequirement() {
         ScanReport report = new ScanReport();
-        TestProbeType probe = TestProbeType.TEST_PROBE_TYPE;
+        TestProbe probe = new TestProbe();
 
         ProbeRequirement<ScanReport> requirement = new ProbeRequirement<>();
         assertTrue(requirement.evaluate(report));
@@ -30,12 +31,34 @@ public class ProbeRequirementTest {
         requirement = new ProbeRequirement<>(new TestProbeType[0]);
         assertTrue(requirement.evaluate(report));
 
-        requirement = new ProbeRequirement<>(probe);
+        requirement = new ProbeRequirement<>(TestProbeType.TEST_PROBE_TYPE);
         assertArrayEquals(
-                requirement.getParameters().toArray(new ProbeType[0]), new TestProbeType[] {probe});
+                requirement.getParameters().toArray(new ProbeType[0]),
+                new TestProbeType[] {TestProbeType.TEST_PROBE_TYPE});
         assertFalse(requirement.evaluate(report));
 
         report.markProbeAsExecuted(probe);
         assertTrue(requirement.evaluate(report));
+    }
+
+    private static class TestProbe extends ScannerProbe<ScanReport, Object> {
+
+        public TestProbe() {
+            super(TestProbeType.TEST_PROBE_TYPE);
+        }
+
+        @Override
+        public Requirement<ScanReport> getRequirements() {
+            return null;
+        }
+
+        @Override
+        public void adjustConfig(ScanReport report) {}
+
+        @Override
+        protected void executeTest() {}
+
+        @Override
+        protected void mergeData(ScanReport report) {}
     }
 }

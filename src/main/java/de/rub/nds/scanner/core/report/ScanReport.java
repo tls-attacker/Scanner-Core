@@ -13,6 +13,7 @@ import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.ProbeType;
+import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.probe.result.*;
 import de.rub.nds.scanner.core.report.rating.ScoreReport;
 import java.math.BigInteger;
@@ -28,8 +29,8 @@ public class ScanReport extends Observable {
     private int score;
     private ScoreReport scoreReport;
 
-    private final Set<ProbeType> executedProbes;
-    private final Set<ProbeType> unexecutedProbes;
+    private final Set<ScannerProbe<?, ?>> executedProbes;
+    private final Set<ScannerProbe<?, ?>> unexecutedProbes;
 
     private final List<PerformanceData> probePerformanceData;
     private int performedConnections;
@@ -61,9 +62,13 @@ public class ScanReport extends Observable {
     public synchronized <T> ObjectResult<T> getObjectResult(
             AnalyzedProperty property, Class<T> valueClass) {
         ObjectResult<?> result = getObjectResult(property);
-        return result != null
-                ? new ObjectResult<>(result.getProperty(), valueClass.cast(result.getValue()))
-                : null;
+        try {
+            return result != null
+                    ? new ObjectResult<>(result.getProperty(), valueClass.cast(result.getValue()))
+                    : null;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
     public synchronized BigIntegerResult getBigIntegerResult(AnalyzedProperty property) {
@@ -94,13 +99,17 @@ public class ScanReport extends Observable {
     public synchronized <V> CollectionResult<V> getCollectionResult(
             AnalyzedProperty property, Class<V> valueClass) {
         CollectionResult<?> result = getCollectionResult(property);
-        return result != null
-                ? new ListResult<>(
-                        result.getProperty(),
-                        result.getCollection().stream()
-                                .map(valueClass::cast)
-                                .collect(Collectors.toUnmodifiableList()))
-                : null;
+        try {
+            return result != null
+                    ? new ListResult<>(
+                            result.getProperty(),
+                            result.getCollection().stream()
+                                    .map(valueClass::cast)
+                                    .collect(Collectors.toUnmodifiableList()))
+                    : null;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
     public synchronized ListResult<?> getListResult(AnalyzedProperty property) {
@@ -111,13 +120,17 @@ public class ScanReport extends Observable {
     public synchronized <V> ListResult<V> getListResult(
             AnalyzedProperty property, Class<V> valueClass) {
         ListResult<?> result = getListResult(property);
-        return result != null
-                ? new ListResult<>(
-                        result.getProperty(),
-                        result.getList().stream()
-                                .map(valueClass::cast)
-                                .collect(Collectors.toUnmodifiableList()))
-                : null;
+        try {
+            return result != null
+                    ? new ListResult<>(
+                            result.getProperty(),
+                            result.getList().stream()
+                                    .map(valueClass::cast)
+                                    .collect(Collectors.toUnmodifiableList()))
+                    : null;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
     public synchronized MapResult<?, ?> getMapResult(AnalyzedProperty property) {
@@ -137,8 +150,14 @@ public class ScanReport extends Observable {
             return null;
         }
         Map<K, V> typedMap = new HashMap<>();
-        result.getMap()
-                .forEach((key, value) -> typedMap.put(keyClass.cast(key), valueClass.cast(value)));
+        try {
+            result.getMap()
+                    .forEach(
+                            (key, value) ->
+                                    typedMap.put(keyClass.cast(key), valueClass.cast(value)));
+        } catch (ClassCastException e) {
+            return null;
+        }
         return new MapResult<>(result.getProperty(), Collections.unmodifiableMap(typedMap));
     }
 
@@ -150,13 +169,17 @@ public class ScanReport extends Observable {
     public synchronized <V> SetResult<V> getSetResult(
             AnalyzedProperty property, Class<V> valueClass) {
         SetResult<?> result = getSetResult(property);
-        return result != null
-                ? new SetResult<>(
-                        result.getProperty(),
-                        result.getSet().stream()
-                                .map(valueClass::cast)
-                                .collect(Collectors.toUnmodifiableSet()))
-                : null;
+        try {
+            return result != null
+                    ? new SetResult<>(
+                            result.getProperty(),
+                            result.getSet().stream()
+                                    .map(valueClass::cast)
+                                    .collect(Collectors.toUnmodifiableSet()))
+                    : null;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
     public synchronized void putResult(AnalyzedProperty property, TestResult result) {
@@ -260,15 +283,7 @@ public class ScanReport extends Observable {
     }
 
     public synchronized boolean isProbeAlreadyExecuted(ProbeType type) {
-        return executedProbes.contains(type);
-    }
-
-    public synchronized void markProbeAsExecuted(ProbeType probe) {
-        executedProbes.add(probe);
-    }
-
-    public synchronized void markProbeAsUnexecuted(ProbeType probe) {
-        unexecutedProbes.add(probe);
+        return getExecutedProbeTypes().contains(type);
     }
 
     public synchronized List<PerformanceData> getProbePerformanceData() {
@@ -279,12 +294,32 @@ public class ScanReport extends Observable {
         probePerformanceData.add(performanceData);
     }
 
-    public synchronized Set<ProbeType> getExecutedProbes() {
+    public synchronized void markProbeAsExecuted(ScannerProbe<?, ?> probe) {
+        executedProbes.add(probe);
+    }
+
+    public synchronized void markProbeAsUnexecuted(ScannerProbe<?, ?> probe) {
+        unexecutedProbes.add(probe);
+    }
+
+    public synchronized Set<ScannerProbe<?, ?>> getExecutedProbes() {
         return Collections.unmodifiableSet(executedProbes);
     }
 
-    public synchronized Set<ProbeType> getUnexecutedProbes() {
+    public synchronized Set<ProbeType> getExecutedProbeTypes() {
+        return executedProbes.stream()
+                .map(ScannerProbe::getType)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    public synchronized Set<ScannerProbe<?, ?>> getUnexecutedProbes() {
         return Collections.unmodifiableSet(unexecutedProbes);
+    }
+
+    public synchronized Set<ProbeType> getUnexecutedProbeTypes() {
+        return unexecutedProbes.stream()
+                .map(ScannerProbe::getType)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     public int getPerformedConnections() {
