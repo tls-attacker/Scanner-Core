@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>scanner-core</artifactId>
-    <version>5.2.8-SNAPSHOT</version>
+    <version>5.3.0</version>
 
     <name>Scanner Core</name>
     <description>A generic scanner framework which can execute a set of probes and combine the results into a report.</description>
@@ -60,7 +60,7 @@
     <scm>
         <connection>scm:git:https://github.com/tls-attacker/scanner-core.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/tls-attacker/scanner-core.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v5.3.0</tag>
         <url>https://github.com/tls-attacker/Scanner-Core</url>
     </scm>
 
