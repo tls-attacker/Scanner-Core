@@ -62,7 +62,7 @@ public class ScanReport extends Observable {
             AnalyzedProperty property, Class<T> valueClass) {
         ObjectResult<?> result = getObjectResult(property);
         return result != null
-                ? new ObjectResult<>(valueClass.cast(result.getValue()), result.getName())
+                ? new ObjectResult<>(result.getProperty(), valueClass.cast(result.getValue()))
                 : null;
     }
 
@@ -96,10 +96,10 @@ public class ScanReport extends Observable {
         CollectionResult<?> result = getCollectionResult(property);
         return result != null
                 ? new ListResult<>(
+                        result.getProperty(),
                         result.getCollection().stream()
                                 .map(valueClass::cast)
-                                .collect(Collectors.toUnmodifiableList()),
-                        result.getName())
+                                .collect(Collectors.toUnmodifiableList()))
                 : null;
     }
 
@@ -113,10 +113,10 @@ public class ScanReport extends Observable {
         ListResult<?> result = getListResult(property);
         return result != null
                 ? new ListResult<>(
+                        result.getProperty(),
                         result.getList().stream()
                                 .map(valueClass::cast)
-                                .collect(Collectors.toUnmodifiableList()),
-                        result.getName())
+                                .collect(Collectors.toUnmodifiableList()))
                 : null;
     }
 
@@ -139,7 +139,7 @@ public class ScanReport extends Observable {
         Map<K, V> typedMap = new HashMap<>();
         result.getMap()
                 .forEach((key, value) -> typedMap.put(keyClass.cast(key), valueClass.cast(value)));
-        return new MapResult<>(Collections.unmodifiableMap(typedMap), result.getName());
+        return new MapResult<>(result.getProperty(), Collections.unmodifiableMap(typedMap));
     }
 
     public synchronized SetResult<?> getSetResult(AnalyzedProperty property) {
@@ -152,10 +152,10 @@ public class ScanReport extends Observable {
         SetResult<?> result = getSetResult(property);
         return result != null
                 ? new SetResult<>(
+                        result.getProperty(),
                         result.getSet().stream()
                                 .map(valueClass::cast)
-                                .collect(Collectors.toUnmodifiableSet()),
-                        result.getName())
+                                .collect(Collectors.toUnmodifiableSet()))
                 : null;
     }
 
@@ -174,35 +174,35 @@ public class ScanReport extends Observable {
     }
 
     public synchronized void putResult(AnalyzedProperty property, BigInteger result) {
-        this.putResult(property, new BigIntegerResult(result, property.getName()));
+        this.putResult(property, new BigIntegerResult(property, result));
     }
 
     public synchronized void putResult(AnalyzedProperty property, Integer result) {
-        this.putResult(property, new IntegerResult(result, property.getName()));
+        this.putResult(property, new IntegerResult(property, result));
     }
 
     public synchronized void putResult(AnalyzedProperty property, Long result) {
-        this.putResult(property, new LongResult(result, property.getName()));
+        this.putResult(property, new LongResult(property, result));
     }
 
     public synchronized void putResult(AnalyzedProperty property, String result) {
-        this.putResult(property, new StringResult(result, property.getName()));
+        this.putResult(property, new StringResult(property, result));
     }
 
     public synchronized void putResult(AnalyzedProperty property, List<?> result) {
-        this.putResult(property, new ListResult<>(result, property.getName()));
+        this.putResult(property, new ListResult<>(property, result));
     }
 
     public synchronized void putResult(AnalyzedProperty property, Set<?> result) {
-        this.putResult(property, new SetResult<>(result, property.getName()));
+        this.putResult(property, new SetResult<>(property, result));
     }
 
     public synchronized void putResult(AnalyzedProperty property, Map<?, ?> result) {
-        this.putResult(property, new MapResult<>(result, property.getName()));
+        this.putResult(property, new MapResult<>(property, result));
     }
 
     public synchronized <T> void putResult(AnalyzedProperty property, T result) {
-        this.putResult(property, new ObjectResult<>(result, property.getName()));
+        this.putResult(property, new ObjectResult<>(property, result));
     }
 
     public synchronized void removeResult(AnalyzedProperty property) {

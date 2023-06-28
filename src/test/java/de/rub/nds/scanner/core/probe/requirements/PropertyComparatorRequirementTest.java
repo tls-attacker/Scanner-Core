@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.rub.nds.scanner.core.TestAnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.ListResult;
 import de.rub.nds.scanner.core.report.ScanReport;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -26,8 +25,8 @@ public class PropertyComparatorRequirementTest {
         ScanReport report0 = new ScanReport(),
                 report1 = new ScanReport(),
                 report2 = new ScanReport();
-        ListResult<Integer> listResult1 = new ListResult<>(List.of(0), property.getName());
-        ListResult<Integer> listResult2 = new ListResult<>(Arrays.asList(0, 1), property.getName());
+        ListResult<Integer> listResult1 = new ListResult<>(property, List.of(0));
+        ListResult<Integer> listResult2 = new ListResult<>(property, List.of(0, 1));
         report1.putResult(property, listResult1);
         report2.putResult(property, listResult2);
 

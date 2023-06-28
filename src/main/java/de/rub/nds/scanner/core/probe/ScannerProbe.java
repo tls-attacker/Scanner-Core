@@ -13,6 +13,7 @@ import de.rub.nds.scanner.core.probe.requirements.Requirement;
 import de.rub.nds.scanner.core.probe.result.*;
 import de.rub.nds.scanner.core.report.PerformanceData;
 import de.rub.nds.scanner.core.report.ScanReport;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,21 +59,7 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
-    public final void put(AnalyzedProperty property, Object value) {
-        TestResult result = null;
-        if (value != null) {
-            if (value instanceof TestResult) {
-                result = (TestResult) value;
-            } else if (value instanceof List<?>) {
-                result = new ListResult<>((List<?>) value, property.getName());
-            } else if (value instanceof Map<?, ?>) {
-                result = new MapResult<>((Map<?, ?>) value, property.getName());
-            } else if (value instanceof Set<?>) {
-                result = new SetResult<>((Set<?>) value, property.getName());
-            } else {
-                result = TestResults.ERROR_DURING_TEST;
-            }
-        }
+    public final void put(AnalyzedProperty property, TestResult result) {
         if (propertiesMap.containsKey(property)) {
             propertiesMap.replace(property, result);
         } else {
@@ -82,6 +69,38 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
                     getClass().getSimpleName());
             propertiesMap.put(property, result);
         }
+    }
+
+    public final void put(AnalyzedProperty property, List<?> result) {
+        put(property, new ListResult<>(property, result));
+    }
+
+    public final void put(AnalyzedProperty property, Map<?, ?> result) {
+        put(property, new MapResult<>(property, result));
+    }
+
+    public final void put(AnalyzedProperty property, Set<?> result) {
+        put(property, new SetResult<>(property, result));
+    }
+
+    public final void put(AnalyzedProperty property, BigInteger result) {
+        put(property, new BigIntegerResult(property, result));
+    }
+
+    public final void put(AnalyzedProperty property, Integer result) {
+        put(property, new IntegerResult(property, result));
+    }
+
+    public final void put(AnalyzedProperty property, Long result) {
+        put(property, new LongResult(property, result));
+    }
+
+    public final void put(AnalyzedProperty property, String result) {
+        put(property, new StringResult(property, result));
+    }
+
+    public final void put(AnalyzedProperty property, Object result) {
+        put(property, new ObjectResult<>(property, result));
     }
 
     protected final <T> void addToList(AnalyzedProperty property, List<T> result) {
@@ -94,9 +113,9 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
                 if (propertiesMap.get(property) instanceof ListResult) {
                     //noinspection unchecked
                     result.addAll(((ListResult<T>) propertiesMap.get(property)).getList());
-                    put(property, new ListResult<>(result, property.getName()));
+                    put(property, new ListResult<>(property, result));
                 } else {
-                    put(property, new ListResult<>(result, property.getName()));
+                    put(property, new ListResult<>(property, result));
                 }
             }
         } else {
@@ -105,7 +124,7 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
                             + " was set in "
                             + getClass()
                             + " but had not been registered!");
-            propertiesMap.put(property, new ListResult<>(result, property.getName()));
+            propertiesMap.put(property, new ListResult<>(property, result));
         }
     }
 

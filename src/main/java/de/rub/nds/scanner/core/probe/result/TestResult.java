@@ -15,4 +15,14 @@ public interface TestResult {
      * @return the name of the TestResult.
      */
     String getName();
+
+    /**
+     * Returns true if the result stored for the property contains actual information. True by
+     * default.
+     *
+     * @return Whether the result contains actual information.
+     */
+    default boolean isRealResult() {
+        return true;
+    }
 }
