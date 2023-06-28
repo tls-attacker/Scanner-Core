@@ -14,6 +14,7 @@ import de.rub.nds.scanner.core.passive.TrackableValue;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.probe.result.*;
+import de.rub.nds.scanner.core.report.rating.ScoreReport;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,12 +25,16 @@ public class ScanReport extends Observable {
     private final Map<TrackableValue, ExtractedValueContainer<?>> extractedValueContainerMap;
 
     private final List<GuidelineReport> guidelineReports;
+    private int score;
+    private ScoreReport scoreReport;
 
     private final Set<ProbeType> executedProbes;
     private final Set<ProbeType> unexecutedProbes;
 
     private final List<PerformanceData> probePerformanceData;
-    private int performedConnections = 0;
+    private int performedConnections;
+    private long scanStartTime;
+    private long scanEndTime;
 
     public ScanReport() {
         resultMap = new HashMap<>();
@@ -238,6 +243,22 @@ public class ScanReport extends Observable {
         guidelineReports.add(guidelineReport);
     }
 
+    public synchronized int getScore() {
+        return score;
+    }
+
+    public synchronized void setScore(int score) {
+        this.score = score;
+    }
+
+    public synchronized ScoreReport getScoreReport() {
+        return scoreReport;
+    }
+
+    public synchronized void setScoreReport(ScoreReport scoreReport) {
+        this.scoreReport = scoreReport;
+    }
+
     public synchronized boolean isProbeAlreadyExecuted(ProbeType type) {
         return executedProbes.contains(type);
     }
@@ -266,11 +287,27 @@ public class ScanReport extends Observable {
         return Collections.unmodifiableSet(unexecutedProbes);
     }
 
-    public synchronized int getPerformedConnections() {
+    public int getPerformedConnections() {
         return performedConnections;
     }
 
-    public synchronized void setPerformedConnections(int performedConnections) {
+    public void setPerformedConnections(int performedConnections) {
         this.performedConnections = performedConnections;
+    }
+
+    public long getScanStartTime() {
+        return scanStartTime;
+    }
+
+    public void setScanStartTime(long scanStartTime) {
+        this.scanStartTime = scanStartTime;
+    }
+
+    public long getScanEndTime() {
+        return scanEndTime;
+    }
+
+    public void setScanEndTime(long scanStopTime) {
+        this.scanEndTime = scanStopTime;
     }
 }

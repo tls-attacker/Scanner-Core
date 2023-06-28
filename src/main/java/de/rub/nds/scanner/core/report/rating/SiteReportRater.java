@@ -12,6 +12,7 @@ import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.TestResult;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,12 +29,12 @@ public class SiteReportRater {
         this.recommendations = recommendations;
     }
 
-    public ScoreReport getScoreReport(HashMap<String, TestResult> resultMap) {
+    public ScoreReport getScoreReport(Map<AnalyzedProperty, TestResult> resultMap) {
         LinkedHashMap<AnalyzedProperty, PropertyResultRatingInfluencer> ratingInfluencers =
                 new LinkedHashMap<>();
 
         for (RatingInfluencer ratingInfluencer : influencers.getRatingInfluencers()) {
-            TestResult result = resultMap.get(ratingInfluencer.getAnalyzedProperty().toString());
+            TestResult result = resultMap.get(ratingInfluencer.getAnalyzedProperty());
             if (result != null) {
                 PropertyResultRatingInfluencer propertyRatingInfluencer =
                         ratingInfluencer.getPropertyRatingInfluencer(result);
