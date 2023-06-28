@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import de.rub.nds.scanner.core.TestReport;
 import de.rub.nds.scanner.core.probe.ProbeType;
+import de.rub.nds.scanner.core.report.ScanReport;
 import org.junit.jupiter.api.Test;
 
 public class ProbeRequirementTest {
@@ -29,10 +29,10 @@ public class ProbeRequirementTest {
 
     @Test
     public void testProbeRequirement() {
-        TestReport report = new TestReport();
+        ScanReport report = new ScanReport();
         TestProbeType probe = TestProbeType.TEST_PROBE_TYPE;
 
-        ProbeRequirement<TestReport> requirement = new ProbeRequirement<>();
+        ProbeRequirement<ScanReport> requirement = new ProbeRequirement<>();
         assertTrue(requirement.evaluate(report));
 
         requirement = new ProbeRequirement<>(new TestProbeType[0]);

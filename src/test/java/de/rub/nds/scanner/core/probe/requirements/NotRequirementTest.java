@@ -10,15 +10,15 @@ package de.rub.nds.scanner.core.probe.requirements;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.rub.nds.scanner.core.TestReport;
+import de.rub.nds.scanner.core.report.ScanReport;
 import org.junit.jupiter.api.Test;
 
 public class NotRequirementTest {
 
     @Test
     public void testNotRequirement() {
-        TestReport report = new TestReport();
-        Requirement<TestReport>
+        ScanReport report = new ScanReport();
+        Requirement<ScanReport>
                 requirement1 = new NotRequirement<>(new UnfulfillableRequirement<>()),
                 requirement2 = new NotRequirement<>(new FulfilledRequirement<>());
         assertTrue(requirement1.evaluate(report));
