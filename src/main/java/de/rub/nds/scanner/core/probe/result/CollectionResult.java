@@ -8,6 +8,7 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -18,18 +19,16 @@ import java.util.Collection;
  */
 public class CollectionResult<T> implements TestResult, Serializable {
 
-    private final String name;
+    private final AnalyzedProperty property;
     protected final Collection<T> collection;
 
-    /**
-     * The constructor for the CollectionResult. Use property.getName() for the name parameter.
-     *
-     * @param collection The result collection.
-     * @param name The name of the CollectionResult object.
-     */
-    public CollectionResult(Collection<T> collection, String name) {
+    public CollectionResult(AnalyzedProperty property, Collection<T> collection) {
+        this.property = property;
         this.collection = collection;
-        this.name = name;
+    }
+
+    public AnalyzedProperty getProperty() {
+        return property;
     }
 
     /**
@@ -41,6 +40,6 @@ public class CollectionResult<T> implements TestResult, Serializable {
 
     @Override
     public String getName() {
-        return name;
+        return property.getName();
     }
 }

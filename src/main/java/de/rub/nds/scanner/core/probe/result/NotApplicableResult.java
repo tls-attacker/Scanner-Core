@@ -11,30 +11,27 @@ package de.rub.nds.scanner.core.probe.result;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.io.Serializable;
 
-public class ObjectResult<T> implements TestResult, Serializable {
+public class NotApplicableResult implements TestResult, Serializable {
 
     private final AnalyzedProperty property;
-    protected final T value;
+    private final String reason;
 
-    public ObjectResult(AnalyzedProperty property, T value) {
+    public NotApplicableResult(AnalyzedProperty property, String reason) {
         this.property = property;
-        this.value = value;
-    }
-
-    public T getValue() {
-        return value;
-    }
-
-    public AnalyzedProperty getProperty() {
-        return property;
-    }
-
-    public <S> S getValue(Class<S> valueClass) {
-        return valueClass.cast(value);
+        this.reason = reason;
     }
 
     @Override
     public String getName() {
         return property.getName();
+    }
+
+    @Override
+    public boolean isRealResult() {
+        return false;
+    }
+
+    public String getReason() {
+        return reason;
     }
 }

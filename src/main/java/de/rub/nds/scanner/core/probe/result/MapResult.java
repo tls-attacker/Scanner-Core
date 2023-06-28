@@ -8,6 +8,7 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -19,23 +20,21 @@ import java.util.Map;
  */
 public class MapResult<S, T> implements TestResult, Serializable {
 
-    private final String name;
+    private final AnalyzedProperty property;
     private final Map<S, T> map;
 
-    /**
-     * The constructor for the MapResult. Use property.getName() for the name parameter.
-     *
-     * @param map the map.
-     * @param name the name of the MapResult.
-     */
-    public MapResult(Map<S, T> map, String name) {
-        this.name = name;
+    public MapResult(AnalyzedProperty property, Map<S, T> map) {
+        this.property = property;
         this.map = map;
+    }
+
+    public AnalyzedProperty getProperty() {
+        return property;
     }
 
     @Override
     public String getName() {
-        return name;
+        return property.getName();
     }
 
     /**

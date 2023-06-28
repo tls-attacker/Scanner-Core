@@ -8,6 +8,7 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.util.Set;
 
 /**
@@ -17,14 +18,8 @@ import java.util.Set;
  */
 public class SetResult<T> extends CollectionResult<T> {
 
-    /**
-     * The constructor for the SetResult. Use property.getName() for the name parameter.
-     *
-     * @param set The result set.
-     * @param name The name of the SetResult object.
-     */
-    public SetResult(Set<T> set, String name) {
-        super(set, name);
+    public SetResult(AnalyzedProperty property, Set<T> set) {
+        super(property, set);
     }
 
     /**

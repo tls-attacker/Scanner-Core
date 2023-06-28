@@ -8,6 +8,7 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.util.List;
 
 /**
@@ -17,14 +18,8 @@ import java.util.List;
  */
 public class ListResult<T> extends CollectionResult<T> {
 
-    /**
-     * The constructor for the ListResult. Use property.getName() for the name parameter.
-     *
-     * @param list the list of the ListResult.
-     * @param name the name of the ListResult.
-     */
-    public ListResult(List<T> list, String name) {
-        super(list, name);
+    public ListResult(AnalyzedProperty property, List<T> list) {
+        super(property, list);
     }
 
     /**

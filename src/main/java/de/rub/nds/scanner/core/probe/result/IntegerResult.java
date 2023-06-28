@@ -8,8 +8,10 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
+
 public class IntegerResult extends ObjectResult<Integer> {
-    public IntegerResult(Integer value, String name) {
-        super(value, name);
+    public IntegerResult(AnalyzedProperty property, Integer value) {
+        super(property, value);
     }
 }

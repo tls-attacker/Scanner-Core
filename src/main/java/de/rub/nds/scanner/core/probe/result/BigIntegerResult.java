@@ -8,10 +8,11 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.math.BigInteger;
 
 public class BigIntegerResult extends ObjectResult<BigInteger> {
-    public BigIntegerResult(BigInteger value, String name) {
-        super(value, name);
+    public BigIntegerResult(AnalyzedProperty property, BigInteger value) {
+        super(property, value);
     }
 }
