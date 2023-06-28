@@ -8,9 +8,6 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -20,8 +17,6 @@ import java.util.Map;
  * @param <S> the key types of the map.
  * @param <T> the value types of the map.
  */
-@XmlRootElement(name = "result")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class MapResult<S, T> implements TestResult, Serializable {
 
     private final String name;

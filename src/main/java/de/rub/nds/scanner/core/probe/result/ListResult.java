@@ -8,9 +8,6 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
@@ -18,8 +15,6 @@ import java.util.List;
  *
  * @param <T> the type of the list elements.
  */
-@XmlRootElement(name = "result")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class ListResult<T> extends CollectionResult<T> {
 
     /**

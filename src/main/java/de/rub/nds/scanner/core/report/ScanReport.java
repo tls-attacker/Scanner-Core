@@ -13,12 +13,8 @@ import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.ProbeType;
-import de.rub.nds.scanner.core.probe.result.CollectionResult;
-import de.rub.nds.scanner.core.probe.result.ListResult;
-import de.rub.nds.scanner.core.probe.result.MapResult;
-import de.rub.nds.scanner.core.probe.result.SetResult;
-import de.rub.nds.scanner.core.probe.result.TestResult;
-import de.rub.nds.scanner.core.probe.result.TestResults;
+import de.rub.nds.scanner.core.probe.result.*;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,6 +46,39 @@ public class ScanReport extends Observable {
 
     public synchronized TestResult getResult(AnalyzedProperty property) {
         return resultMap.getOrDefault(property, TestResults.NOT_TESTED_YET);
+    }
+
+    public synchronized ObjectResult<?> getObjectResult(AnalyzedProperty property) {
+        TestResult result = resultMap.get(property);
+        return result instanceof ObjectResult ? (ObjectResult<?>) result : null;
+    }
+
+    public synchronized <T> ObjectResult<T> getObjectResult(
+            AnalyzedProperty property, Class<T> valueClass) {
+        ObjectResult<?> result = getObjectResult(property);
+        return result != null
+                ? new ObjectResult<>(valueClass.cast(result.getValue()), result.getName())
+                : null;
+    }
+
+    public synchronized BigIntegerResult getBigIntegerResult(AnalyzedProperty property) {
+        TestResult result = resultMap.get(property);
+        return result instanceof BigIntegerResult ? (BigIntegerResult) result : null;
+    }
+
+    public synchronized IntegerResult getIntegerResult(AnalyzedProperty property) {
+        TestResult result = resultMap.get(property);
+        return result instanceof IntegerResult ? (IntegerResult) result : null;
+    }
+
+    public synchronized LongResult getLongResult(AnalyzedProperty property) {
+        TestResult result = resultMap.get(property);
+        return result instanceof LongResult ? (LongResult) result : null;
+    }
+
+    public synchronized StringResult getStringResult(AnalyzedProperty property) {
+        TestResult result = resultMap.get(property);
+        return result instanceof StringResult ? (StringResult) result : null;
     }
 
     public synchronized CollectionResult<?> getCollectionResult(AnalyzedProperty property) {
@@ -139,6 +168,22 @@ public class ScanReport extends Observable {
                                 : TestResults.UNCERTAIN);
     }
 
+    public synchronized void putResult(AnalyzedProperty property, BigInteger result) {
+        this.putResult(property, new BigIntegerResult(result, property.getName()));
+    }
+
+    public synchronized void putResult(AnalyzedProperty property, Integer result) {
+        this.putResult(property, new IntegerResult(result, property.getName()));
+    }
+
+    public synchronized void putResult(AnalyzedProperty property, Long result) {
+        this.putResult(property, new LongResult(result, property.getName()));
+    }
+
+    public synchronized void putResult(AnalyzedProperty property, String result) {
+        this.putResult(property, new StringResult(result, property.getName()));
+    }
+
     public synchronized void putResult(AnalyzedProperty property, List<?> result) {
         this.putResult(property, new ListResult<>(result, property.getName()));
     }
@@ -149,6 +194,10 @@ public class ScanReport extends Observable {
 
     public synchronized void putResult(AnalyzedProperty property, Map<?, ?> result) {
         this.putResult(property, new MapResult<>(result, property.getName()));
+    }
+
+    public synchronized <T> void putResult(AnalyzedProperty property, T result) {
+        this.putResult(property, new ObjectResult<>(result, property.getName()));
     }
 
     public synchronized void removeResult(AnalyzedProperty property) {
