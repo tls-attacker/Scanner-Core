@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.guideline;
 
-import de.rub.nds.scanner.core.constants.TestResults;
+import de.rub.nds.scanner.core.probe.result.TestResults;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

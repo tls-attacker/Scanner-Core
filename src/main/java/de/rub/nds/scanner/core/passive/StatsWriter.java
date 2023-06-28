@@ -12,9 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class StatsWriter<S> {
+public class StatsWriter<StateT> {
 
-    private final List<StatExtractor<S, ?>> extractorList;
+    private final List<StatExtractor<StateT, ?>> extractorList;
 
     private int stateCounter = 0;
 
@@ -22,12 +22,12 @@ public class StatsWriter<S> {
         extractorList = new LinkedList<>();
     }
 
-    public void addExtractor(StatExtractor<S, ?> extractor) {
+    public void addExtractor(StatExtractor<StateT, ?> extractor) {
         extractorList.add(extractor);
     }
 
-    public void extract(S state) {
-        for (StatExtractor<S, ?> extractor : extractorList) {
+    public void extract(StateT state) {
+        for (StatExtractor<StateT, ?> extractor : extractorList) {
             extractor.extract(state);
         }
         stateCounter++;

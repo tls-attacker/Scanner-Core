@@ -10,6 +10,6 @@ package de.rub.nds.scanner.core.afterprobe;
 
 import de.rub.nds.scanner.core.report.ScanReport;
 
-public abstract class AfterProbe<R extends ScanReport<R>> {
-    public abstract void analyze(R report);
+public abstract class AfterProbe<ReportT extends ScanReport> {
+    public abstract void analyze(ReportT report);
 }

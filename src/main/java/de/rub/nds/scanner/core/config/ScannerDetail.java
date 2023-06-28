@@ -6,7 +6,7 @@
  * Licensed under Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
-package de.rub.nds.scanner.core.constants;
+package de.rub.nds.scanner.core.config;
 
 public enum ScannerDetail implements Comparable<ScannerDetail> {
     ALL(100),
@@ -14,9 +14,9 @@ public enum ScannerDetail implements Comparable<ScannerDetail> {
     NORMAL(50),
     QUICK(25);
 
-    private int levelValue;
+    private final int levelValue;
 
-    private ScannerDetail(int levelValue) {
+    ScannerDetail(int levelValue) {
         this.levelValue = levelValue;
     }
 

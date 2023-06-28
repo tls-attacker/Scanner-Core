@@ -6,7 +6,7 @@
  * Licensed under Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
-package de.rub.nds.scanner.core.io;
+package de.rub.nds.scanner.core.util;
 
 import jakarta.xml.bind.*;
 import jakarta.xml.bind.util.JAXBSource;
@@ -25,7 +25,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class JAXBIO<T> {
+public abstract class JaxbSerializer<T> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -33,9 +33,9 @@ public abstract class JAXBIO<T> {
 
     protected JAXBContext context;
 
-    protected JAXBIO() {}
+    protected JaxbSerializer() {}
 
-    protected JAXBIO(Set<Class<?>> classesToBeBound) throws JAXBException {
+    protected JaxbSerializer(Set<Class<?>> classesToBeBound) throws JAXBException {
         this.context = getJAXBContext(classesToBeBound);
     }
 
@@ -78,7 +78,7 @@ public abstract class JAXBIO<T> {
         }
     }
 
-    public T read(InputStream inputStream) throws JAXBException, IOException, XMLStreamException {
+    public T read(InputStream inputStream) throws JAXBException, XMLStreamException {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         unmarshaller.setEventHandler(
                 event -> {

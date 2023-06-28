@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.guideline;
 
-import de.rub.nds.scanner.core.constants.TestResults;
+import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,23 +16,19 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GuidelineChecker<R extends ScanReport<R>> {
+public class GuidelineChecker<ReportT extends ScanReport> {
 
     protected static final Logger LOGGER = LogManager.getLogger();
 
-    private final Guideline<R> guideline;
+    private final Guideline<ReportT> guideline;
 
-    public GuidelineChecker(Guideline<R> guideline) {
+    public GuidelineChecker(Guideline<ReportT> guideline) {
         this.guideline = guideline;
     }
 
-    public void fillReport(R report) {
-        List<GuidelineReport> guidelineReports = report.getGuidelineReports();
-        if (guidelineReports == null) {
-            guidelineReports = new ArrayList<>();
-        }
+    public void fillReport(ReportT report) {
         List<GuidelineCheckResult> results = new ArrayList<>();
-        for (GuidelineCheck<R> check : guideline.getChecks()) {
+        for (GuidelineCheck<ReportT> check : guideline.getChecks()) {
             GuidelineCheckResult result;
             if (!check.passesCondition(report)) {
                 result =
@@ -79,8 +75,7 @@ public class GuidelineChecker<R extends ScanReport<R>> {
             result.setId(check.getId());
             results.add(result);
         }
-        guidelineReports.add(
+        report.addGuidelineReport(
                 new GuidelineReport(this.guideline.getName(), this.guideline.getLink(), results));
-        report.setGuidelineReports(guidelineReports);
     }
 }

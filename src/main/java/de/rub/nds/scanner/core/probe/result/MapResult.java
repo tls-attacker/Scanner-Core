@@ -6,11 +6,12 @@
  * Licensed under Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
-package de.rub.nds.scanner.core.constants;
+package de.rub.nds.scanner.core.probe.result;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -21,19 +22,25 @@ import java.util.Map;
  */
 @XmlRootElement(name = "result")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MapResult<S, T> extends CollectionResult<S> {
+public class MapResult<S, T> implements TestResult, Serializable {
 
+    private final String name;
     private final Map<S, T> map;
 
     /**
-     * The constructor for the MapResult. Use property.name() for the name parameter.
+     * The constructor for the MapResult. Use property.getName() for the name parameter.
      *
      * @param map the map.
      * @param name the name of the MapResult.
      */
     public MapResult(Map<S, T> map, String name) {
-        super(map.keySet(), name);
+        this.name = name;
         this.map = map;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     /**

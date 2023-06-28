@@ -17,15 +17,16 @@ import java.util.List;
  *
  * @see FulfilledRequirement
  */
-public final class UnfulfillableRequirement<R extends ScanReport<R>> extends Requirement<R> {
+public final class UnfulfillableRequirement<ReportT extends ScanReport>
+        extends Requirement<ReportT> {
 
     @Override
-    public boolean evaluate(R report) {
+    public boolean evaluate(ReportT report) {
         return false;
     }
 
     @Override
-    public List<Requirement<R>> getUnfulfilledRequirements(R report) {
+    public List<Requirement<ReportT>> getUnfulfilledRequirements(ReportT report) {
         return List.of(this);
     }
 

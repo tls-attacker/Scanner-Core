@@ -6,7 +6,7 @@
  * Licensed under Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
-package de.rub.nds.scanner.core.constants;
+package de.rub.nds.scanner.core.probe.result;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -23,7 +23,7 @@ import java.util.Set;
 public class SetResult<T> extends CollectionResult<T> {
 
     /**
-     * The constructor for the SetResult. Use property.name() for the name parameter.
+     * The constructor for the SetResult. Use property.getName() for the name parameter.
      *
      * @param set The result set.
      * @param name The name of the SetResult object.

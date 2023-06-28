@@ -8,9 +8,9 @@
  */
 package de.rub.nds.scanner.core.probe;
 
-import de.rub.nds.scanner.core.constants.*;
 import de.rub.nds.scanner.core.passive.StatsWriter;
 import de.rub.nds.scanner.core.probe.requirements.Requirement;
+import de.rub.nds.scanner.core.probe.result.*;
 import de.rub.nds.scanner.core.report.PerformanceData;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.HashMap;
@@ -21,14 +21,14 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public abstract class ScannerProbe<R extends ScanReport<R>, P extends ScannerProbe<R, P, S>, S>
-        implements Callable<P> {
+public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
+        implements Callable<ScannerProbe<ReportT, StateT>> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ProbeType type;
     private final Map<AnalyzedProperty, TestResult> propertiesMap = new HashMap<>();
-    private StatsWriter<S> writer;
+    private StatsWriter<StateT> writer;
 
     private long startTime;
     private long stopTime;
@@ -38,17 +38,17 @@ public abstract class ScannerProbe<R extends ScanReport<R>, P extends ScannerPro
     }
 
     @Override
-    public P call() {
+    public ScannerProbe<ReportT, StateT> call() {
         LOGGER.debug("Executing: {}", getProbeName());
         this.startTime = System.currentTimeMillis();
         executeTest();
         this.stopTime = System.currentTimeMillis();
 
         LOGGER.debug("Finished {} -  Took {}s", getProbeName(), (stopTime - startTime) / 1000);
-        return (P) this;
+        return this;
     }
 
-    public final boolean canBeExecuted(R report) {
+    public final boolean canBeExecuted(ReportT report) {
         return getRequirements().evaluate(report);
     }
 
@@ -117,10 +117,10 @@ public abstract class ScannerProbe<R extends ScanReport<R>, P extends ScannerPro
         }
     }
 
-    public final void merge(R report) {
+    public final void merge(ReportT report) {
         if (getStartTime() != 0 && getStopTime() != 0) {
-            report.getPerformanceList()
-                    .add(new PerformanceData(getType(), getStartTime(), getStopTime()));
+            report.recordProbePerformance(
+                    new PerformanceData(getType(), getStartTime(), getStopTime()));
         }
         mergeData(report);
         TestResult result;
@@ -134,21 +134,21 @@ public abstract class ScannerProbe<R extends ScanReport<R>, P extends ScannerPro
         }
     }
 
-    protected final void extractStats(List<S> states) {
+    protected final void extractStats(List<StateT> states) {
         if (writer != null) {
-            for (S state : states) {
+            for (StateT state : states) {
                 getWriter().extract(state);
             }
         }
     }
 
-    public abstract Requirement<R> getRequirements();
+    public abstract Requirement<ReportT> getRequirements();
 
-    public abstract void adjustConfig(R report);
+    public abstract void adjustConfig(ReportT report);
 
     protected abstract void executeTest();
 
-    protected abstract void mergeData(R report);
+    protected abstract void mergeData(ReportT report);
 
     public ProbeType getType() {
         return type;
@@ -166,11 +166,11 @@ public abstract class ScannerProbe<R extends ScanReport<R>, P extends ScannerPro
         return getType().getName();
     }
 
-    public StatsWriter<S> getWriter() {
+    public StatsWriter<StateT> getWriter() {
         return writer;
     }
 
-    public void setWriter(StatsWriter<S> writer) {
+    public void setWriter(StatsWriter<StateT> writer) {
         this.writer = writer;
     }
 }

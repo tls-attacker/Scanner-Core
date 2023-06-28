@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.guideline;
 
-import de.rub.nds.scanner.core.constants.TestResult;
+import de.rub.nds.scanner.core.probe.result.TestResult;
 import jakarta.xml.bind.annotation.XmlAnyElement;
 
 public abstract class GuidelineCheckResult {

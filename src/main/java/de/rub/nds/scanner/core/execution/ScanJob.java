@@ -14,21 +14,24 @@ import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.List;
 
 public class ScanJob<
-        R extends ScanReport<R>, P extends ScannerProbe<R, P, S>, AP extends AfterProbe<R>, S> {
+        ReportT extends ScanReport,
+        ProbeT extends ScannerProbe<ReportT, StateT>,
+        AfterProbeT extends AfterProbe<ReportT>,
+        StateT> {
 
-    private final List<P> probeList;
-    private final List<AP> afterList;
+    private final List<ProbeT> probeList;
+    private final List<AfterProbeT> afterList;
 
-    public ScanJob(List<P> probeList, List<AP> afterList) {
+    public ScanJob(List<ProbeT> probeList, List<AfterProbeT> afterList) {
         this.probeList = probeList;
         this.afterList = afterList;
     }
 
-    public List<P> getProbeList() {
+    public List<ProbeT> getProbeList() {
         return probeList;
     }
 
-    public List<AP> getAfterList() {
+    public List<AfterProbeT> getAfterList() {
         return afterList;
     }
 }

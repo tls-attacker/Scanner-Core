@@ -14,21 +14,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** A simple requirement combining two or more requirements with a logical AND. */
-public final class AndRequirement<R extends ScanReport<R>> extends LogicalRequirement<R> {
+public final class AndRequirement<ReportT extends ScanReport> extends LogicalRequirement<ReportT> {
 
-    private final List<Requirement<R>> requirements;
+    private final List<Requirement<ReportT>> requirements;
 
-    public AndRequirement(List<Requirement<R>> requirements) {
+    public AndRequirement(List<Requirement<ReportT>> requirements) {
         this.requirements = Collections.unmodifiableList(requirements);
     }
 
     @Override
-    public boolean evaluate(R report) {
+    public boolean evaluate(ReportT report) {
         return requirements.stream().allMatch(requirement -> requirement.evaluate(report));
     }
 
     @Override
-    public List<Requirement<R>> getUnfulfilledRequirements(R report) {
+    public List<Requirement<ReportT>> getUnfulfilledRequirements(ReportT report) {
         return requirements.stream()
                 .filter(requirement -> !requirement.evaluate(report))
                 .flatMap(requirement -> requirement.getUnfulfilledRequirements(report).stream())
@@ -36,7 +36,7 @@ public final class AndRequirement<R extends ScanReport<R>> extends LogicalRequir
     }
 
     @Override
-    public List<Requirement<R>> getContainedRequirements() {
+    public List<Requirement<ReportT>> getContainedRequirements() {
         return requirements;
     }
 

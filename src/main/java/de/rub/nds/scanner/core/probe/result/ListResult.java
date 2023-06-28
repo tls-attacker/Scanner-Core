@@ -6,7 +6,7 @@
  * Licensed under Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
-package de.rub.nds.scanner.core.constants;
+package de.rub.nds.scanner.core.probe.result;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -23,7 +23,7 @@ import java.util.List;
 public class ListResult<T> extends CollectionResult<T> {
 
     /**
-     * The constructor for the ListResult. Use property.name() for the name parameter.
+     * The constructor for the ListResult. Use property.getName() for the name parameter.
      *
      * @param list the list of the ListResult.
      * @param name the name of the ListResult.

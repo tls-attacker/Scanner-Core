@@ -8,12 +8,12 @@
  */
 package de.rub.nds.scanner.core.report.rating;
 
-import de.rub.nds.scanner.core.constants.AnalyzedProperty;
-import de.rub.nds.scanner.core.io.JAXBIO;
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
+import de.rub.nds.scanner.core.util.JaxbSerializer;
 import jakarta.xml.bind.JAXBException;
 import java.util.Set;
 
-public class RatingInfluencersIO extends JAXBIO<RatingInfluencers> {
+public class RatingInfluencersIO extends JaxbSerializer<RatingInfluencers> {
 
     public RatingInfluencersIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {

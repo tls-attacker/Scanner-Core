@@ -6,17 +6,17 @@
  * Licensed under Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
-package de.rub.nds.scanner.core.constants;
+package de.rub.nds.scanner.core.probe;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
-/** Enum which represents specific failure {@link TestResult}s. */
-@XmlRootElement(name = "result")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public enum FailureResult implements TestResult {
-    MISSING_CLIENT_HELLO;
+public interface AnalyzedProperty {
 
-    private FailureResult() {}
+    AnalyzedPropertyCategory getCategory();
+
+    String getName();
 }

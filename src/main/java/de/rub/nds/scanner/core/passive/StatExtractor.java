@@ -8,9 +8,9 @@
  */
 package de.rub.nds.scanner.core.passive;
 
-public abstract class StatExtractor<S, T> {
+public abstract class StatExtractor<StateT, ValueT> {
 
-    private final ExtractedValueContainer<T> container;
+    private final ExtractedValueContainer<ValueT> container;
     private final TrackableValue valueType;
 
     public StatExtractor(TrackableValue valueType) {
@@ -22,13 +22,13 @@ public abstract class StatExtractor<S, T> {
         return valueType;
     }
 
-    public void put(T t) {
-        container.put(t);
+    public void put(ValueT value) {
+        container.put(value);
     }
 
-    public ExtractedValueContainer<T> getContainer() {
+    public ExtractedValueContainer<ValueT> getContainer() {
         return container;
     }
 
-    public abstract void extract(S state);
+    public abstract void extract(StateT state);
 }

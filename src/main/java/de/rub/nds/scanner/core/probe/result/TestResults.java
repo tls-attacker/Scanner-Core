@@ -6,7 +6,7 @@
  * Licensed under Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
-package de.rub.nds.scanner.core.constants;
+package de.rub.nds.scanner.core.probe.result;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -31,7 +31,10 @@ public enum TestResults implements TestResult {
     UNASSIGNED_ERROR,
     TIMEOUT;
 
-    private TestResults() {}
+    @Override
+    public String getName() {
+        return name();
+    }
 
     /**
      * @param value evaluation of a boolean to TestResults.

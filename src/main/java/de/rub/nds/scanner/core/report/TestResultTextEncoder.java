@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.report;
 
-import de.rub.nds.scanner.core.constants.TestResult;
+import de.rub.nds.scanner.core.probe.result.TestResult;
 import java.util.HashMap;
 
 public class TestResultTextEncoder extends Encoder<TestResult> {
@@ -28,11 +28,11 @@ public class TestResultTextEncoder extends Encoder<TestResult> {
     @Override
     public String encode(TestResult result) {
         if (textEncodingMap == null) {
-            return result.name();
+            return result.getName();
         }
         String string = textEncodingMap.get(result);
         if (string == null) {
-            return result.name();
+            return result.getName();
         } else {
             return string;
         }

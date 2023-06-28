@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.report.container;
 
-import de.rub.nds.scanner.core.constants.ScannerDetail;
+import de.rub.nds.scanner.core.config.ScannerDetail;
 import de.rub.nds.scanner.core.report.AnsiColor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,11 +44,7 @@ public class KeyValueContainer extends ReportContainer {
 
     private String pad(String text, int size) {
         if (text.length() < size) {
-            StringBuilder builder = new StringBuilder(text);
-            for (int i = 0; i < size - text.length(); i++) {
-                builder.append(" ");
-            }
-            return builder.toString();
+            return text + " ".repeat(size - text.length());
         } else if (text.length() > size) {
             LOGGER.warn(
                     "KeyValue 'Key' size is bigger than PADDED_KEY_LENGTH:"

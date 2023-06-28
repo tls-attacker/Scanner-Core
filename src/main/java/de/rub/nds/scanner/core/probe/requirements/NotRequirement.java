@@ -11,21 +11,21 @@ package de.rub.nds.scanner.core.probe.requirements;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.List;
 
-public final class NotRequirement<R extends ScanReport<R>> extends LogicalRequirement<R> {
+public final class NotRequirement<ReportT extends ScanReport> extends LogicalRequirement<ReportT> {
 
-    private final Requirement<R> requirement;
+    private final Requirement<ReportT> requirement;
 
-    public NotRequirement(Requirement<R> requirement) {
+    public NotRequirement(Requirement<ReportT> requirement) {
         this.requirement = requirement;
     }
 
     @Override
-    public boolean evaluate(R report) {
+    public boolean evaluate(ReportT report) {
         return requirement != null && !requirement.evaluate(report);
     }
 
     @Override
-    public List<Requirement<R>> getContainedRequirements() {
+    public List<Requirement<ReportT>> getContainedRequirements() {
         return List.of(requirement);
     }
 

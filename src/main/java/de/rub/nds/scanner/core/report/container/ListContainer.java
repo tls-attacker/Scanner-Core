@@ -8,15 +8,15 @@
  */
 package de.rub.nds.scanner.core.report.container;
 
-import de.rub.nds.scanner.core.constants.ScannerDetail;
+import de.rub.nds.scanner.core.config.ScannerDetail;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ListContainer extends ReportContainer {
 
-    private List<ReportContainer> reportContainerList;
+    private final List<ReportContainer> reportContainerList;
 
-    private int depthIncrease;
+    private final int depthIncrease;
 
     public ListContainer() {
         super(ScannerDetail.NORMAL);
@@ -45,9 +45,7 @@ public class ListContainer extends ReportContainer {
     @Override
     public void print(StringBuilder builder, int depth, boolean useColor) {
         reportContainerList.forEach(
-                container -> {
-                    container.print(builder, depth + depthIncrease, useColor);
-                });
+                container -> container.print(builder, depth + depthIncrease, useColor));
     }
 
     public ListContainer add(ReportContainer container) {

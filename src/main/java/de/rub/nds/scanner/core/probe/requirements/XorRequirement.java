@@ -11,22 +11,22 @@ package de.rub.nds.scanner.core.probe.requirements;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.List;
 
-public final class XorRequirement<R extends ScanReport<R>> extends LogicalRequirement<R> {
+public final class XorRequirement<ReportT extends ScanReport> extends LogicalRequirement<ReportT> {
 
-    private final Requirement<R> a, b;
+    private final Requirement<ReportT> a, b;
 
-    public XorRequirement(Requirement<R> a, Requirement<R> b) {
+    public XorRequirement(Requirement<ReportT> a, Requirement<ReportT> b) {
         this.a = a;
         this.b = b;
     }
 
     @Override
-    public boolean evaluate(R report) {
+    public boolean evaluate(ReportT report) {
         return a.evaluate(report) ^ b.evaluate(report);
     }
 
     @Override
-    public List<Requirement<R>> getContainedRequirements() {
+    public List<Requirement<ReportT>> getContainedRequirements() {
         return List.of(a, b);
     }
 

@@ -8,24 +8,19 @@
  */
 package de.rub.nds.scanner.core.report;
 
-import de.rub.nds.scanner.core.constants.TestResult;
+import de.rub.nds.scanner.core.probe.result.TestResult;
 import java.util.HashMap;
 
 public class ColorEncoding {
 
-    private HashMap<TestResult, AnsiColor> colorMap;
-
-    public ColorEncoding() {
-        colorMap = null;
-    }
+    private final HashMap<TestResult, AnsiColor> colorMap;
 
     public ColorEncoding(HashMap<TestResult, AnsiColor> colorMap) {
         this.colorMap = colorMap;
     }
 
     public AnsiColor getColor(TestResult result) {
-        AnsiColor color = colorMap.get(result);
-        return color;
+        return colorMap.get(result);
     }
 
     public String encode(TestResult result, String encodedText) {

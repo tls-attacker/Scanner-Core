@@ -14,16 +14,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ExtractedValueContainer<T> {
+public class ExtractedValueContainer<ValueT> {
 
-    private final List<T> extractedValueList;
+    private final List<ValueT> extractedValueList;
 
     private final TrackableValue type;
-
-    public ExtractedValueContainer() {
-        extractedValueList = null;
-        type = null;
-    }
 
     public ExtractedValueContainer(TrackableValue type) {
         extractedValueList = new LinkedList<>();
@@ -32,9 +27,9 @@ public class ExtractedValueContainer<T> {
 
     public boolean areAllValuesIdentical() {
         if (extractedValueList.size() > 0) {
-            T t = extractedValueList.get(0);
+            ValueT value = extractedValueList.get(0);
             for (int i = 1; i < extractedValueList.size(); i++) {
-                if (!extractedValueList.get(i).equals(t)) {
+                if (!extractedValueList.get(i).equals(value)) {
                     return false;
                 }
             }
@@ -43,11 +38,11 @@ public class ExtractedValueContainer<T> {
     }
 
     public boolean areAllValuesDifferent() {
-        Set<T> set = new HashSet<>(extractedValueList);
+        Set<ValueT> set = new HashSet<>(extractedValueList);
         return set.size() == extractedValueList.size();
     }
 
-    public List<T> getExtractedValueList() {
+    public List<ValueT> getExtractedValueList() {
         return extractedValueList;
     }
 
@@ -59,8 +54,8 @@ public class ExtractedValueContainer<T> {
         return extractedValueList.size();
     }
 
-    public void put(T t) {
-        extractedValueList.add(t);
+    public void put(ValueT value) {
+        extractedValueList.add(value);
     }
 
     public TrackableValue getType() {

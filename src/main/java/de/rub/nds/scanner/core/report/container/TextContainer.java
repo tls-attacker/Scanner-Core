@@ -8,13 +8,13 @@
  */
 package de.rub.nds.scanner.core.report.container;
 
-import de.rub.nds.scanner.core.constants.ScannerDetail;
+import de.rub.nds.scanner.core.config.ScannerDetail;
 import de.rub.nds.scanner.core.report.AnsiColor;
 
 public class TextContainer extends ReportContainer {
 
-    private String text;
-    private AnsiColor color;
+    private final String text;
+    private final AnsiColor color;
 
     public TextContainer(String text, AnsiColor color) {
         super(ScannerDetail.NORMAL);

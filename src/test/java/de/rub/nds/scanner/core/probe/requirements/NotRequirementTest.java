@@ -19,8 +19,8 @@ public class NotRequirementTest {
     public void testNotRequirement() {
         TestReport report = new TestReport();
         Requirement<TestReport>
-                requirement1 = new NotRequirement<TestReport>(new UnfulfillableRequirement<>()),
-                requirement2 = new NotRequirement<TestReport>(new FulfilledRequirement<>());
+                requirement1 = new NotRequirement<>(new UnfulfillableRequirement<>()),
+                requirement2 = new NotRequirement<>(new FulfilledRequirement<>());
         assertTrue(requirement1.evaluate(report));
         assertFalse(requirement2.evaluate(report));
         assertInstanceOf(UnfulfillableRequirement.class, requirement1.not());

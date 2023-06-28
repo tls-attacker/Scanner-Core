@@ -33,11 +33,11 @@ public enum AnsiColor {
     UNDERLINE("\033[4m"),
     DEFAULT_COLOR("");
 
-    private String code;
+    private final String code;
 
     private static final Map<String, AnsiColor> MAP;
 
-    private AnsiColor(String code) {
+    AnsiColor(String code) {
         this.code = code;
     }
 

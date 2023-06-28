@@ -9,23 +9,29 @@
 package de.rub.nds.scanner.core.execution;
 
 import de.rub.nds.scanner.core.afterprobe.AfterProbe;
-import de.rub.nds.scanner.core.constants.ProbeType;
+import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Scanner<
-        R extends ScanReport<R>, P extends ScannerProbe<R, P, S>, AP extends AfterProbe<R>, S> {
-    protected final List<P> probeList;
-    protected final List<AP> afterList;
+        ReportT extends ScanReport,
+        ProbeT extends ScannerProbe<ReportT, StateT>,
+        AfterProbeT extends AfterProbe<ReportT>,
+        StateT> {
+    protected final List<ProbeT> probeList;
+    protected final List<AfterProbeT> afterList;
     protected final List<ProbeType> probeTypesToExecute;
 
     public Scanner(List<ProbeType> probesToExecute) {
         this(new LinkedList<>(), new LinkedList<>(), probesToExecute);
     }
 
-    public Scanner(List<P> probeList, List<AP> afterList, List<ProbeType> probeTypesToExecute) {
+    public Scanner(
+            List<ProbeT> probeList,
+            List<AfterProbeT> afterList,
+            List<ProbeType> probeTypesToExecute) {
         this.probeTypesToExecute = probeTypesToExecute;
         this.afterList = afterList;
         this.probeList = probeList;
@@ -33,11 +39,11 @@ public abstract class Scanner<
 
     protected abstract void fillProbeLists();
 
-    protected void addProbeToProbeList(P probe) {
+    protected void addProbeToProbeList(ProbeT probe) {
         addProbeToProbeList(probe, true);
     }
 
-    protected void addProbeToProbeList(P probe, boolean addByDefault) {
+    protected void addProbeToProbeList(ProbeT probe, boolean addByDefault) {
         if ((probeTypesToExecute == null && addByDefault)
                 || (probeTypesToExecute != null && probeTypesToExecute.contains(probe.getType()))) {
             probeList.add(probe);

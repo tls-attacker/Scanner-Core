@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.report;
 
-import de.rub.nds.scanner.core.constants.ProbeType;
+import de.rub.nds.scanner.core.probe.ProbeType;
 
 public class PerformanceData {
 

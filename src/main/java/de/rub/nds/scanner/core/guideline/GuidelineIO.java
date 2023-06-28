@@ -8,26 +8,27 @@
  */
 package de.rub.nds.scanner.core.guideline;
 
-import de.rub.nds.scanner.core.constants.AnalyzedProperty;
-import de.rub.nds.scanner.core.io.JAXBIO;
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.report.ScanReport;
+import de.rub.nds.scanner.core.util.JaxbSerializer;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class GuidelineIO<R extends ScanReport<R>> extends JAXBIO<Guideline<R>> {
+public final class GuidelineIO<ReportT extends ScanReport>
+        extends JaxbSerializer<Guideline<ReportT>> {
 
     public GuidelineIO(
             Class<? extends AnalyzedProperty> analyzedPropertyClass,
-            Set<Class<? extends GuidelineCheck<R>>> supportedGuidelineCheckClasses)
+            Set<Class<? extends GuidelineCheck<ReportT>>> supportedGuidelineCheckClasses)
             throws JAXBException {
         this.context = getJAXBContext(analyzedPropertyClass, supportedGuidelineCheckClasses);
     }
 
     private JAXBContext getJAXBContext(
             Class<? extends AnalyzedProperty> analyzedPropertyClass,
-            Set<Class<? extends GuidelineCheck<R>>> supportedGuidelineCheckClasses)
+            Set<Class<? extends GuidelineCheck<ReportT>>> supportedGuidelineCheckClasses)
             throws JAXBException {
         Set<Class<?>> classesToBeBound = new HashSet<>(supportedGuidelineCheckClasses);
         classesToBeBound.add(analyzedPropertyClass);
