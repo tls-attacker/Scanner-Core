@@ -10,7 +10,7 @@ package de.rub.nds.scanner.core.probe.requirements;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.rub.nds.scanner.core.TestReport;
+import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +18,8 @@ public class OrRequirementTest {
 
     @Test
     public void testOrRequirement() {
-        TestReport report = new TestReport();
-        Requirement<TestReport>
+        ScanReport report = new ScanReport();
+        Requirement<ScanReport>
                 requirement1 =
                         new OrRequirement<>(
                                 List.of(
@@ -45,7 +45,7 @@ public class OrRequirementTest {
         assertTrue(requirement3.evaluate(report));
         assertFalse(requirement4.evaluate(report));
 
-        OrRequirement<TestReport> combined = requirement1.or(requirement2);
+        OrRequirement<ScanReport> combined = requirement1.or(requirement2);
         assertEquals(4, combined.getContainedRequirements().size());
     }
 }
