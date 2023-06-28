@@ -12,30 +12,33 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import de.rub.nds.scanner.core.TestProbeType;
-import de.rub.nds.scanner.core.probe.ProbeType;
+import de.rub.nds.scanner.core.TestAnalyzedProperty;
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
+import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.ScanReport;
 import org.junit.jupiter.api.Test;
 
-public class ProbeRequirementTest {
+public class PropertyTrueRequirementTest {
 
     @Test
-    public void testProbeRequirement() {
+    public void testPropertyRequirement() {
         ScanReport report = new ScanReport();
-        TestProbeType probe = TestProbeType.TEST_PROBE_TYPE;
+        AnalyzedProperty[] property =
+                new AnalyzedProperty[] {TestAnalyzedProperty.TEST_ANALYZED_PROPERTY};
 
-        ProbeRequirement<ScanReport> requirement = new ProbeRequirement<>();
+        PropertyValueRequirement<ScanReport> requirement = new PropertyTrueRequirement<>();
         assertTrue(requirement.evaluate(report));
 
-        requirement = new ProbeRequirement<>(new TestProbeType[0]);
+        requirement = new PropertyTrueRequirement<>();
         assertTrue(requirement.evaluate(report));
 
-        requirement = new ProbeRequirement<>(probe);
-        assertArrayEquals(
-                requirement.getParameters().toArray(new ProbeType[0]), new TestProbeType[] {probe});
+        requirement = new PropertyTrueRequirement<>(property);
+        assertArrayEquals(requirement.getParameters().toArray(), property);
         assertFalse(requirement.evaluate(report));
 
-        report.markProbeAsExecuted(probe);
+        report.putResult(TestAnalyzedProperty.TEST_ANALYZED_PROPERTY, TestResults.FALSE);
+        assertFalse(requirement.evaluate(report));
+        report.putResult(TestAnalyzedProperty.TEST_ANALYZED_PROPERTY, TestResults.TRUE);
         assertTrue(requirement.evaluate(report));
     }
 }
