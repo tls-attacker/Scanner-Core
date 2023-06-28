@@ -62,9 +62,13 @@ public class ScanReport extends Observable {
     public synchronized <T> ObjectResult<T> getObjectResult(
             AnalyzedProperty property, Class<T> valueClass) {
         ObjectResult<?> result = getObjectResult(property);
-        return result != null
-                ? new ObjectResult<>(result.getProperty(), valueClass.cast(result.getValue()))
-                : null;
+        try {
+            return result != null
+                    ? new ObjectResult<>(result.getProperty(), valueClass.cast(result.getValue()))
+                    : null;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
     public synchronized BigIntegerResult getBigIntegerResult(AnalyzedProperty property) {
@@ -95,13 +99,17 @@ public class ScanReport extends Observable {
     public synchronized <V> CollectionResult<V> getCollectionResult(
             AnalyzedProperty property, Class<V> valueClass) {
         CollectionResult<?> result = getCollectionResult(property);
-        return result != null
-                ? new ListResult<>(
-                        result.getProperty(),
-                        result.getCollection().stream()
-                                .map(valueClass::cast)
-                                .collect(Collectors.toUnmodifiableList()))
-                : null;
+        try {
+            return result != null
+                    ? new ListResult<>(
+                            result.getProperty(),
+                            result.getCollection().stream()
+                                    .map(valueClass::cast)
+                                    .collect(Collectors.toUnmodifiableList()))
+                    : null;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
     public synchronized ListResult<?> getListResult(AnalyzedProperty property) {
@@ -112,13 +120,17 @@ public class ScanReport extends Observable {
     public synchronized <V> ListResult<V> getListResult(
             AnalyzedProperty property, Class<V> valueClass) {
         ListResult<?> result = getListResult(property);
-        return result != null
-                ? new ListResult<>(
-                        result.getProperty(),
-                        result.getList().stream()
-                                .map(valueClass::cast)
-                                .collect(Collectors.toUnmodifiableList()))
-                : null;
+        try {
+            return result != null
+                    ? new ListResult<>(
+                            result.getProperty(),
+                            result.getList().stream()
+                                    .map(valueClass::cast)
+                                    .collect(Collectors.toUnmodifiableList()))
+                    : null;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
     public synchronized MapResult<?, ?> getMapResult(AnalyzedProperty property) {
@@ -138,8 +150,14 @@ public class ScanReport extends Observable {
             return null;
         }
         Map<K, V> typedMap = new HashMap<>();
-        result.getMap()
-                .forEach((key, value) -> typedMap.put(keyClass.cast(key), valueClass.cast(value)));
+        try {
+            result.getMap()
+                    .forEach(
+                            (key, value) ->
+                                    typedMap.put(keyClass.cast(key), valueClass.cast(value)));
+        } catch (ClassCastException e) {
+            return null;
+        }
         return new MapResult<>(result.getProperty(), Collections.unmodifiableMap(typedMap));
     }
 
@@ -151,13 +169,17 @@ public class ScanReport extends Observable {
     public synchronized <V> SetResult<V> getSetResult(
             AnalyzedProperty property, Class<V> valueClass) {
         SetResult<?> result = getSetResult(property);
-        return result != null
-                ? new SetResult<>(
-                        result.getProperty(),
-                        result.getSet().stream()
-                                .map(valueClass::cast)
-                                .collect(Collectors.toUnmodifiableSet()))
-                : null;
+        try {
+            return result != null
+                    ? new SetResult<>(
+                            result.getProperty(),
+                            result.getSet().stream()
+                                    .map(valueClass::cast)
+                                    .collect(Collectors.toUnmodifiableSet()))
+                    : null;
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
     public synchronized void putResult(AnalyzedProperty property, TestResult result) {
