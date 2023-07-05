@@ -8,9 +8,13 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.io.Serializable;
 
+@JsonIncludeProperties({"type", "reason"})
+@JsonPropertyOrder({"type", "reason"})
 public class NotApplicableResult implements TestResult, Serializable {
 
     private final AnalyzedProperty property;

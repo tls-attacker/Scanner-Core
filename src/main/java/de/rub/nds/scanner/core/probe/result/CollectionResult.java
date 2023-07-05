@@ -8,6 +8,9 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.io.Serializable;
 import java.util.Collection;
@@ -17,6 +20,8 @@ import java.util.Collection;
  *
  * @param <T> the type of which the CollectionResult consists.
  */
+@JsonIncludeProperties({"type", "value"})
+@JsonPropertyOrder({"type", "value"})
 public class CollectionResult<T> implements TestResult, Serializable {
 
     private final AnalyzedProperty property;
@@ -34,6 +39,7 @@ public class CollectionResult<T> implements TestResult, Serializable {
     /**
      * @return the collection of the CollectionResult object of type T.
      */
+    @JsonGetter("value")
     public Collection<T> getCollection() {
         return collection;
     }

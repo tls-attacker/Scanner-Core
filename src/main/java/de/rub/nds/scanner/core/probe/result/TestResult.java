@@ -25,4 +25,8 @@ public interface TestResult {
     default boolean isRealResult() {
         return true;
     }
+
+    default String getType() {
+        return this.getClass().getSimpleName();
+    }
 }

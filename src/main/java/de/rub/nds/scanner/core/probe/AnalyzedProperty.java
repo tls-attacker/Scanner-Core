@@ -8,6 +8,7 @@
  */
 package de.rub.nds.scanner.core.probe;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -18,5 +19,6 @@ public interface AnalyzedProperty {
 
     AnalyzedPropertyCategory getCategory();
 
+    @JsonValue
     String getName();
 }

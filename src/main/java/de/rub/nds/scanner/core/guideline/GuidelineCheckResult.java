@@ -8,54 +8,45 @@
  */
 package de.rub.nds.scanner.core.guideline;
 
-import de.rub.nds.scanner.core.probe.result.TestResult;
-import jakarta.xml.bind.annotation.XmlAnyElement;
+public class GuidelineCheckResult {
 
-public abstract class GuidelineCheckResult {
+    private String checkName;
+    private GuidelineAdherence adherence;
+    private String hint;
 
-    private String id;
-    private String name;
-
-    @XmlAnyElement(lax = true)
-    private TestResult result;
-
-    private GuidelineCheckCondition condition;
-
-    public GuidelineCheckResult(TestResult result) {
-        this.result = result;
+    public GuidelineCheckResult(String checkName, GuidelineAdherence adherence) {
+        this.checkName = checkName;
+        this.adherence = adherence;
+        this.hint = null;
     }
 
-    public abstract String display();
-
-    public final String getId() {
-        return id;
+    public GuidelineCheckResult(String checkName, GuidelineAdherence adherence, String hint) {
+        this.checkName = checkName;
+        this.adherence = adherence;
+        this.hint = hint;
     }
 
-    public final void setId(String id) {
-        this.id = id;
+    public String getCheckName() {
+        return checkName;
     }
 
-    public final String getName() {
-        return name;
+    public void setCheckName(String checkName) {
+        this.checkName = checkName;
     }
 
-    public final void setName(String name) {
-        this.name = name;
+    public GuidelineAdherence getAdherence() {
+        return adherence;
     }
 
-    public final TestResult getResult() {
-        return result;
+    public void setAdherence(GuidelineAdherence adherence) {
+        this.adherence = adherence;
     }
 
-    public final void setResult(TestResult result) {
-        this.result = result;
+    public String getHint() {
+        return hint;
     }
 
-    public GuidelineCheckCondition getCondition() {
-        return condition;
-    }
-
-    public void setCondition(GuidelineCheckCondition condition) {
-        this.condition = condition;
+    public void setHint(String hint) {
+        this.hint = hint;
     }
 }

@@ -8,6 +8,7 @@
  */
 package de.rub.nds.scanner.core.passive;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class ExtractedValueContainer<ValueT> {
         return set.size() == extractedValueList.size();
     }
 
+    @JsonValue
     public List<ValueT> getExtractedValueList() {
         return extractedValueList;
     }

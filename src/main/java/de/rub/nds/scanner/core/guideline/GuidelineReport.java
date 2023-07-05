@@ -8,47 +8,25 @@
  */
 package de.rub.nds.scanner.core.guideline;
 
-import de.rub.nds.scanner.core.probe.result.TestResults;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
+@JsonIncludeProperties({"name", "link", "results"})
+@JsonPropertyOrder({"name", "link", "results"})
 public class GuidelineReport {
 
     private String name;
     private String link;
-    private List<GuidelineCheckResult> passed;
-    private List<GuidelineCheckResult> failed;
-    private List<GuidelineCheckResult> uncertain;
-    private List<GuidelineCheckResult> skipped;
+    private final List<GuidelineCheckResult> results;
 
     public GuidelineReport(String name, String link, List<GuidelineCheckResult> results) {
         this.name = name;
         this.link = link;
-        this.passed =
-                results.stream()
-                        .filter(result -> Objects.equals(TestResults.TRUE, result.getResult()))
-                        .collect(Collectors.toList());
-        this.failed =
-                results.stream()
-                        .filter(result -> Objects.equals(TestResults.FALSE, result.getResult()))
-                        .collect(Collectors.toList());
-        this.skipped =
-                results.stream()
-                        .filter(
-                                result ->
-                                        Objects.equals(
-                                                TestResults.COULD_NOT_TEST, result.getResult()))
-                        .collect(Collectors.toList());
-        this.uncertain =
-                results.stream()
-                        .filter(result -> !Objects.equals(TestResults.TRUE, result.getResult()))
-                        .filter(result -> !Objects.equals(TestResults.FALSE, result.getResult()))
-                        .filter(
-                                result ->
-                                        !Objects.equals(
-                                                TestResults.COULD_NOT_TEST, result.getResult()))
-                        .collect(Collectors.toList());
+        this.results = new ArrayList<>(results);
     }
 
     public String getName() {
@@ -67,35 +45,35 @@ public class GuidelineReport {
         this.link = link;
     }
 
-    public List<GuidelineCheckResult> getPassed() {
-        return passed;
+    public List<GuidelineCheckResult> getResults() {
+        return Collections.unmodifiableList(results);
     }
 
-    public void setPassed(List<GuidelineCheckResult> passed) {
-        this.passed = passed;
+    public void addResult(GuidelineCheckResult result) {
+        results.add(result);
     }
 
-    public List<GuidelineCheckResult> getFailed() {
-        return failed;
+    public List<GuidelineCheckResult> getAdhered() {
+        return results.stream()
+                .filter(result -> result.getAdherence() == GuidelineAdherence.ADHERED)
+                .collect(Collectors.toUnmodifiableList());
     }
 
-    public void setFailed(List<GuidelineCheckResult> failed) {
-        this.failed = failed;
+    public List<GuidelineCheckResult> getViolated() {
+        return results.stream()
+                .filter(result -> result.getAdherence() == GuidelineAdherence.VIOLATED)
+                .collect(Collectors.toUnmodifiableList());
     }
 
-    public List<GuidelineCheckResult> getUncertain() {
-        return uncertain;
+    public List<GuidelineCheckResult> getConditionNotMet() {
+        return results.stream()
+                .filter(result -> result.getAdherence() == GuidelineAdherence.CONDITION_NOT_MET)
+                .collect(Collectors.toUnmodifiableList());
     }
 
-    public void setUncertain(List<GuidelineCheckResult> uncertain) {
-        this.uncertain = uncertain;
-    }
-
-    public List<GuidelineCheckResult> getSkipped() {
-        return skipped;
-    }
-
-    public void setSkipped(List<GuidelineCheckResult> skipped) {
-        this.skipped = skipped;
+    public List<GuidelineCheckResult> getFailedChecks() {
+        return results.stream()
+                .filter(result -> result.getAdherence() == GuidelineAdherence.CHECK_FAILED)
+                .collect(Collectors.toUnmodifiableList());
     }
 }
