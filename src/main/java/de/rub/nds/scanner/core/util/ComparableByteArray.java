@@ -8,11 +8,12 @@
  */
 package de.rub.nds.scanner.core.util;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 
 public class ComparableByteArray {
 
-    private byte[] array;
+    @JsonValue private byte[] array;
 
     public ComparableByteArray(byte[] array) {
         this.array = array;
