@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import de.rub.nds.scanner.core.util.ByteArrayHexSerializer;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -27,6 +29,12 @@ public class ScanReportSerializer {
 
     static {
         mapper = new ObjectMapper();
+
+        SimpleModule builtInModule = new SimpleModule("ScannerCoreBuiltInModule");
+        builtInModule.addKeySerializer(byte[].class, new ByteArrayHexSerializer(true));
+        builtInModule.addSerializer(new ByteArrayHexSerializer(false));
+
+        mapper.registerModule(builtInModule);
         mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         mapper.configOverride(BigDecimal.class)
                 .setFormat(JsonFormat.Value.forShape(JsonFormat.Shape.STRING));
