@@ -8,6 +8,7 @@
  */
 package de.rub.nds.scanner.core.report;
 
+import com.fasterxml.jackson.annotation.*;
 import de.rub.nds.scanner.core.guideline.GuidelineReport;
 import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
@@ -20,9 +21,32 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@JsonIncludeProperties({
+    "results",
+    "extractedValues",
+    "guidelineReports",
+    "scoreReport",
+    "probePerformanceData",
+    "performedConnections",
+    "scanStartTime",
+    "scanEndTime"
+})
+@JsonPropertyOrder({
+    "scanStartTime",
+    "scanEndTime",
+    "performedConnections",
+    "results",
+    "extractedValues",
+    "guidelineReports",
+    "scoreReport",
+    "probePerformanceData"
+})
 public class ScanReport extends Observable {
 
-    private final HashMap<AnalyzedProperty, TestResult> resultMap;
+    @JsonProperty("results")
+    private Map<AnalyzedProperty, TestResult> resultMap;
+
+    @JsonProperty("extractedValues")
     private final Map<TrackableValue, ExtractedValueContainer<?>> extractedValueContainerMap;
 
     private final List<GuidelineReport> guidelineReports;

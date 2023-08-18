@@ -77,8 +77,6 @@ public abstract class GuidelineCheck<ReportT extends ScanReport> {
         return requirementLevel;
     }
 
-    public abstract String getId();
-
     public GuidelineCheckCondition getCondition() {
         return condition;
     }

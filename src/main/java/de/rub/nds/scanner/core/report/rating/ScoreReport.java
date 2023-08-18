@@ -9,17 +9,16 @@
 package de.rub.nds.scanner.core.report.rating;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ScoreReport {
 
     private final int score;
 
-    private final LinkedHashMap<AnalyzedProperty, PropertyResultRatingInfluencer> influencers;
+    private final Map<AnalyzedProperty, PropertyResultRatingInfluencer> influencers;
 
     public ScoreReport(
-            int score,
-            LinkedHashMap<AnalyzedProperty, PropertyResultRatingInfluencer> influencers) {
+            int score, Map<AnalyzedProperty, PropertyResultRatingInfluencer> influencers) {
         this.score = score;
         this.influencers = influencers;
     }
@@ -28,7 +27,7 @@ public class ScoreReport {
         return score;
     }
 
-    public LinkedHashMap<AnalyzedProperty, PropertyResultRatingInfluencer> getInfluencers() {
+    public Map<AnalyzedProperty, PropertyResultRatingInfluencer> getInfluencers() {
         return influencers;
     }
 }

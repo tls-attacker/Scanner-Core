@@ -8,11 +8,9 @@
  */
 package de.rub.nds.scanner.core.guideline;
 
-import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,47 +30,22 @@ public class GuidelineChecker<ReportT extends ScanReport> {
             GuidelineCheckResult result;
             if (!check.passesCondition(report)) {
                 result =
-                        new GuidelineCheckResult(TestResults.COULD_NOT_TEST) {
-                            @Override
-                            public String display() {
-                                return "Condition was not met => Check is skipped.";
-                            }
-                        };
-                result.setName(check.getName());
-                result.setId(check.getId());
-                result.setCondition(check.getCondition());
-                results.add(result);
-                continue;
-            }
-            try {
-                result = check.evaluate(report);
-            } catch (Throwable throwable) {
-                LOGGER.debug("Failed evaluating check: ", throwable);
-                result =
-                        new GuidelineCheckResult(TestResults.ERROR_DURING_TEST) {
-                            @Override
-                            public String display() {
-                                return throwable.getLocalizedMessage();
-                            }
-                        };
-            }
-
-            if (result.getResult() == null) {
-                LOGGER.error("Null result from check {}", check.getId());
-                continue;
-            }
-            if (Objects.equals(check.getRequirementLevel(), RequirementLevel.MAY)) {
-                result.setResult(TestResults.TRUE);
-            } else if (Objects.equals(check.getRequirementLevel(), RequirementLevel.MUST_NOT)
-                    || Objects.equals(check.getRequirementLevel(), RequirementLevel.SHOULD_NOT)) {
-                if (result.getResult().equals(TestResults.TRUE)) {
-                    result.setResult(TestResults.FALSE);
-                } else if (result.getResult().equals(TestResults.FALSE)) {
-                    result.setResult(TestResults.TRUE);
+                        new GuidelineCheckResult(
+                                check.getName(),
+                                GuidelineAdherence.CONDITION_NOT_MET,
+                                "Condition was not met => Check is skipped.");
+            } else {
+                try {
+                    result = check.evaluate(report);
+                } catch (Throwable throwable) {
+                    LOGGER.debug("Failed evaluating check: ", throwable);
+                    result =
+                            new GuidelineCheckResult(
+                                    check.getName(),
+                                    GuidelineAdherence.CHECK_FAILED,
+                                    throwable.getLocalizedMessage());
                 }
             }
-            result.setName(check.getName());
-            result.setId(check.getId());
             results.add(result);
         }
         report.addGuidelineReport(

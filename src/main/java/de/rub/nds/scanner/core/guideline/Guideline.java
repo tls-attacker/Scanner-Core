@@ -11,6 +11,8 @@ package de.rub.nds.scanner.core.guideline;
 import de.rub.nds.scanner.core.report.ScanReport;
 import jakarta.xml.bind.annotation.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @XmlRootElement(name = "guideline")
@@ -29,7 +31,7 @@ public class Guideline<ReportT extends ScanReport> implements Serializable {
     public Guideline(String name, String link, List<GuidelineCheck<ReportT>> checks) {
         this.name = name;
         this.link = link;
-        this.checks = checks;
+        this.checks = new ArrayList<>(checks);
     }
 
     public String getName() {
@@ -49,10 +51,10 @@ public class Guideline<ReportT extends ScanReport> implements Serializable {
     }
 
     public List<GuidelineCheck<ReportT>> getChecks() {
-        return checks;
+        return Collections.unmodifiableList(checks);
     }
 
-    public void setChecks(List<GuidelineCheck<ReportT>> checks) {
-        this.checks = checks;
+    public void addCheck(GuidelineCheck<ReportT> check) {
+        checks.add(check);
     }
 }

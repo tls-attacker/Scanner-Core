@@ -12,6 +12,7 @@ import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.TestResult;
 import de.rub.nds.scanner.core.probe.result.TestResults;
 import jakarta.xml.bind.annotation.*;
+import java.util.Collections;
 import java.util.List;
 
 @XmlRootElement
@@ -65,23 +66,11 @@ public class GuidelineCheckCondition {
         return result;
     }
 
-    public void setResult(TestResult result) {
-        this.result = result;
-    }
-
     public List<GuidelineCheckCondition> getAnd() {
-        return and;
-    }
-
-    public void setAnd(List<GuidelineCheckCondition> and) {
-        this.and = and;
+        return and != null ? Collections.unmodifiableList(and) : null;
     }
 
     public List<GuidelineCheckCondition> getOr() {
-        return or;
-    }
-
-    public void setOr(List<GuidelineCheckCondition> or) {
-        this.or = or;
+        return or != null ? Collections.unmodifiableList(or) : null;
     }
 }

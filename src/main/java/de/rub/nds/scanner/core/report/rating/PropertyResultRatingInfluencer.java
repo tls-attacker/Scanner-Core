@@ -8,6 +8,7 @@
  */
 package de.rub.nds.scanner.core.report.rating;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.TestResult;
 import de.rub.nds.scanner.core.probe.result.TestResults;
@@ -110,6 +111,7 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
         this.referencedPropertyResult = referencedPropertyResult;
     }
 
+    @JsonIgnore
     public boolean isBadInfluence() {
         return (influence != null && influence < 0 || scoreCap != null);
     }

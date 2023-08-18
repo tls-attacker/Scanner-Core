@@ -8,6 +8,9 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.io.Serializable;
 import java.util.Map;
@@ -18,6 +21,8 @@ import java.util.Map;
  * @param <S> the key types of the map.
  * @param <T> the value types of the map.
  */
+@JsonIncludeProperties({"type", "value"})
+@JsonPropertyOrder({"type", "value"})
 public class MapResult<S, T> implements TestResult, Serializable {
 
     private final AnalyzedProperty property;
@@ -40,6 +45,7 @@ public class MapResult<S, T> implements TestResult, Serializable {
     /**
      * @return the map of the MapResult object.
      */
+    @JsonProperty("value")
     public Map<S, T> getMap() {
         return map;
     }
