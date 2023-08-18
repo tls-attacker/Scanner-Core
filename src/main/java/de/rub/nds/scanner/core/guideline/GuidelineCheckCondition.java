@@ -67,10 +67,10 @@ public class GuidelineCheckCondition {
     }
 
     public List<GuidelineCheckCondition> getAnd() {
-        return Collections.unmodifiableList(and);
+        return and != null ? Collections.unmodifiableList(and) : null;
     }
 
     public List<GuidelineCheckCondition> getOr() {
-        return Collections.unmodifiableList(or);
+        return or != null ? Collections.unmodifiableList(or) : null;
     }
 }
