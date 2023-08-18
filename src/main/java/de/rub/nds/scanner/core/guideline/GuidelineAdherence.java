@@ -12,5 +12,13 @@ public enum GuidelineAdherence {
     ADHERED,
     VIOLATED,
     CONDITION_NOT_MET,
-    CHECK_FAILED
+    CHECK_FAILED;
+
+    /**
+     * @param value evaluation of a boolean to GuidelineAdherence.
+     * @return GuidelineAdherence.ADHERED if true and GuidelineAdherence.VIOLATED if false
+     */
+    public static GuidelineAdherence of(boolean value) {
+        return value ? ADHERED : VIOLATED;
+    }
 }
