@@ -15,24 +15,49 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.reflections.Reflections;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 public final class GuidelineIO<ReportT extends ScanReport>
         extends JaxbSerializer<Guideline<ReportT>> {
 
-    public GuidelineIO(
-            Class<? extends AnalyzedProperty> analyzedPropertyClass,
-            Set<Class<? extends GuidelineCheck<ReportT>>> supportedGuidelineCheckClasses)
+    private Logger LOGGER = LogManager.getLogger();
+
+    public GuidelineIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {
-        this.context = getJAXBContext(analyzedPropertyClass, supportedGuidelineCheckClasses);
+        this.context = getJAXBContext(analyzedPropertyClass);
     }
 
-    private JAXBContext getJAXBContext(
-            Class<? extends AnalyzedProperty> analyzedPropertyClass,
-            Set<Class<? extends GuidelineCheck<ReportT>>> supportedGuidelineCheckClasses)
+    private JAXBContext getJAXBContext(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {
-        Set<Class<?>> classesToBeBound = new HashSet<>(supportedGuidelineCheckClasses);
-        classesToBeBound.add(analyzedPropertyClass);
-        classesToBeBound.add(Guideline.class);
-        return getJAXBContext(classesToBeBound);
+        if (context == null) {
+            // TODO we could do this scanning during building and then just collect the
+            // results
+            // TODO it would also be good if we didn't have to hardcode the package name
+            // here, but I could not get it work without it. Hours wasted: 3
+            String packageName = "de.rub";
+            Reflections reflections =
+                    new Reflections(
+                            new ConfigurationBuilder()
+                                    .setUrls(ClasspathHelper.forPackage(packageName))
+                                    .filterInputsBy(
+                                            new FilterBuilder().includePackage(packageName)));
+            Set<Class<? extends GuidelineCheck>> guidelineCheckClasses =
+                    reflections.getSubTypesOf(GuidelineCheck.class);
+            Set<Class<?>> classes = new HashSet<>();
+            classes.add(Guideline.class);
+            classes.addAll(guidelineCheckClasses);
+            LOGGER.debug("Registering GuidelineClasses in JAXBContext:");
+            for (Class tempClass : classes) {
+                LOGGER.debug(tempClass.getName());
+            }
+            context = JAXBContext.newInstance(classes.toArray(new Class[classes.size()]));
+        }
+
+        return context;
     }
 }
