@@ -481,7 +481,7 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
-    protected final void extractStats(List<StateT> states) {
+    protected final void extractStats(Iterable<StateT> states) {
         if (writer != null) {
             for (StateT state : states) {
                 getWriter().extract(state);
