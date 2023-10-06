@@ -101,7 +101,7 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
     }
 
     private TestResult convertToResult(AnalyzedProperty property, Object result) {
-        // java 17 could use pattern matching :S
+        // TODO: Use pattern matching with java 17(+)
         if (result instanceof TestResult) {
             return (TestResult) result;
         }
