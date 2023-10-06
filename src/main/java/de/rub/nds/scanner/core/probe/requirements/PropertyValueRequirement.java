@@ -42,12 +42,19 @@ public class PropertyValueRequirement<R extends ScanReport>
         }
         Map<AnalyzedProperty, TestResult> propertyMap = report.getResultMap();
         for (AnalyzedProperty property : parameters) {
-            if (!propertyMap.containsKey(property)
-                    || propertyMap.get(property) == null
-                    || !propertyMap.get(property).equals(requiredTestResult)) {
-                checkPropertyValuePair(
-                        property.toString(), propertyMap.get(property), requiredTestResult);
+            if (!propertyMap.containsKey(property)) {
                 return false;
+            }
+            TestResult actualResult = propertyMap.get(property);
+            try {
+                if (actualResult == null
+                        || !actualResult.equalsExpectedResult(requiredTestResult)) {
+                    return false;
+                }
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(
+                        String.format("Cannot evaluate Requirement for Property \"%s\"", property),
+                        e);
             }
         }
         return true;
@@ -55,16 +62,6 @@ public class PropertyValueRequirement<R extends ScanReport>
 
     public TestResult getRequiredTestResult() {
         return requiredTestResult;
-    }
-
-    private void checkPropertyValuePair(
-            String propertyString, TestResult listedResult, TestResult expectedResult) {
-        if (listedResult != null && listedResult.getClass() != expectedResult.getClass()) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "Requirement set for property %s expects wrong type of result (found %s but expected %s)",
-                            propertyString, listedResult.getClass(), expectedResult.getClass()));
-        }
     }
 
     @Override
