@@ -29,4 +29,33 @@ public interface TestResult {
     default String getType() {
         return this.getClass().getSimpleName();
     }
+
+    /**
+     * Function used to check if the actual result is equal to the expected result. This is used in
+     * the requirement system (cf. {@link
+     * de.rub.nds.scanner.core.probe.requirements.PropertyValueRequirement}). By default, this
+     * function checks if the actual result and the expected result are of the same type and then
+     * uses the default equals implementation. If the types do not match, equals is not called and
+     * an exception is thrown.
+     *
+     * <p>It can be useful to overwrite this to allow a more complex result to evaluate to a simple
+     * result.
+     *
+     * <p>Example: A result might be checked for each version of a protocol. Each of these checks
+     * results in a TestResults enum. The actual result can overwrite this function to say that it
+     * is equal to TRUE if it is TRUE in one version.
+     *
+     * @param expectedResult The expected result stated in the requirement.
+     * @return Whether the actual result is equal to the expected result.
+     */
+    default boolean equalsExpectedResult(TestResult expectedResult) {
+        if (!getClass().equals(expectedResult.getClass())) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Cannot Compare actual result with expected result (type mismatch: found %s but expected %s)"
+                                    + " - Consider overwriting equalsExpectedResult if the type mismatch is intended.",
+                            this.getClass(), expectedResult.getClass()));
+        }
+        return this.equals(expectedResult);
+    }
 }

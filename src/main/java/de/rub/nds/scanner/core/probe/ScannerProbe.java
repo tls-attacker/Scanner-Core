@@ -50,7 +50,16 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
     }
 
     public final boolean canBeExecuted(ReportT report) {
-        return getRequirements().evaluate(report);
+        try {
+            return getRequirements().evaluate(report);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(
+                    "Cannot evaluate Requirements for Probe \"{}\" ({})",
+                    getProbeName(),
+                    getClass().getCanonicalName(),
+                    e);
+            return false;
+        }
     }
 
     protected final void register(AnalyzedProperty... properties) {
@@ -181,15 +190,21 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
             report.recordProbePerformance(
                     new PerformanceData(getType(), getStartTime(), getStopTime()));
         }
+        boolean wasExecuted = getStartTime() != 0;
         mergeData(report);
-        TestResult result;
         for (AnalyzedProperty property : propertiesMap.keySet()) {
-            result = propertiesMap.get(property);
-            report.putResult(property, result);
-            if (result == TestResults.UNASSIGNED_ERROR) {
-                LOGGER.error(
-                        "{} in {} had not been assigned!", property, getClass().getSimpleName());
+            TestResult result = propertiesMap.get(property);
+            if (result == TestResults.UNASSIGNED_ERROR || result == null) {
+                if (wasExecuted) {
+                    LOGGER.error(
+                            "{} in {} had not been assigned (or was set to null)!",
+                            property,
+                            getClass().getSimpleName());
+                } else {
+                    result = TestResults.COULD_NOT_TEST;
+                }
             }
+            report.putResult(property, result);
         }
     }
 
