@@ -65,7 +65,7 @@ public class RatingInfluencer {
 
     public PropertyResultRatingInfluencer getPropertyRatingInfluencer(TestResult result) {
         for (PropertyResultRatingInfluencer ri : propertyRatingInfluencers) {
-            if (ri.getResult() == result) {
+            if (ri.getResult().equalsExpectedResult(result)) {
                 return ri;
             }
         }
