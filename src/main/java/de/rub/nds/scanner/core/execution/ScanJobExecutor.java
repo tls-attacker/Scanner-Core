@@ -12,7 +12,7 @@ import de.rub.nds.scanner.core.report.ScanReport;
 
 public abstract class ScanJobExecutor<ReportT extends ScanReport> {
 
-    public abstract void execute(ReportT report);
+    public abstract void execute(ReportT report) throws InterruptedException;
 
     public abstract void shutdown();
 }
