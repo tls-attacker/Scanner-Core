@@ -8,8 +8,10 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import java.io.Serializable;
+
 /** The interface for TestResults */
-public interface TestResult {
+public interface TestResult extends Serializable {
 
     /**
      * @return the name of the TestResult.
