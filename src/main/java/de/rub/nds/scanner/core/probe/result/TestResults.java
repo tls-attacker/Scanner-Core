@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @JsonIncludeProperties({"type", "value"})
 @JsonPropertyOrder({"type", "value"})
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum TestResults implements TestResult {
+public enum TestResults implements SummarizableTestResult {
     TRUE,
     FALSE,
     PARTIALLY,
@@ -47,5 +47,15 @@ public enum TestResults implements TestResult {
      */
     public static TestResults of(boolean value) {
         return value ? TRUE : FALSE;
+    }
+
+    @Override
+    public TestResults getSummarizedResult() {
+        return this;
+    }
+
+    @Override
+    public boolean isExplicitSummary() {
+        return true;
     }
 }
