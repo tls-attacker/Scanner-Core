@@ -9,7 +9,6 @@
 package de.rub.nds.scanner.core.guideline;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
-import de.rub.nds.scanner.core.report.ScanReport;
 import de.rub.nds.scanner.core.util.JaxbSerializer;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -22,8 +21,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
-public final class GuidelineIO<ReportT extends ScanReport>
-        extends JaxbSerializer<Guideline<ReportT>> {
+public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
 
     private Logger LOGGER = LogManager.getLogger();
 
