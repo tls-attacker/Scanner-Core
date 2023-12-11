@@ -22,6 +22,11 @@ public final class ExecutorConfig {
     @Parameter(names = "-scanDetail", description = "How detailed do you want to scan?")
     private ScannerDetail scanDetail = ScannerDetail.NORMAL;
 
+    @Parameter(
+            names = "-postAnalysisDetail",
+            description = "How detailed do you want the post analysis to be")
+    private ScannerDetail postAnalysisDetail = ScannerDetail.NORMAL;
+
     @Parameter(names = "-reportDetail", description = "How detailed do you want the report to be?")
     private ScannerDetail reportDetail = ScannerDetail.NORMAL;
 
@@ -55,6 +60,14 @@ public final class ExecutorConfig {
 
     public void setScanDetail(ScannerDetail scanDetail) {
         this.scanDetail = scanDetail;
+    }
+
+    public ScannerDetail getPostAnalysisDetail() {
+        return postAnalysisDetail;
+    }
+
+    public void setPostAnalysisDetail(ScannerDetail postAnalysisDetail) {
+        this.postAnalysisDetail = postAnalysisDetail;
     }
 
     public ScannerDetail getReportDetail() {

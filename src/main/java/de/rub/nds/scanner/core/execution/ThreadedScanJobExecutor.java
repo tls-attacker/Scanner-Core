@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
@@ -33,7 +32,7 @@ public class ThreadedScanJobExecutor<
                 ProbeT extends ScannerProbe<ReportT, StateT>,
                 AfterProbeT extends AfterProbe<ReportT>,
                 StateT>
-        extends ScanJobExecutor<ReportT> implements Observer {
+        extends ScanJobExecutor<ReportT> implements Observer, AutoCloseable {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -75,7 +74,7 @@ public class ThreadedScanJobExecutor<
     }
 
     @Override
-    public void execute(ReportT report) {
+    public void execute(ReportT report) throws InterruptedException {
         notScheduledTasks = new ArrayList<>(scanJob.getProbeList());
         report.addObserver(this);
 
@@ -101,31 +100,24 @@ public class ThreadedScanJobExecutor<
         update(report, null);
     }
 
-    private void executeProbesTillNoneCanBeExecuted(ReportT report) {
+    private void executeProbesTillNoneCanBeExecuted(ReportT report) throws InterruptedException {
         boolean probesQueued = true;
         while (probesQueued) {
             // handle all Finished Results
             List<Future<ScannerProbe<ReportT, StateT>>> finishedFutures = new LinkedList<>();
             for (Future<ScannerProbe<ReportT, StateT>> result : futureResults) {
                 if (result.isDone()) {
+                    ScannerProbe<ReportT, StateT> probeResult = null;
                     try {
-                        ScannerProbe<ReportT, StateT> probeResult = result.get();
-                        LOGGER.info(probeResult.getType().getName() + " probe executed");
-                        finishedFutures.add(result);
-                        report.markProbeAsExecuted(result.get());
-                        probeResult.merge(report);
-                    } catch (InterruptedException | ExecutionException ex) {
-                        LOGGER.error(
-                                "Encountered an exception before we could merge the result. Killing the task.",
-                                ex);
-                        result.cancel(true);
-                        finishedFutures.add(result);
-                    } catch (CancellationException ex) {
-                        LOGGER.info(
-                                "Could not retrieve a task because it was cancelled after {} milliseconds",
-                                config.getProbeTimeout());
-                        finishedFutures.add(result);
+                        probeResult = result.get();
+                        LOGGER.info("{} probe executed", probeResult.getType().getName());
+                    } catch (ExecutionException e) {
+                        LOGGER.error("Some probe execution failed", e);
+                        throw new RuntimeException(e);
                     }
+                    finishedFutures.add(result);
+                    report.markProbeAsExecuted(probeResult);
+                    probeResult.merge(report);
                 }
             }
             futureResults.removeAll(finishedFutures);
@@ -135,12 +127,8 @@ public class ThreadedScanJobExecutor<
                 // nothing can be executed anymore
                 probesQueued = false;
             } else {
-                try {
-                    // wait for at least one probe to finish executing before checking again
-                    semaphore.acquire();
-                } catch (Exception e) {
-                    LOGGER.info("Interrupted while waiting for probe execution");
-                }
+                // wait for at least one probe to finish executing before checking again
+                semaphore.acquire();
             }
         }
     }
@@ -186,6 +174,11 @@ public class ThreadedScanJobExecutor<
             afterProbe.analyze(report);
         }
         LOGGER.debug("Finished analysis");
+    }
+
+    @Override
+    public void close() {
+        shutdown();
     }
 
     @Override

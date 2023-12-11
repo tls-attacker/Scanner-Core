@@ -149,11 +149,20 @@ public abstract class Scanner<
         // Scan Execution
         LOGGER.debug("Starting scan execution");
         ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob = new ScanJob<>(probeList, afterList);
-        ThreadedScanJobExecutor<ReportT, ProbeT, AfterProbeT, StateT> executor =
+        try (ThreadedScanJobExecutor<ReportT, ProbeT, AfterProbeT, StateT> scanJobExecutor =
                 new ThreadedScanJobExecutor<>(
-                        executorConfig, scanJob, executorConfig.getParallelProbes(), "");
-        report.setScanStartTime(System.currentTimeMillis());
-        executor.execute(report);
+                        executorConfig,
+                        scanJob,
+                        executorConfig.getParallelProbes(),
+                        "ScannerProbeExecutor")) {
+            report.setScanStartTime(System.currentTimeMillis());
+            scanJobExecutor.execute(report);
+        } catch (InterruptedException e) {
+            LOGGER.warn("Scan execution interrupted");
+            report.setScanEndTime(System.currentTimeMillis());
+            Thread.currentThread().interrupt();
+            return report;
+        }
         LOGGER.debug("Scan execution complete");
 
         // Rating
@@ -181,7 +190,6 @@ public abstract class Scanner<
         LOGGER.debug(
                 "Scan finished, took a total of {} milliseconds",
                 report.getScanEndTime() - report.getScanStartTime());
-        executor.shutdown();
 
         // Serialize report to file
         if (executorConfig.isWriteReportToFile()) {

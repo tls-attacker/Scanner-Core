@@ -50,7 +50,16 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
     }
 
     public final boolean canBeExecuted(ReportT report) {
-        return getRequirements().evaluate(report);
+        try {
+            return getRequirements().evaluate(report);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(
+                    "Cannot evaluate Requirements for Probe \"{}\" ({})",
+                    getProbeName(),
+                    getClass().getCanonicalName(),
+                    e);
+            return false;
+        }
     }
 
     protected final void register(AnalyzedProperty... properties) {
@@ -59,10 +68,10 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
-    public final void putIfFalse(
+    public final <T> void putIfFalse(
             AnalyzedProperty determiningProperty,
             AnalyzedProperty propertyToSet,
-            List<?> actualResult,
+            T actualResult,
             String notApplicableReason) {
         putIfEqual(
                 determiningProperty,
@@ -72,101 +81,10 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
                 TestResults.FALSE);
     }
 
-    public final void putIfFalse(
+    public final <T> void putIfTrue(
             AnalyzedProperty determiningProperty,
             AnalyzedProperty propertyToSet,
-            Map<?, ?> actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.FALSE);
-    }
-
-    public final void putIfFalse(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Set<?> actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.FALSE);
-    }
-
-    public final void putIfFalse(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            BigInteger actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.FALSE);
-    }
-
-    public final void putIfFalse(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Integer actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.FALSE);
-    }
-
-    public final void putIfFalse(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Long actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.FALSE);
-    }
-
-    public final void putIfFalse(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            String actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.FALSE);
-    }
-
-    public final void putIfFalse(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Object actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.FALSE);
-    }
-
-    public final void putIfTrue(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            List<?> actualResult,
+            T actualResult,
             String notApplicableReason) {
         putIfEqual(
                 determiningProperty,
@@ -176,101 +94,10 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
                 TestResults.TRUE);
     }
 
-    public final void putIfTrue(
+    public final <T> void putIfEqual(
             AnalyzedProperty determiningProperty,
             AnalyzedProperty propertyToSet,
-            Map<?, ?> actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.TRUE);
-    }
-
-    public final void putIfTrue(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Set<?> actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.TRUE);
-    }
-
-    public final void putIfTrue(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            BigInteger actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.TRUE);
-    }
-
-    public final void putIfTrue(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Integer actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.TRUE);
-    }
-
-    public final void putIfTrue(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Long actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.TRUE);
-    }
-
-    public final void putIfTrue(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            String actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.TRUE);
-    }
-
-    public final void putIfTrue(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Object actualResult,
-            String notApplicableReason) {
-        putIfEqual(
-                determiningProperty,
-                propertyToSet,
-                actualResult,
-                notApplicableReason,
-                TestResults.TRUE);
-    }
-
-    public final void putIfEqual(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            List<?> actualResult,
+            T actualResult,
             String notApplicableReason,
             TestResult expectedValue) {
         if (!propertiesMap.containsKey(determiningProperty)
@@ -282,153 +109,47 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
-    public final void putIfEqual(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Map<?, ?> actualResult,
-            String notApplicableReason,
-            TestResult expectedValue) {
-        if (!propertiesMap.containsKey(determiningProperty)
-                || propertiesMap.get(determiningProperty) == null
-                || !propertiesMap.get(determiningProperty).equals(expectedValue)) {
-            put(propertyToSet, new NotApplicableResult(propertyToSet, notApplicableReason));
-        } else {
-            put(propertyToSet, actualResult);
+    private TestResult convertToResult(AnalyzedProperty property, Object result) {
+        // TODO: Use pattern matching with java 17(+)
+        if (result instanceof TestResult) {
+            return (TestResult) result;
         }
+        if (result instanceof String) {
+            return new StringResult(property, (String) result);
+        }
+        if (result instanceof Long) {
+            return new LongResult(property, (Long) result);
+        }
+        if (result instanceof Integer) {
+            return new IntegerResult(property, (Integer) result);
+        }
+        if (result instanceof BigInteger) {
+            return new BigIntegerResult(property, (BigInteger) result);
+        }
+        if (result instanceof Set) {
+            return new SetResult<>(property, (Set<?>) result);
+        }
+        if (result instanceof Map) {
+            return new MapResult<>(property, (Map<?, ?>) result);
+        }
+        if (result instanceof List) {
+            return new ListResult<>(property, (List<?>) result);
+        }
+        return new ObjectResult<>(property, result);
     }
 
-    public final void putIfEqual(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Set<?> actualResult,
-            String notApplicableReason,
-            TestResult expectedValue) {
-        if (!propertiesMap.containsKey(determiningProperty)
-                || propertiesMap.get(determiningProperty) == null
-                || !propertiesMap.get(determiningProperty).equals(expectedValue)) {
-            put(propertyToSet, new NotApplicableResult(propertyToSet, notApplicableReason));
-        } else {
-            put(propertyToSet, actualResult);
-        }
-    }
+    public final <T> void put(AnalyzedProperty property, T result) {
+        TestResult internalResult = convertToResult(property, result);
 
-    public final void putIfEqual(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            BigInteger actualResult,
-            String notApplicableReason,
-            TestResult expectedValue) {
-        if (!propertiesMap.containsKey(determiningProperty)
-                || propertiesMap.get(determiningProperty) == null
-                || !propertiesMap.get(determiningProperty).equals(expectedValue)) {
-            put(propertyToSet, new NotApplicableResult(propertyToSet, notApplicableReason));
-        } else {
-            put(propertyToSet, actualResult);
-        }
-    }
-
-    public final void putIfEqual(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Integer actualResult,
-            String notApplicableReason,
-            TestResult expectedValue) {
-        if (!propertiesMap.containsKey(determiningProperty)
-                || propertiesMap.get(determiningProperty) == null
-                || !propertiesMap.get(determiningProperty).equals(expectedValue)) {
-            put(propertyToSet, new NotApplicableResult(propertyToSet, notApplicableReason));
-        } else {
-            put(propertyToSet, actualResult);
-        }
-    }
-
-    public final void putIfEqual(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Long actualResult,
-            String notApplicableReason,
-            TestResult expectedValue) {
-        if (!propertiesMap.containsKey(determiningProperty)
-                || propertiesMap.get(determiningProperty) == null
-                || !propertiesMap.get(determiningProperty).equals(expectedValue)) {
-            put(propertyToSet, new NotApplicableResult(propertyToSet, notApplicableReason));
-        } else {
-            put(propertyToSet, actualResult);
-        }
-    }
-
-    public final void putIfEqual(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            String actualResult,
-            String notApplicableReason,
-            TestResult expectedValue) {
-        if (!propertiesMap.containsKey(determiningProperty)
-                || propertiesMap.get(determiningProperty) == null
-                || !propertiesMap.get(determiningProperty).equals(expectedValue)) {
-            put(propertyToSet, new NotApplicableResult(propertyToSet, notApplicableReason));
-        } else {
-            put(propertyToSet, actualResult);
-        }
-    }
-
-    public final void putIfEqual(
-            AnalyzedProperty determiningProperty,
-            AnalyzedProperty propertyToSet,
-            Object actualResult,
-            String notApplicableReason,
-            TestResult expectedValue) {
-        if (!propertiesMap.containsKey(determiningProperty)
-                || propertiesMap.get(determiningProperty) == null
-                || !propertiesMap.get(determiningProperty).equals(expectedValue)) {
-            put(propertyToSet, new NotApplicableResult(propertyToSet, notApplicableReason));
-        } else {
-            put(propertyToSet, actualResult);
-        }
-    }
-
-    public final void put(AnalyzedProperty property, TestResult result) {
         if (propertiesMap.containsKey(property)) {
-            propertiesMap.replace(property, result);
+            propertiesMap.replace(property, internalResult);
         } else {
             LOGGER.error(
                     "{} was set in {} but had not been registered!",
                     property,
                     getClass().getSimpleName());
-            propertiesMap.put(property, result);
+            propertiesMap.put(property, internalResult);
         }
-    }
-
-    public final void put(AnalyzedProperty property, List<?> result) {
-        put(property, new ListResult<>(property, result));
-    }
-
-    public final void put(AnalyzedProperty property, Map<?, ?> result) {
-        put(property, new MapResult<>(property, result));
-    }
-
-    public final void put(AnalyzedProperty property, Set<?> result) {
-        put(property, new SetResult<>(property, result));
-    }
-
-    public final void put(AnalyzedProperty property, BigInteger result) {
-        put(property, new BigIntegerResult(property, result));
-    }
-
-    public final void put(AnalyzedProperty property, Integer result) {
-        put(property, new IntegerResult(property, result));
-    }
-
-    public final void put(AnalyzedProperty property, Long result) {
-        put(property, new LongResult(property, result));
-    }
-
-    public final void put(AnalyzedProperty property, String result) {
-        put(property, new StringResult(property, result));
-    }
-
-    public final void put(AnalyzedProperty property, Object result) {
-        put(property, new ObjectResult<>(property, result));
     }
 
     protected final <T> void addToList(AnalyzedProperty property, List<T> result) {
@@ -469,19 +190,25 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
             report.recordProbePerformance(
                     new PerformanceData(getType(), getStartTime(), getStopTime()));
         }
+        boolean wasExecuted = getStartTime() != 0;
         mergeData(report);
-        TestResult result;
         for (AnalyzedProperty property : propertiesMap.keySet()) {
-            result = propertiesMap.get(property);
-            report.putResult(property, result);
-            if (result == TestResults.UNASSIGNED_ERROR) {
-                LOGGER.error(
-                        "{} in {} had not been assigned!", property, getClass().getSimpleName());
+            TestResult result = propertiesMap.get(property);
+            if (result == TestResults.UNASSIGNED_ERROR || result == null) {
+                if (wasExecuted) {
+                    LOGGER.error(
+                            "{} in {} had not been assigned (or was set to null)!",
+                            property,
+                            getClass().getSimpleName());
+                } else {
+                    result = TestResults.COULD_NOT_TEST;
+                }
             }
+            report.putResult(property, result);
         }
     }
 
-    protected final void extractStats(List<StateT> states) {
+    protected final void extractStats(Iterable<StateT> states) {
         if (writer != null) {
             for (StateT state : states) {
                 getWriter().extract(state);
