@@ -154,7 +154,7 @@ public abstract class Scanner<
                         executorConfig,
                         scanJob,
                         executorConfig.getParallelProbes(),
-                        "ScannerProbeExecutor")) {
+                        "ScannerProbeExecutor " + report.getRemoteName())) {
             report.setScanStartTime(System.currentTimeMillis());
             scanJobExecutor.execute(report);
         } catch (InterruptedException e) {

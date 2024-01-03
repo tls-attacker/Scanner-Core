@@ -70,6 +70,10 @@ public class ScanReport extends Observable {
         unexecutedProbes = new HashSet<>();
     }
 
+    public String getRemoteName() {
+        return "ScanReport.getRemoteName not implemented";
+    }
+
     public synchronized Map<AnalyzedProperty, TestResult> getResultMap() {
         return Collections.unmodifiableMap(resultMap);
     }

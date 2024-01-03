@@ -10,23 +10,22 @@ package de.rub.nds.scanner.core.execution;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class NamedThreadFactory implements ThreadFactory {
 
-    private int number;
+    private AtomicInteger number = new AtomicInteger(1);
 
     private final String prefix;
 
     public NamedThreadFactory(String prefix) {
-        this.number = 1;
         this.prefix = prefix;
     }
 
     @Override
     public Thread newThread(Runnable r) {
         Thread newThread = Executors.defaultThreadFactory().newThread(r);
-        newThread.setName(prefix + "-" + number);
-        number++;
+        newThread.setName(prefix + "-" + number.getAndIncrement());
         return newThread;
     }
 }
