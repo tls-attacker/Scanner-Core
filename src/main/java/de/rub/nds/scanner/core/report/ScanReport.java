@@ -71,7 +71,7 @@ public class ScanReport extends Observable {
     }
 
     public String getRemoteName() {
-        return "";
+        return "ScanReport.getRemoteName not implemented";
     }
 
     public synchronized Map<AnalyzedProperty, TestResult> getResultMap() {
