@@ -33,6 +33,8 @@ public class GuidelineCheckCondition {
     @XmlElement(type = TestResults.class)
     private TestResult result;
 
+    /** Private no-arg constructor to please JAXB */
+    @SuppressWarnings("unused")
     private GuidelineCheckCondition() {}
 
     private GuidelineCheckCondition(

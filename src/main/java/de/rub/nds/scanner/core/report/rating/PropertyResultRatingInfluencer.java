@@ -45,6 +45,8 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     @XmlElement(type = TestResults.class, name = "referencedPropertyResult")
     private TestResult referencedPropertyResult;
 
+    /** Private no-arg constructor to please JAXB */
+    @SuppressWarnings("unused")
     private PropertyResultRatingInfluencer() {}
 
     public PropertyResultRatingInfluencer(TestResult result, Integer influence) {
