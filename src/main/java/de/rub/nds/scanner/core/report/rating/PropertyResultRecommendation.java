@@ -30,6 +30,8 @@ public class PropertyResultRecommendation {
 
     private String detailedDescription;
 
+    /** Private no-arg constructor to please JAXB */
+    @SuppressWarnings("unused")
     private PropertyResultRecommendation() {}
 
     public PropertyResultRecommendation(

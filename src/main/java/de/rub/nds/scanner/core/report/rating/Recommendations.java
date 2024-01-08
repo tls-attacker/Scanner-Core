@@ -24,6 +24,8 @@ public class Recommendations implements Serializable {
     @XmlElement(name = "recommendation")
     private List<Recommendation> recommendations;
 
+    /** Private no-arg constructor to please JAXB */
+    @SuppressWarnings("unused")
     private Recommendations() {}
 
     public Recommendations(List<Recommendation> recommendations) {
