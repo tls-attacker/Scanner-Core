@@ -11,11 +11,10 @@ package de.rub.nds.scanner.core.probe.result;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
-import java.io.Serializable;
 
 @JsonIncludeProperties({"type", "value"})
 @JsonPropertyOrder({"type", "value"})
-public class ObjectResult<T> implements TestResult, Serializable {
+public class ObjectResult<T> implements TestResult {
 
     private final AnalyzedProperty property;
     protected final T value;

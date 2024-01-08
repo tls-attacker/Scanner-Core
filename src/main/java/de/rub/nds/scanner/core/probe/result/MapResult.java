@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -23,7 +22,7 @@ import java.util.Map;
  */
 @JsonIncludeProperties({"type", "value"})
 @JsonPropertyOrder({"type", "value"})
-public class MapResult<S, T> implements TestResult, Serializable {
+public class MapResult<S, T> implements TestResult {
 
     private final AnalyzedProperty property;
     private final Map<S, T> map;

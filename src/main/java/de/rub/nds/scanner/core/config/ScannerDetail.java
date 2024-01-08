@@ -8,7 +8,7 @@
  */
 package de.rub.nds.scanner.core.config;
 
-public enum ScannerDetail implements Comparable<ScannerDetail> {
+public enum ScannerDetail {
     ALL(100),
     DETAILED(75),
     NORMAL(50),

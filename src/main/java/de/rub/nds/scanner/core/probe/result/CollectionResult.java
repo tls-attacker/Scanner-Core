@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
-import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -22,7 +21,7 @@ import java.util.Collection;
  */
 @JsonIncludeProperties({"type", "value"})
 @JsonPropertyOrder({"type", "value"})
-public class CollectionResult<T> implements TestResult, Serializable {
+public class CollectionResult<T> implements TestResult {
 
     private final AnalyzedProperty property;
     protected final Collection<T> collection;
