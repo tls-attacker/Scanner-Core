@@ -36,6 +36,7 @@ public class ThreadedScanJobExecutor<
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    @SuppressWarnings("unused")
     private final ExecutorConfig config;
 
     private final ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob;
