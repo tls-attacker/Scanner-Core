@@ -26,6 +26,8 @@ public class Guideline<ReportT extends ScanReport> implements Serializable {
     @XmlAnyElement(lax = true)
     private List<GuidelineCheck<ReportT>> checks;
 
+    /** Private no-arg constructor to please JAXB */
+    @SuppressWarnings("unused")
     private Guideline() {}
 
     public Guideline(String name, String link, List<GuidelineCheck<ReportT>> checks) {

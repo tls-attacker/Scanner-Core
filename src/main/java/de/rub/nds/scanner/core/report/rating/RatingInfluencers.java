@@ -24,6 +24,8 @@ public class RatingInfluencers implements Serializable {
     @XmlElement(name = "ratingInfluencer")
     private LinkedList<RatingInfluencer> ratingInfluencers;
 
+    /** Private no-arg constructor to please JAXB */
+    @SuppressWarnings("unused")
     private RatingInfluencers() {}
 
     public RatingInfluencers(LinkedList<RatingInfluencer> ratingInfluencers) {

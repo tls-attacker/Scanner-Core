@@ -25,6 +25,8 @@ public abstract class GuidelineCheck<ReportT extends ScanReport> {
 
     private GuidelineCheckCondition condition;
 
+    /** Private no-arg constructor to please JAXB */
+    @SuppressWarnings("unused")
     private GuidelineCheck() {}
 
     public GuidelineCheck(String name, RequirementLevel requirementLevel) {
