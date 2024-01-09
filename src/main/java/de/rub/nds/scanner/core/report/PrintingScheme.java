@@ -12,12 +12,8 @@ import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
 import de.rub.nds.scanner.core.probe.result.TestResult;
 import java.util.HashMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class PrintingScheme {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private HashMap<AnalyzedProperty, ColorEncoding> valueColorEncodings;
 
