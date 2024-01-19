@@ -27,6 +27,7 @@ public enum TestResults implements SummarizableTestResult {
     FALSE,
     PARTIALLY,
     CANNOT_BE_TESTED,
+    MAKES_NO_SENSE,
     COULD_NOT_TEST,
     ERROR_DURING_TEST,
     UNCERTAIN,
