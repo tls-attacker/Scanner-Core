@@ -41,11 +41,20 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
     @Override
     public ScannerProbe<ReportT, StateT> call() {
         LOGGER.debug("Executing: {}", getProbeName());
-        this.startTime = System.currentTimeMillis();
-        executeTest();
-        this.stopTime = System.currentTimeMillis();
+        try {
+            this.startTime = System.currentTimeMillis();
+            executeTest();
+            this.stopTime = System.currentTimeMillis();
+            LOGGER.debug("Finished {} -  Took {}s", getProbeName(), (stopTime - startTime) / 1000);
+        } catch (Exception E) {
+            LOGGER.error("Encountered an error while executing {}", getProbeName(), E);
+            for (AnalyzedProperty property : propertiesMap.keySet()) {
+                if (propertiesMap.get(property) == TestResults.UNASSIGNED_ERROR) {
+                    propertiesMap.put(property, TestResults.ERROR_DURING_TEST);
+                }
+            }
+        }
 
-        LOGGER.debug("Finished {} -  Took {}s", getProbeName(), (stopTime - startTime) / 1000);
         return this;
     }
 
