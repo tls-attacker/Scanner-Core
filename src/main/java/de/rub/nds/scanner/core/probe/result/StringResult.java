@@ -17,7 +17,7 @@ public class StringResult extends ObjectResult<String> {
 
     @Override
     public String toString() {
-        return "" + value + "(" + getProperty().getName() + ")";
+        return "" + value + "(" + getProperty() + ")";
     }
 
     @Override
