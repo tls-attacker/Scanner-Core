@@ -20,4 +20,21 @@ public class StringResult extends ObjectResult<String> {
         return "" + value + "(" + getProperty().getName() + ")";
     }
 
+    @Override
+    public boolean equals(Object otherObject) {
+        if (this == otherObject) {
+            return true;
+        }
+        if (otherObject == null || getClass() != otherObject.getClass()) {
+            return false;
+        }
+        StringResult otherResult = (StringResult) otherObject;
+        return value.equals(otherResult.value) && getProperty().equals(otherResult.getProperty());
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode() + getProperty().hashCode();
+    }
+
 }
