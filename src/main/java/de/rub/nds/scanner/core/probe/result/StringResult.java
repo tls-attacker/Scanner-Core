@@ -14,4 +14,10 @@ public class StringResult extends ObjectResult<String> {
     public StringResult(AnalyzedProperty property, String value) {
         super(property, value);
     }
+
+    @Override
+    public String toString() {
+        return "" + value + "(" + getProperty().getName() + ")";
+    }
+
 }
