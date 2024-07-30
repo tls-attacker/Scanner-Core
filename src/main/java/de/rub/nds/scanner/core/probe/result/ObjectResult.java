@@ -38,6 +38,6 @@ public class ObjectResult<T> implements TestResult {
 
     @Override
     public String getName() {
-        return property.getName();
+        return getValue().toString();
     }
 }

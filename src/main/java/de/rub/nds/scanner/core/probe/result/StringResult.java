@@ -34,7 +34,7 @@ public class StringResult extends ObjectResult<String> {
 
     @Override
     public int hashCode() {
-        return value.hashCode() + getProperty().hashCode();
+        return value.hashCode() + (getProperty() == null ? 0 : getProperty().hashCode());
     }
 
 }
