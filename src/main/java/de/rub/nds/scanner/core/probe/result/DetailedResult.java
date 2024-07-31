@@ -53,4 +53,10 @@ public class DetailedResult<T extends Serializable> implements SummarizableTestR
     public boolean isExplicitSummary() {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "" + summary + ", " + details.toString();
+    }
+
 }
