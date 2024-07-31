@@ -56,7 +56,7 @@ public class DetailedResult<T extends Serializable> implements SummarizableTestR
 
     @Override
     public String toString() {
-        return "" + summary + ", " + details.toString();
+        return "" + summary + ", " + details;
     }
 
 }
