@@ -59,4 +59,32 @@ public class DetailedResult<T extends Serializable> implements SummarizableTestR
         return "" + summary + ", " + details;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((details == null) ? 0 : details.hashCode());
+        result = prime * result + ((summary == null) ? 0 : summary.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DetailedResult other = (DetailedResult) obj;
+        if (details == null) {
+            if (other.details != null)
+                return false;
+        } else if (!details.equals(other.details))
+            return false;
+        if (summary != other.summary)
+            return false;
+        return true;
+    }
+
 }
