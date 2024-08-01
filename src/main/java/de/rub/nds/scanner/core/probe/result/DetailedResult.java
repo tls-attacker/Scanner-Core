@@ -69,6 +69,11 @@ public class DetailedResult<T extends Serializable> implements SummarizableTestR
     }
 
     @Override
+    public String getName() {
+        return "" + summary.getName() + ", " + details;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
