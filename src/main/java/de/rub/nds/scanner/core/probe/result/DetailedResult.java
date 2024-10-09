@@ -91,5 +91,4 @@ public class DetailedResult<T extends Serializable> implements SummarizableTestR
             return false;
         return true;
     }
-
 }

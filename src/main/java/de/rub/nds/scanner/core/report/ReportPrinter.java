@@ -95,10 +95,7 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
     }
 
     protected StringBuilder prettyAppend(StringBuilder builder, String name, int value) {
-        return builder.append(addIndentations(name))
-                .append(": ")
-                .append(value)
-                .append("\n");
+        return builder.append(addIndentations(name)).append(": ").append(value).append("\n");
     }
 
     protected StringBuilder prettyAppend(StringBuilder builder, String name, Boolean value) {
@@ -139,9 +136,9 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
         depth = 0;
 
         return builder.append(
-                printColorful
-                        ? AnsiColor.BOLD.getCode() + AnsiColor.BLUE.getCode()
-                        : AnsiColor.RESET.getCode())
+                        printColorful
+                                ? AnsiColor.BOLD.getCode() + AnsiColor.BLUE.getCode()
+                                : AnsiColor.RESET.getCode())
                 .append("\n------------------------------------------------------------\n")
                 .append(value)
                 .append("\n\n")

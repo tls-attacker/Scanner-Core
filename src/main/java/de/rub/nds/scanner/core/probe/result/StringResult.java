@@ -36,5 +36,4 @@ public class StringResult extends ObjectResult<String> {
     public int hashCode() {
         return value.hashCode() + (getProperty() == null ? 0 : getProperty().hashCode());
     }
-
 }
