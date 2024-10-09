@@ -84,6 +84,7 @@ public class DetailedResult<T extends Serializable> implements SummarizableTestR
         if (getClass() != obj.getClass()) {
             return false;
         }
+        @SuppressWarnings("rawtypes")
         DetailedResult other = (DetailedResult) obj;
         if (details == null) {
             if (other.details != null) {
