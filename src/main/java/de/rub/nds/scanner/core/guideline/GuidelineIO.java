@@ -50,7 +50,7 @@ public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
             classes.add(Guideline.class);
             classes.addAll(guidelineCheckClasses);
             LOGGER.debug("Registering GuidelineClasses in JAXBContext:");
-            for (Class tempClass : classes) {
+            for (Class<?> tempClass : classes) {
                 LOGGER.debug(tempClass.getName());
             }
             context = JAXBContext.newInstance(classes.toArray(new Class[classes.size()]));
