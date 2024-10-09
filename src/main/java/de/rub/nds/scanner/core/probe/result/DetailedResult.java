@@ -75,20 +75,26 @@ public class DetailedResult<T extends Serializable> implements SummarizableTestR
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         DetailedResult other = (DetailedResult) obj;
         if (details == null) {
-            if (other.details != null)
+            if (other.details != null) {
                 return false;
-        } else if (!details.equals(other.details))
+            }
+        } else if (!details.equals(other.details)) {
             return false;
-        if (summary != other.summary)
+        }
+        if (summary != other.summary) {
             return false;
+        }
         return true;
     }
 }
