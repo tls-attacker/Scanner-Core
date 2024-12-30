@@ -38,6 +38,6 @@ public class ObjectResult<T> implements TestResult {
 
     @Override
     public String getName() {
-        return getValue().toString();
+        return getValue() != null ? getValue().toString() : "null";
     }
 }
