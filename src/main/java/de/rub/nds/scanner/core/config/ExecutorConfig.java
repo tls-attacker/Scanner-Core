@@ -52,7 +52,25 @@ public final class ExecutorConfig {
                     "The maximum number of threads used to execute probes located in the queue.")
     private int overallThreads = 1;
 
+    @Parameter(
+            names = "-exclude",
+            description =
+                    "A list of probes that should be excluded from the scan. The list is separated by commas.")
+    private List<ProbeType> excludedProbes = new LinkedList<>();
+
     private List<ProbeType> probes = null;
+
+    public ExecutorConfig() {
+        // Default constructor
+    }
+
+    public List<ProbeType> getExcludedProbes() {
+        return excludedProbes;
+    }
+
+    public void setExcludedProbes(List<ProbeType> excludedProbes) {
+        this.excludedProbes = excludedProbes;
+    }
 
     public ScannerDetail getScanDetail() {
         return scanDetail;
