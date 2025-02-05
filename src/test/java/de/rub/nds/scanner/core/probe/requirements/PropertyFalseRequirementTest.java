@@ -16,13 +16,18 @@ import de.rub.nds.scanner.core.TestAnalyzedProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.ScanReport;
+import java.io.OutputStream;
 import org.junit.jupiter.api.Test;
 
 public class PropertyFalseRequirementTest {
 
     @Test
     public void testPropertyNotRequirement() {
-        ScanReport report = new ScanReport();
+        ScanReport report =
+                new ScanReport() {
+                    @Override
+                    public void serializeToJson(OutputStream stream) {}
+                };
         AnalyzedProperty[] propertyNot =
                 new AnalyzedProperty[] {TestAnalyzedProperty.TEST_ANALYZED_PROPERTY};
 

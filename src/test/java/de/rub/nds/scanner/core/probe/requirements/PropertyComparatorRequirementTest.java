@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.rub.nds.scanner.core.TestAnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.ListResult;
 import de.rub.nds.scanner.core.report.ScanReport;
+import java.io.OutputStream;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -22,9 +23,21 @@ public class PropertyComparatorRequirementTest {
     @Test
     public void testPropertyComparatorRequirement() {
         TestAnalyzedProperty property = TestAnalyzedProperty.TEST_ANALYZED_PROPERTY;
-        ScanReport report0 = new ScanReport(),
-                report1 = new ScanReport(),
-                report2 = new ScanReport();
+        ScanReport report0 =
+                new ScanReport() {
+                    @Override
+                    public void serializeToJson(OutputStream stream) {}
+                };
+        ScanReport report1 =
+                new ScanReport() {
+                    @Override
+                    public void serializeToJson(OutputStream stream) {}
+                };
+        ScanReport report2 =
+                new ScanReport() {
+                    @Override
+                    public void serializeToJson(OutputStream stream) {}
+                };
         ListResult<Integer> listResult1 = new ListResult<>(property, List.of(0));
         ListResult<Integer> listResult2 = new ListResult<>(property, List.of(0, 1));
         report1.putResult(property, listResult1);
