@@ -8,14 +8,6 @@
  */
 package de.rub.nds.scanner.core.execution;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.rub.nds.scanner.core.afterprobe.AfterProbe;
 import de.rub.nds.scanner.core.config.ExecutorConfig;
 import de.rub.nds.scanner.core.guideline.Guideline;
@@ -25,6 +17,12 @@ import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.report.ScanReport;
 import de.rub.nds.scanner.core.report.rating.ScoreReport;
 import de.rub.nds.scanner.core.report.rating.SiteReportRater;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.LinkedList;
+import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public abstract class Scanner<
                 ReportT extends ScanReport,
