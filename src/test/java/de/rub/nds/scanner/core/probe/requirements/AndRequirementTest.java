@@ -11,7 +11,6 @@ package de.rub.nds.scanner.core.probe.requirements;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.rub.nds.scanner.core.report.ScanReport;
-
 import java.io.OutputStream;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -20,11 +19,11 @@ public class AndRequirementTest {
 
     @Test
     public void testAndRequirement() {
-        ScanReport report = new ScanReport() {
-                @Override
-                public void serializeToJson(OutputStream stream) {
-                }
-        };
+        ScanReport report =
+                new ScanReport() {
+                    @Override
+                    public void serializeToJson(OutputStream stream) {}
+                };
         Requirement<ScanReport>
                 requirement1 =
                         new AndRequirement<>(
