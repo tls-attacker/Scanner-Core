@@ -15,10 +15,10 @@ import de.rub.nds.scanner.core.guideline.GuidelineChecker;
 import de.rub.nds.scanner.core.passive.StatsWriter;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.report.ScanReport;
-import de.rub.nds.scanner.core.report.ScanReportSerializer;
 import de.rub.nds.scanner.core.report.rating.ScoreReport;
 import de.rub.nds.scanner.core.report.rating.SiteReportRater;
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -194,7 +194,11 @@ public abstract class Scanner<
         // Serialize report to file
         if (executorConfig.isWriteReportToFile()) {
             LOGGER.debug("Writing report to file");
-            ScanReportSerializer.serialize(new File(executorConfig.getOutputFile()), report);
+            try {
+                report.serializeToJson(new FileOutputStream(executorConfig.getOutputFile()));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Could not serialize report to file", e);
+            }
         }
 
         LOGGER.debug("Calling onScanEnd() event hook");

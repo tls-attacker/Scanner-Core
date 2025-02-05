@@ -16,13 +16,18 @@ import de.rub.nds.scanner.core.TestAnalyzedProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.ScanReport;
+import java.io.OutputStream;
 import org.junit.jupiter.api.Test;
 
 public class PropertyTrueRequirementTest {
 
     @Test
     public void testPropertyRequirement() {
-        ScanReport report = new ScanReport();
+        ScanReport report =
+                new ScanReport() {
+                    @Override
+                    public void serializeToJson(OutputStream stream) {}
+                };
         AnalyzedProperty[] property =
                 new AnalyzedProperty[] {TestAnalyzedProperty.TEST_ANALYZED_PROPERTY};
 

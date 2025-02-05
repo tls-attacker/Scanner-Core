@@ -16,13 +16,18 @@ import de.rub.nds.scanner.core.TestProbeType;
 import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.report.ScanReport;
+import java.io.OutputStream;
 import org.junit.jupiter.api.Test;
 
 public class ProbeRequirementTest {
 
     @Test
     public void testProbeRequirement() {
-        ScanReport report = new ScanReport();
+        ScanReport report =
+                new ScanReport() {
+                    @Override
+                    public void serializeToJson(OutputStream stream) {}
+                };
         TestProbe probe = new TestProbe();
 
         ProbeRequirement<ScanReport> requirement = new ProbeRequirement<>();
