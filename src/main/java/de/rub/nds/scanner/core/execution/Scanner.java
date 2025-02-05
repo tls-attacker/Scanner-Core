@@ -231,7 +231,11 @@ public abstract class Scanner<
         if ((executorConfig.getProbes() == null && executeByDefault)
                 || (executorConfig.getProbes() != null
                         && executorConfig.getProbes().contains(probe.getType()))) {
-            probeList.add(probe);
+            if (executorConfig.getExcludedProbes().contains(probe.getType())) {
+                LOGGER.debug("Probe {} is excluded from the scan", probe.getType());
+            } else {
+                probeList.add(probe);
+            }
         }
     }
 
