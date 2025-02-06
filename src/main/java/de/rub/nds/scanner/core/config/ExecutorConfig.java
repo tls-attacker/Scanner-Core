@@ -10,6 +10,7 @@ package de.rub.nds.scanner.core.config;
 
 import com.beust.jcommander.Parameter;
 import de.rub.nds.scanner.core.probe.ProbeType;
+import de.rub.nds.scanner.core.probe.ProbeTypeConverter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,7 +56,8 @@ public final class ExecutorConfig {
     @Parameter(
             names = "-exclude",
             description =
-                    "A list of probes that should be excluded from the scan. The list is separated by commas.")
+                    "A list of probes that should be excluded from the scan. The list is separated by commas.",
+            converter = ProbeTypeConverter.class)
     private List<ProbeType> excludedProbes = new LinkedList<>();
 
     private List<ProbeType> probes = null;
