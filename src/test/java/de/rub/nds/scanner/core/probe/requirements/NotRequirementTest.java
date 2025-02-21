@@ -11,13 +11,18 @@ package de.rub.nds.scanner.core.probe.requirements;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.rub.nds.scanner.core.report.ScanReport;
+import java.io.OutputStream;
 import org.junit.jupiter.api.Test;
 
 public class NotRequirementTest {
 
     @Test
     public void testNotRequirement() {
-        ScanReport report = new ScanReport();
+        ScanReport report =
+                new ScanReport() {
+                    @Override
+                    public void serializeToJson(OutputStream stream) {}
+                };
         Requirement<ScanReport>
                 requirement1 = new NotRequirement<>(new UnfulfillableRequirement<>()),
                 requirement2 = new NotRequirement<>(new FulfilledRequirement<>());

@@ -8,17 +8,38 @@
  */
 package de.rub.nds.scanner.core.report;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.rub.nds.scanner.core.guideline.GuidelineReport;
 import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
-import de.rub.nds.scanner.core.probe.result.*;
+import de.rub.nds.scanner.core.probe.result.BigIntegerResult;
+import de.rub.nds.scanner.core.probe.result.CollectionResult;
+import de.rub.nds.scanner.core.probe.result.IntegerResult;
+import de.rub.nds.scanner.core.probe.result.ListResult;
+import de.rub.nds.scanner.core.probe.result.LongResult;
+import de.rub.nds.scanner.core.probe.result.MapResult;
+import de.rub.nds.scanner.core.probe.result.ObjectResult;
+import de.rub.nds.scanner.core.probe.result.SetResult;
+import de.rub.nds.scanner.core.probe.result.StringResult;
+import de.rub.nds.scanner.core.probe.result.TestResult;
+import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.rating.ScoreReport;
+import java.io.OutputStream;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Observable;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @JsonIncludeProperties({
@@ -41,7 +62,7 @@ import java.util.stream.Collectors;
     "scoreReport",
     "probePerformanceData"
 })
-public class ScanReport extends Observable {
+public abstract class ScanReport extends Observable {
 
     @JsonProperty("results")
     private Map<AnalyzedProperty, TestResult> resultMap;
@@ -69,6 +90,8 @@ public class ScanReport extends Observable {
         executedProbes = new HashSet<>();
         unexecutedProbes = new HashSet<>();
     }
+
+    public abstract void serializeToJson(OutputStream OutputStream);
 
     public String getRemoteName() {
         return "ScanReport.getRemoteName not implemented";

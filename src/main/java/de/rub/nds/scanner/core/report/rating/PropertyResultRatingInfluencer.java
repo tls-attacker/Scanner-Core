@@ -33,6 +33,7 @@ import java.util.Objects;
 public class PropertyResultRatingInfluencer implements Comparable<PropertyResultRatingInfluencer> {
 
     @XmlElement(type = TestResults.class, name = "result")
+    @JsonIgnore
     private TestResult result;
 
     private Integer influence;
@@ -43,6 +44,7 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     private AnalyzedProperty referencedProperty;
 
     @XmlElement(type = TestResults.class, name = "referencedPropertyResult")
+    @JsonIgnore
     private TestResult referencedPropertyResult;
 
     /** Private no-arg constructor to please JAXB */

@@ -10,6 +10,7 @@ package de.rub.nds.scanner.core.config;
 
 import com.beust.jcommander.Parameter;
 import de.rub.nds.scanner.core.probe.ProbeType;
+import de.rub.nds.scanner.core.probe.ProbeTypeConverter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,7 +53,26 @@ public final class ExecutorConfig {
                     "The maximum number of threads used to execute probes located in the queue.")
     private int overallThreads = 1;
 
+    @Parameter(
+            names = "-exclude",
+            description =
+                    "A list of probes that should be excluded from the scan. The list is separated by commas.",
+            converter = ProbeTypeConverter.class)
+    private List<ProbeType> excludedProbes = new LinkedList<>();
+
     private List<ProbeType> probes = null;
+
+    public ExecutorConfig() {
+        // Default constructor
+    }
+
+    public List<ProbeType> getExcludedProbes() {
+        return excludedProbes;
+    }
+
+    public void setExcludedProbes(List<ProbeType> excludedProbes) {
+        this.excludedProbes = excludedProbes;
+    }
 
     public ScannerDetail getScanDetail() {
         return scanDetail;
