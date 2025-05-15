@@ -50,6 +50,9 @@ public class ThreadedScanJobExecutor<
     // Used for waiting for Threads in the ThreadPoolExecutor
     private final Semaphore semaphore = new Semaphore(0);
 
+    private int probeCount;
+    private int finishedProbes = 0;
+
     public ThreadedScanJobExecutor(
             ExecutorConfig config,
             ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob,
@@ -76,6 +79,7 @@ public class ThreadedScanJobExecutor<
 
     @Override
     public void execute(ReportT report) throws InterruptedException {
+        probeCount = scanJob.getProbeList().size();
         notScheduledTasks = new ArrayList<>(scanJob.getProbeList());
         report.addObserver(this);
 
@@ -108,10 +112,15 @@ public class ThreadedScanJobExecutor<
             List<Future<ScannerProbe<ReportT, StateT>>> finishedFutures = new LinkedList<>();
             for (Future<ScannerProbe<ReportT, StateT>> result : futureResults) {
                 if (result.isDone()) {
+                    finishedProbes++;
                     ScannerProbe<ReportT, StateT> probeResult = null;
                     try {
                         probeResult = result.get();
-                        LOGGER.info("{} probe executed", probeResult.getType().getName());
+                        LOGGER.info(
+                                "[{}/{}] {} probe executed",
+                                finishedProbes,
+                                probeCount,
+                                probeResult.getType().getName());
                     } catch (ExecutionException e) {
                         LOGGER.error("Some probe execution failed", e);
                         throw new RuntimeException(e);
@@ -135,6 +144,7 @@ public class ThreadedScanJobExecutor<
     }
 
     private void reportAboutNotExecutedProbes() {
+        LOGGER.info("{} scheduled probes were not executed", notScheduledTasks.size());
         LOGGER.debug("Did not execute the following probes:");
         for (ProbeT probe : notScheduledTasks) {
             LOGGER.debug(probe.getProbeName());
