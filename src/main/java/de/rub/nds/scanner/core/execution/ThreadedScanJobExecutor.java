@@ -14,12 +14,12 @@ import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.report.ScanReport;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
@@ -32,7 +32,7 @@ public class ThreadedScanJobExecutor<
                 ProbeT extends ScannerProbe<ReportT, StateT>,
                 AfterProbeT extends AfterProbe<ReportT>,
                 StateT>
-        extends ScanJobExecutor<ReportT> implements Observer, AutoCloseable {
+        extends ScanJobExecutor<ReportT> implements PropertyChangeListener, AutoCloseable {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -81,9 +81,9 @@ public class ThreadedScanJobExecutor<
     public void execute(ReportT report) throws InterruptedException {
         probeCount = scanJob.getProbeList().size();
         notScheduledTasks = new ArrayList<>(scanJob.getProbeList());
-        report.addObserver(this);
+        report.addPropertyChangeListener(this);
 
-        checkForExecutableProbes(report);
+        checkExecutableProbesAndSchedule(report);
         executeProbesTillNoneCanBeExecuted(report);
         updateReportWithNotExecutedProbes(report);
         reportAboutNotExecutedProbes();
@@ -91,7 +91,7 @@ public class ThreadedScanJobExecutor<
         executeAfterProbes(report);
 
         LOGGER.info("Finished scan");
-        report.deleteObserver(this);
+        report.removePropertyChangeListener(this);
     }
 
     private void updateReportWithNotExecutedProbes(ReportT report) {
@@ -99,10 +99,6 @@ public class ThreadedScanJobExecutor<
             probe.merge(report);
             report.markProbeAsUnexecuted(probe);
         }
-    }
-
-    private void checkForExecutableProbes(ReportT report) {
-        update(report, null);
     }
 
     private void executeProbesTillNoneCanBeExecuted(ReportT report) throws InterruptedException {
@@ -132,7 +128,7 @@ public class ThreadedScanJobExecutor<
             }
             futureResults.removeAll(finishedFutures);
             // execute possible new probes
-            update(report, this);
+            propertyChange(new PropertyChangeEvent(report, "Check for new probes", null, null));
             if (futureResults.isEmpty()) {
                 // nothing can be executed anymore
                 probesQueued = false;
@@ -198,23 +194,26 @@ public class ThreadedScanJobExecutor<
     }
 
     @Override
-    public synchronized void update(Observable o, Object o1) {
-        if (o instanceof ScanReport) {
-            ReportT report = (ReportT) o;
-            List<ProbeT> newNotSchedulesTasksList = new LinkedList<>();
-            for (ProbeT probe : notScheduledTasks) {
-                if (probe.canBeExecuted(report)) {
-                    probe.adjustConfig(report);
-                    LOGGER.debug("Scheduling: " + probe.getProbeName());
-                    Future<ScannerProbe<ReportT, StateT>> future = executor.submit(probe);
-                    futureResults.add(future);
-                } else {
-                    newNotSchedulesTasksList.add(probe);
-                }
-            }
-            this.notScheduledTasks = newNotSchedulesTasksList;
+    public synchronized void propertyChange(PropertyChangeEvent event) {
+        if (event.getSource() instanceof ScanReport) {
+            checkExecutableProbesAndSchedule((ReportT) event.getSource());
         } else {
-            LOGGER.error(this.getClass().getName() + " received an update from a non-siteReport");
+            LOGGER.error("{} received an update from a non-siteReport", this.getClass().getName());
         }
+    }
+
+    public synchronized void checkExecutableProbesAndSchedule(ReportT report) {
+        List<ProbeT> newNotSchedulesTasksList = new LinkedList<>();
+        for (ProbeT probe : notScheduledTasks) {
+            if (probe.canBeExecuted(report)) {
+                probe.adjustConfig(report);
+                LOGGER.debug("Scheduling: {}", probe.getProbeName());
+                Future<ScannerProbe<ReportT, StateT>> future = executor.submit(probe);
+                futureResults.add(future);
+            } else {
+                newNotSchedulesTasksList.add(probe);
+            }
+        }
+        this.notScheduledTasks = newNotSchedulesTasksList;
     }
 }

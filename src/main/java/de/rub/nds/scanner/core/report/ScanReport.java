@@ -8,9 +8,7 @@
  */
 package de.rub.nds.scanner.core.report;
 
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.rub.nds.scanner.core.guideline.GuidelineReport;
 import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
@@ -29,6 +27,7 @@ import de.rub.nds.scanner.core.probe.result.StringResult;
 import de.rub.nds.scanner.core.probe.result.TestResult;
 import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.rating.ScoreReport;
+import java.beans.PropertyChangeListener;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -38,31 +37,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Observable;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@JsonIncludeProperties({
-    "results",
-    "extractedValues",
-    "guidelineReports",
-    "scoreReport",
-    "probePerformanceData",
-    "performedConnections",
-    "scanStartTime",
-    "scanEndTime"
-})
-@JsonPropertyOrder({
-    "scanStartTime",
-    "scanEndTime",
-    "performedConnections",
-    "results",
-    "extractedValues",
-    "guidelineReports",
-    "scoreReport",
-    "probePerformanceData"
-})
-public abstract class ScanReport extends Observable {
+public abstract class ScanReport {
+
+    private final java.beans.PropertyChangeSupport propertyChangeSupport =
+            new java.beans.PropertyChangeSupport(this);
 
     @JsonProperty("results")
     private Map<AnalyzedProperty, TestResult> resultMap;
@@ -71,16 +52,16 @@ public abstract class ScanReport extends Observable {
     private final Map<TrackableValue, ExtractedValueContainer<?>> extractedValueContainerMap;
 
     private final List<GuidelineReport> guidelineReports;
-    private int score;
+    private Integer score;
     private ScoreReport scoreReport;
 
     private final Set<ScannerProbe<?, ?>> executedProbes;
     private final Set<ScannerProbe<?, ?>> unexecutedProbes;
 
     private final List<PerformanceData> probePerformanceData;
-    private int performedConnections;
-    private long scanStartTime;
-    private long scanEndTime;
+    private Integer performedConnections;
+    private Long scanStartTime;
+    private Long scanEndTime;
 
     public ScanReport() {
         resultMap = new HashMap<>();
@@ -249,7 +230,9 @@ public abstract class ScanReport extends Observable {
     }
 
     public synchronized void putResult(AnalyzedProperty property, TestResult result) {
+        TestResult oldResult = resultMap.get(property);
         resultMap.put(property, result);
+        propertyChangeSupport.firePropertyChange(property.toString(), oldResult, result);
     }
 
     public synchronized void putResult(AnalyzedProperty property, Boolean result) {
@@ -295,7 +278,8 @@ public abstract class ScanReport extends Observable {
     }
 
     public synchronized void removeResult(AnalyzedProperty property) {
-        resultMap.remove(property);
+        TestResult oldResult = resultMap.remove(property);
+        propertyChangeSupport.firePropertyChange(property.toString(), oldResult, null);
     }
 
     public synchronized Map<TrackableValue, ExtractedValueContainer<?>>
@@ -332,11 +316,11 @@ public abstract class ScanReport extends Observable {
         guidelineReports.add(guidelineReport);
     }
 
-    public synchronized int getScore() {
+    public synchronized Integer getScore() {
         return score;
     }
 
-    public synchronized void setScore(int score) {
+    public synchronized void setScore(Integer score) {
         this.score = score;
     }
 
@@ -388,27 +372,35 @@ public abstract class ScanReport extends Observable {
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    public int getPerformedConnections() {
+    public synchronized Integer getPerformedConnections() {
         return performedConnections;
     }
 
-    public void setPerformedConnections(int performedConnections) {
+    public synchronized void setPerformedConnections(Integer performedConnections) {
         this.performedConnections = performedConnections;
     }
 
-    public long getScanStartTime() {
+    public synchronized Long getScanStartTime() {
         return scanStartTime;
     }
 
-    public void setScanStartTime(long scanStartTime) {
+    public synchronized void setScanStartTime(Long scanStartTime) {
         this.scanStartTime = scanStartTime;
     }
 
-    public long getScanEndTime() {
+    public synchronized Long getScanEndTime() {
         return scanEndTime;
     }
 
-    public void setScanEndTime(long scanStopTime) {
+    public synchronized void setScanEndTime(Long scanStopTime) {
         this.scanEndTime = scanStopTime;
+    }
+
+    public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 }
