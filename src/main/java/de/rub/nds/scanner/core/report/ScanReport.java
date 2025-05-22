@@ -8,6 +8,7 @@
  */
 package de.rub.nds.scanner.core.report;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.rub.nds.scanner.core.guideline.GuidelineReport;
 import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
@@ -55,8 +56,8 @@ public abstract class ScanReport {
     private Integer score;
     private ScoreReport scoreReport;
 
-    private final Set<ScannerProbe<?, ?>> executedProbes;
-    private final Set<ScannerProbe<?, ?>> unexecutedProbes;
+    @JsonIgnore private final Set<ScannerProbe<?, ?>> executedProbes;
+    @JsonIgnore private final Set<ScannerProbe<?, ?>> unexecutedProbes;
 
     private final List<PerformanceData> probePerformanceData;
     private Integer performedConnections;
@@ -346,10 +347,12 @@ public abstract class ScanReport {
 
     public synchronized void markProbeAsExecuted(ScannerProbe<?, ?> probe) {
         executedProbes.add(probe);
+        propertyChangeSupport.firePropertyChange("supportedProbe", null, probe.getProbeName());
     }
 
     public synchronized void markProbeAsUnexecuted(ScannerProbe<?, ?> probe) {
         unexecutedProbes.add(probe);
+        propertyChangeSupport.firePropertyChange("unsupportedProbe", null, probe.getProbeName());
     }
 
     public synchronized Set<ScannerProbe<?, ?>> getExecutedProbes() {

@@ -105,8 +105,8 @@ public class ThreadedScanJobExecutor<
         boolean probesQueued = true;
         while (probesQueued) {
             // handle all Finished Results
-            List<Future<ScannerProbe<ReportT, StateT>>> finishedFutures = new LinkedList<>();
-            for (Future<ScannerProbe<ReportT, StateT>> result : futureResults) {
+            List<Future<ScannerProbe<ReportT, StateT>>> finishedFutures = new ArrayList<>();
+            for (Future<ScannerProbe<ReportT, StateT>> result : new ArrayList<>(futureResults)) {
                 if (result.isDone()) {
                     finishedProbes++;
                     ScannerProbe<ReportT, StateT> probeResult = null;
@@ -122,13 +122,13 @@ public class ThreadedScanJobExecutor<
                         throw new RuntimeException(e);
                     }
                     finishedFutures.add(result);
-                    report.markProbeAsExecuted(probeResult);
                     probeResult.merge(report);
+                    report.markProbeAsExecuted(probeResult);
                 }
             }
             futureResults.removeAll(finishedFutures);
             // execute possible new probes
-            propertyChange(new PropertyChangeEvent(report, "Check for new probes", null, null));
+            checkExecutableProbesAndSchedule(report);
             if (futureResults.isEmpty()) {
                 // nothing can be executed anymore
                 probesQueued = false;
@@ -195,6 +195,10 @@ public class ThreadedScanJobExecutor<
 
     @Override
     public synchronized void propertyChange(PropertyChangeEvent event) {
+        if (!event.getPropertyName().equals("supportedProbe")
+                || !event.getPropertyName().equals("unsupportedProbe")) {
+            return;
+        }
         if (event.getSource() instanceof ScanReport) {
             checkExecutableProbesAndSchedule((ReportT) event.getSource());
         } else {
