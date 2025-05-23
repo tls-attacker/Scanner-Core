@@ -27,6 +27,11 @@ public class PropertyFalseRequirementTest {
                 new ScanReport() {
                     @Override
                     public void serializeToJson(OutputStream stream) {}
+
+                    @Override
+                    public String getRemoteName() {
+                        return "";
+                    }
                 };
         AnalyzedProperty[] propertyNot =
                 new AnalyzedProperty[] {TestAnalyzedProperty.TEST_ANALYZED_PROPERTY};

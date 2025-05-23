@@ -29,6 +29,7 @@ import de.rub.nds.scanner.core.probe.result.TestResult;
 import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.rating.ScoreReport;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ import java.util.stream.Collectors;
 
 public abstract class ScanReport {
 
-    private final java.beans.PropertyChangeSupport propertyChangeSupport =
-            new java.beans.PropertyChangeSupport(this);
+    @JsonIgnore
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     @JsonProperty("results")
     private Map<AnalyzedProperty, TestResult> resultMap;
@@ -64,7 +65,7 @@ public abstract class ScanReport {
     private Long scanStartTime;
     private Long scanEndTime;
 
-    public ScanReport() {
+    protected ScanReport() {
         resultMap = new HashMap<>();
         extractedValueContainerMap = new HashMap<>();
         guidelineReports = new ArrayList<>();
@@ -73,11 +74,9 @@ public abstract class ScanReport {
         unexecutedProbes = new HashSet<>();
     }
 
-    public abstract void serializeToJson(OutputStream OutputStream);
+    public abstract void serializeToJson(OutputStream outputStream);
 
-    public String getRemoteName() {
-        return "ScanReport.getRemoteName not implemented";
-    }
+    public abstract String getRemoteName();
 
     public synchronized Map<AnalyzedProperty, TestResult> getResultMap() {
         return Collections.unmodifiableMap(resultMap);

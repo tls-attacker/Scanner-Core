@@ -27,6 +27,11 @@ public class PropertyTrueRequirementTest {
                 new ScanReport() {
                     @Override
                     public void serializeToJson(OutputStream stream) {}
+
+                    @Override
+                    public String getRemoteName() {
+                        return "";
+                    }
                 };
         AnalyzedProperty[] property =
                 new AnalyzedProperty[] {TestAnalyzedProperty.TEST_ANALYZED_PROPERTY};
