@@ -11,6 +11,13 @@ package de.rub.nds.scanner.core.probe.result;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 
 public class IntegerResult extends ObjectResult<Integer> {
+
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private IntegerResult() {
+        super(null, null);
+    }
+
     public IntegerResult(AnalyzedProperty property, Integer value) {
         super(property, value);
     }

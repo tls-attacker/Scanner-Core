@@ -51,6 +51,7 @@ public abstract class ScanReport {
     private Map<AnalyzedProperty, TestResult> resultMap;
 
     @JsonProperty("extractedValues")
+    @JsonIgnore
     private final Map<TrackableValue, ExtractedValueContainer<?>> extractedValueContainerMap;
 
     private final List<GuidelineReport> guidelineReports;

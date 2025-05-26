@@ -14,6 +14,15 @@ public class GuidelineCheckResult {
     private GuidelineAdherence adherence;
     private String hint;
 
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private GuidelineCheckResult() {
+        // Default constructor for deserialization
+        this.checkName = null;
+        this.adherence = null;
+        this.hint = null;
+    }
+
     public GuidelineCheckResult(String checkName, GuidelineAdherence adherence) {
         this.checkName = checkName;
         this.adherence = adherence;

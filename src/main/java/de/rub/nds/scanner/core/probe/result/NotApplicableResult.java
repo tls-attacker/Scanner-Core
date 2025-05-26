@@ -19,6 +19,14 @@ public class NotApplicableResult implements TestResult {
     private final AnalyzedProperty property;
     private final String reason;
 
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private NotApplicableResult() {
+        // Default constructor for deserialization
+        this.property = null;
+        this.reason = null;
+    }
+
     public NotApplicableResult(AnalyzedProperty property, String reason) {
         this.property = property;
         this.reason = reason;

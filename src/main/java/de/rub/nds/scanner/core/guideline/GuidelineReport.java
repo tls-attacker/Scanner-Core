@@ -23,6 +23,14 @@ public class GuidelineReport {
     private String link;
     private final List<GuidelineCheckResult> results;
 
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private GuidelineReport() {
+        this.name = null;
+        this.link = null;
+        this.results = new ArrayList<>();
+    }
+
     public GuidelineReport(String name, String link, List<GuidelineCheckResult> results) {
         this.name = name;
         this.link = link;

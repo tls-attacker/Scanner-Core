@@ -26,6 +26,14 @@ public class CollectionResult<T> implements TestResult {
     private final AnalyzedProperty property;
     protected final Collection<T> collection;
 
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private CollectionResult() {
+        // Default constructor for deserialization
+        this.property = null;
+        this.collection = null;
+    }
+
     public CollectionResult(AnalyzedProperty property, Collection<T> collection) {
         this.property = property;
         this.collection = collection;

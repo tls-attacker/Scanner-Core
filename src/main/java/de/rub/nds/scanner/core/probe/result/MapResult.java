@@ -27,6 +27,14 @@ public class MapResult<S, T> implements TestResult {
     private final AnalyzedProperty property;
     private final Map<S, T> map;
 
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private MapResult() {
+        // Default constructor for deserialization
+        this.property = null;
+        this.map = null;
+    }
+
     public MapResult(AnalyzedProperty property, Map<S, T> map) {
         this.property = property;
         this.map = map;

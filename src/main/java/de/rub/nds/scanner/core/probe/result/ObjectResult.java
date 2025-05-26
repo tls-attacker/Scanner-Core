@@ -19,6 +19,14 @@ public class ObjectResult<T> implements TestResult {
     private final AnalyzedProperty property;
     protected final T value;
 
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private ObjectResult() {
+        // Default constructor for deserialization
+        this.property = null;
+        this.value = null;
+    }
+
     public ObjectResult(AnalyzedProperty property, T value) {
         this.property = property;
         this.value = value;
