@@ -8,8 +8,7 @@
  */
 package de.rub.nds.scanner.core.passive;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +17,10 @@ import java.util.stream.Collectors;
 
 public class ExtractedValueContainer<ValueT> {
 
-    @JsonIgnore // TODO fix this
+    @JsonTypeInfo(
+            use = JsonTypeInfo.Id.CLASS,
+            include = JsonTypeInfo.As.PROPERTY,
+            property = "@class")
     private List<Object> extractedValueList;
 
     private TrackableValue type;
@@ -54,7 +56,6 @@ public class ExtractedValueContainer<ValueT> {
     }
 
     @SuppressWarnings("unchecked")
-    @JsonValue
     public List<ValueT> getExtractedValueList() {
         return (List<ValueT>) extractedValueList;
     }
