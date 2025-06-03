@@ -10,11 +10,18 @@ package de.rub.nds.scanner.core.guideline;
 
 public class MissingRequirementGuidelineResult extends GuidelineCheckResult {
 
-    protected MissingRequirementGuidelineResult(String checkName, GuidelineAdherence adherence) {
+    // Default constructor for deserialization
+    @SuppressWarnings("unused")
+    private MissingRequirementGuidelineResult() {
+        // Default constructor for deserialization
+        super(null , null);
+    }
+
+    public MissingRequirementGuidelineResult(String checkName, GuidelineAdherence adherence) {
         super(checkName, adherence);
     }
 
-    protected MissingRequirementGuidelineResult(
+    public MissingRequirementGuidelineResult(
             String checkName, GuidelineAdherence adherence, String hint) {
         super(checkName, adherence, hint);
     }

@@ -10,6 +10,12 @@ package de.rub.nds.scanner.core.guideline;
 
 public class FailedCheckGuidelineResult extends GuidelineCheckResult {
 
+    // Default constructor for deserialization
+    @SuppressWarnings("unused")
+    private FailedCheckGuidelineResult() {
+        super(null, null);
+    }
+
     public FailedCheckGuidelineResult(String checkName, GuidelineAdherence adherence) {
         super(checkName, adherence);
     }
