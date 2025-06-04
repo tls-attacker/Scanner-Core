@@ -14,7 +14,7 @@ public class MissingRequirementGuidelineResult extends GuidelineCheckResult {
     @SuppressWarnings("unused")
     private MissingRequirementGuidelineResult() {
         // Default constructor for deserialization
-        super(null , null);
+        super(null, null);
     }
 
     public MissingRequirementGuidelineResult(String checkName, GuidelineAdherence adherence) {
