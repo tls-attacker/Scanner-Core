@@ -20,7 +20,6 @@ public abstract class GuidelineCheckResult {
     @SuppressWarnings("unused")
     // Default constructor for deserialization
     private GuidelineCheckResult() {
-        // Default constructor for deserialization
         this.checkName = null;
         this.adherence = null;
         this.hint = null;
