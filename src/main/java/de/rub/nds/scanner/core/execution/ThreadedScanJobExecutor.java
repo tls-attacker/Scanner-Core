@@ -205,7 +205,7 @@ public class ThreadedScanJobExecutor<
             for (ProbeT probe : notScheduledTasks) {
                 if (probe.canBeExecuted(report)) {
                     probe.adjustConfig(report);
-                    LOGGER.debug("Scheduling: " + probe.getProbeName());
+                    LOGGER.debug("Scheduling: {}", probe.getProbeName());
                     Future<ScannerProbe<ReportT, StateT>> future = executor.submit(probe);
                     futureResults.add(future);
                 } else {
@@ -214,7 +214,7 @@ public class ThreadedScanJobExecutor<
             }
             this.notScheduledTasks = newNotSchedulesTasksList;
         } else {
-            LOGGER.error(this.getClass().getName() + " received an update from a non-siteReport");
+            LOGGER.error("{} received an update from a non-siteReport", this.getClass().getName());
         }
     }
 }

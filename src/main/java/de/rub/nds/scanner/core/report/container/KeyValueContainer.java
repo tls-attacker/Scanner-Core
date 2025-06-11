@@ -47,9 +47,8 @@ public class KeyValueContainer extends ReportContainer {
             return text + " ".repeat(size - text.length());
         } else if (text.length() > size) {
             LOGGER.warn(
-                    "KeyValue 'Key' size is bigger than PADDED_KEY_LENGTH:"
-                            + PADDED_KEY_LENGTH
-                            + " - which breaks the layout. Consider choosing a shorter name or raising PADDED_KEY_LEGNTH");
+                    "KeyValue 'Key' size is bigger than PADDED_KEY_LENGTH:{} - which breaks the layout. Consider choosing a shorter name or raising PADDED_KEY_LEGNTH",
+                    PADDED_KEY_LENGTH);
             return text;
         } else {
             return text;
