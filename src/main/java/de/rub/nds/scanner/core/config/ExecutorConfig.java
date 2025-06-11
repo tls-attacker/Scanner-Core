@@ -15,6 +15,70 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Central configuration class for controlling scanner execution behavior and performance.
+ *
+ * <p>ExecutorConfig provides comprehensive configuration options for the Scanner Core framework,
+ * controlling everything from probe execution behavior to output formatting and threading. This
+ * class uses JCommander annotations to enable command-line configuration while also supporting
+ * programmatic configuration for embedded usage.
+ *
+ * <p><b>Key Configuration Areas:</b>
+ *
+ * <ul>
+ *   <li><b>Threading & Performance:</b> Control parallel probe execution and timeouts
+ *   <li><b>Scan Granularity:</b> Configure detail levels for scanning, analysis, and reporting
+ *   <li><b>Probe Selection:</b> Include/exclude specific probe types from execution
+ *   <li><b>Output Control:</b> Configure report formatting, files, and color output
+ *   <li><b>Execution Behavior:</b> Control error handling, retry logic, and scan flow
+ * </ul>
+ *
+ * <p><b>Threading Configuration:</b> The framework supports multi-level parallelism:
+ *
+ * <ul>
+ *   <li>{@code parallelProbes}: Number of different probe types that can execute simultaneously
+ *   <li>{@code overallThreads}: Total thread pool size for all scanning operations
+ *   <li>Probe-specific threading: Individual probes may use additional internal threading
+ * </ul>
+ *
+ * <p><b>Detail Level Control:</b> Three independent detail levels can be configured via {@link
+ * ScannerDetail}:
+ *
+ * <ul>
+ *   <li>{@code scanDetail}: Controls depth of probe execution and data collection
+ *   <li>{@code postAnalysisDetail}: Controls thoroughness of post-probe analysis
+ *   <li>{@code reportDetail}: Controls verbosity and completeness of output reports
+ * </ul>
+ *
+ * <p><b>Probe Filtering:</b> Probes can be selectively included or excluded:
+ *
+ * <ul>
+ *   <li>{@code includedProbes}: If specified, only these probe types will execute
+ *   <li>{@code excludedProbes}: These probe types will be skipped during execution
+ *   <li>Both lists use {@link ProbeType} identifiers for type-safe configuration
+ * </ul>
+ *
+ * <p><b>Example Usage:</b>
+ *
+ * <pre>{@code
+ * // Programmatic configuration
+ * ExecutorConfig config = new ExecutorConfig();
+ * config.setParallelProbes(4);
+ * config.setScanDetail(ScannerDetail.DETAILED);
+ * config.setProbeTimeout(300000); // 5 minutes
+ * config.setOutputFile("/path/to/report.json");
+ *
+ * // Command-line usage
+ * // java -jar scanner.jar -parallelProbes 4 -scanDetail DETAILED -outputFile report.json
+ * }</pre>
+ *
+ * <p><b>Thread Safety:</b> This configuration class is not thread-safe. It should be configured
+ * before being passed to scanner instances, and not modified during execution.
+ *
+ * @see ScannerDetail
+ * @see ProbeType
+ * @see de.rub.nds.scanner.core.execution.ScanJobExecutor
+ */
 public final class ExecutorConfig {
 
     @Parameter(names = "-noColor", description = "If you use Windows or don't want colored text.")
