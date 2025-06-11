@@ -26,7 +26,7 @@ import java.util.List;
  * <p><b>Key Configuration Areas:</b>
  *
  * <ul>
- *   <li><b>Threading & Performance:</b> Control parallel probe execution and timeouts
+ *   <li><b>Threading &amp; Performance:</b> Control parallel probe execution and timeouts
  *   <li><b>Scan Granularity:</b> Configure detail levels for scanning, analysis, and reporting
  *   <li><b>Probe Selection:</b> Include/exclude specific probe types from execution
  *   <li><b>Output Control:</b> Configure report formatting, files, and color output
@@ -134,6 +134,11 @@ public final class ExecutorConfig {
         return excludedProbes;
     }
 
+    /**
+     * Sets the list of probe types to exclude from execution.
+     *
+     * @param excludedProbes list of probe types to skip during scanning
+     */
     public void setExcludedProbes(List<ProbeType> excludedProbes) {
         this.excludedProbes = excludedProbes;
     }
@@ -142,6 +147,11 @@ public final class ExecutorConfig {
         return scanDetail;
     }
 
+    /**
+     * Sets the level of detail for probe execution and data collection.
+     *
+     * @param scanDetail the scan detail level to use
+     */
     public void setScanDetail(ScannerDetail scanDetail) {
         this.scanDetail = scanDetail;
     }
@@ -150,6 +160,11 @@ public final class ExecutorConfig {
         return postAnalysisDetail;
     }
 
+    /**
+     * Sets the level of detail for post-probe analysis operations.
+     *
+     * @param postAnalysisDetail the post-analysis detail level to use
+     */
     public void setPostAnalysisDetail(ScannerDetail postAnalysisDetail) {
         this.postAnalysisDetail = postAnalysisDetail;
     }
@@ -158,14 +173,29 @@ public final class ExecutorConfig {
         return reportDetail;
     }
 
+    /**
+     * Sets the level of detail for report generation and output.
+     *
+     * @param reportDetail the report detail level to use
+     */
     public void setReportDetail(ScannerDetail reportDetail) {
         this.reportDetail = reportDetail;
     }
 
+    /**
+     * Returns whether colored output is disabled.
+     *
+     * @return true if color output is disabled, false otherwise
+     */
     public boolean isNoColor() {
         return noColor;
     }
 
+    /**
+     * Sets whether to disable colored output in reports and console.
+     *
+     * @param noColor true to disable color output, false to enable
+     */
     public void setNoColor(boolean noColor) {
         this.noColor = noColor;
     }
@@ -174,10 +204,20 @@ public final class ExecutorConfig {
         return probes;
     }
 
+    /**
+     * Sets the specific list of probe types to execute.
+     *
+     * @param probes list of probe types to run, or null to run all non-excluded probes
+     */
     public void setProbes(List<ProbeType> probes) {
         this.probes = probes;
     }
 
+    /**
+     * Sets the specific probe types to execute using varargs.
+     *
+     * @param probes probe types to run
+     */
     public void setProbes(ProbeType... probes) {
         this.probes = Arrays.asList(probes);
     }
@@ -200,10 +240,20 @@ public final class ExecutorConfig {
         return probeTimeout;
     }
 
+    /**
+     * Sets the timeout for individual probe execution.
+     *
+     * @param probeTimeout timeout in milliseconds for each probe
+     */
     public void setProbeTimeout(int probeTimeout) {
         this.probeTimeout = probeTimeout;
     }
 
+    /**
+     * Returns whether a report output file has been configured.
+     *
+     * @return true if an output file is set, false otherwise
+     */
     public boolean isWriteReportToFile() {
         return outputFile != null;
     }
@@ -212,6 +262,11 @@ public final class ExecutorConfig {
         return outputFile;
     }
 
+    /**
+     * Sets the file path where the scan report should be written.
+     *
+     * @param outputFile path to the output file, or null to disable file output
+     */
     public void setOutputFile(String outputFile) {
         this.outputFile = outputFile;
     }
@@ -220,6 +275,11 @@ public final class ExecutorConfig {
         return parallelProbes;
     }
 
+    /**
+     * Sets the number of different probe types that can execute simultaneously.
+     *
+     * @param parallelProbes number of parallel probe types (minimum 1)
+     */
     public void setParallelProbes(int parallelProbes) {
         this.parallelProbes = parallelProbes;
     }
@@ -228,10 +288,20 @@ public final class ExecutorConfig {
         return overallThreads;
     }
 
+    /**
+     * Sets the total thread pool size for all scanning operations.
+     *
+     * @param overallThreads maximum number of threads to use (minimum 1)
+     */
     public void setOverallThreads(int overallThreads) {
         this.overallThreads = overallThreads;
     }
 
+    /**
+     * Returns whether the configuration enables multi-threaded execution.
+     *
+     * @return true if parallel probes or overall threads is greater than 1
+     */
     public boolean isMultithreaded() {
         return (parallelProbes > 1 || overallThreads > 1);
     }

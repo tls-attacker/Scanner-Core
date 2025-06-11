@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 /**
  * Represents a {@link Requirement} for required {@link AnalyzedProperty} properties which evaluated
  * to the expected values.
+ *
+ * @param <R> the type of {@link ScanReport} this requirement can be evaluated against
  */
 public class PropertyValueRequirement<R extends ScanReport>
         extends PrimitiveRequirement<R, AnalyzedProperty> {

@@ -27,7 +27,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  *   <li>Configuration details (e.g., "CERTIFICATE_CHAIN_LENGTH")
  * </ul>
  *
- * <p>Properties are associated with {@link TestResult} values in scan reports, creating a key-value
+ * <p>Properties are associated with {@link de.rub.nds.scanner.core.probe.result.TestResult} values in scan reports, creating a key-value
  * mapping that represents the complete scan findings. They are organized into categories via {@link
  * AnalyzedPropertyCategory} for better organization and reporting.
  *

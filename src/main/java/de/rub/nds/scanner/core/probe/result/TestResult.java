@@ -10,7 +10,57 @@ package de.rub.nds.scanner.core.probe.result;
 
 import java.io.Serializable;
 
-/** The interface for TestResults */
+/**
+ * Core interface representing the result of a test or probe execution within the Scanner Core
+ * framework.
+ *
+ * <p>TestResult serves as the foundation for all test outcomes, providing a consistent contract
+ * for result handling, comparison, and serialization. All probe results must implement this
+ * interface to ensure compatibility with the scanning and reporting infrastructure.
+ *
+ * <p>The interface provides several key capabilities:
+ *
+ * <ul>
+ *   <li><strong>Identification:</strong> Each result has a unique name for identification
+ *   <li><strong>Validation:</strong> Results can indicate whether they contain actual information
+ *   <li><strong>Comparison:</strong> Support for requirement-based evaluation through {@link
+ *       #equalsExpectedResult(TestResult)}
+ *   <li><strong>Serialization:</strong> All results are serializable for persistence and
+ *       transmission
+ * </ul>
+ *
+ * <p>Common implementations include:
+ *
+ * <ul>
+ *   <li>{@link TestResults} - Enumerated test outcomes (TRUE, FALSE, UNCERTAIN, etc.)
+ *   <li>{@link CollectionResult} - Results containing collections of values
+ *   <li>{@link SummarizableTestResult} - Complex results that can be summarized
+ * </ul>
+ *
+ * <p>Usage example:
+ *
+ * <pre>{@code
+ * public class CustomTestResult implements TestResult {
+ *     private final String name;
+ *     private final boolean value;
+ *
+ *     @Override
+ *     public String getName() {
+ *         return name;
+ *     }
+ *
+ *     @Override
+ *     public boolean isRealResult() {
+ *         return true; // This result contains actual data
+ *     }
+ * }
+ * }</pre>
+ *
+ * @see TestResults
+ * @see SummarizableTestResult
+ * @see CollectionResult
+ * @see de.rub.nds.scanner.core.probe.requirements.PropertyValueRequirement
+ */
 public interface TestResult extends Serializable {
 
     /**

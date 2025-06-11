@@ -17,7 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/** Represents a {@link Requirement} for evaluated {@link AnalyzedProperty} properties. */
+/**
+ * Represents a {@link Requirement} for evaluated {@link AnalyzedProperty} properties.
+ *
+ * @param <R> the type of {@link ScanReport} this requirement can be evaluated against
+ */
 public class PropertyRequirement<R extends ScanReport>
         extends PrimitiveRequirement<R, AnalyzedProperty> {
 

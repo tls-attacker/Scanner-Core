@@ -15,6 +15,7 @@ import java.util.List;
  * A simple requirement which always evaluates to true. This may be used in probes with no
  * requirements.
  *
+ * @param <ReportT> the type of scan report this requirement operates on
  * @see UnfulfillableRequirement
  */
 public final class FulfilledRequirement<ReportT extends ScanReport> extends Requirement<ReportT> {
