@@ -13,11 +13,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** A simple requirement combining two or more requirements with a logical AND. */
+/**
+ * A simple requirement combining two or more requirements with a logical AND.
+ *
+ * @param <ReportT> the type of scan report this requirement operates on
+ */
 public final class AndRequirement<ReportT extends ScanReport> extends LogicalRequirement<ReportT> {
 
+    /** The list of requirements to be combined with logical AND. */
     private final List<Requirement<ReportT>> requirements;
 
+    /**
+     * Creates a new AndRequirement with the specified list of requirements.
+     *
+     * @param requirements the list of requirements to combine with logical AND
+     */
     public AndRequirement(List<Requirement<ReportT>> requirements) {
         this.requirements = Collections.unmodifiableList(requirements);
     }

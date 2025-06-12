@@ -15,6 +15,7 @@ import java.util.List;
  * A simple requirement which always evaluates to false. This may be used in probes to prevent
  * execution.
  *
+ * @param <ReportT> the type of scan report this requirement operates on
  * @see FulfilledRequirement
  */
 public final class UnfulfillableRequirement<ReportT extends ScanReport>

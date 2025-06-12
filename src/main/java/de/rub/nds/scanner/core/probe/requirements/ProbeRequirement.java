@@ -13,7 +13,11 @@ import de.rub.nds.scanner.core.report.ScanReport;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** Represents a {@link Requirement} for required executed {@link ProbeType}s. */
+/**
+ * Represents a {@link Requirement} for required executed {@link ProbeType}s.
+ *
+ * @param <ReportT> the type of {@link ScanReport} this requirement can be evaluated against
+ */
 public class ProbeRequirement<ReportT extends ScanReport>
         extends PrimitiveRequirement<ReportT, ProbeType> {
 

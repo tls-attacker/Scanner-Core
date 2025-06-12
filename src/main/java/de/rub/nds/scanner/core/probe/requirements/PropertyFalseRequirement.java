@@ -16,6 +16,8 @@ import java.util.List;
 /**
  * Represents a {@link Requirement} for required {@link AnalyzedProperty} properties which were
  * negatively evaluated (TestResults.FALSE).
+ *
+ * @param <R> the type of {@link ScanReport} this requirement can be evaluated against
  */
 public class PropertyFalseRequirement<R extends ScanReport> extends PropertyValueRequirement<R> {
     public PropertyFalseRequirement(List<AnalyzedProperty> properties) {

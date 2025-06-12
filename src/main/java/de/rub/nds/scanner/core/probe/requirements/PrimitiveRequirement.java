@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
  * Abstract subclass of {@link Requirement} to represent a requirement which can be evaluated
  * directly to a boolean value. Requirements of this type contain one or more parameters of any
  * type.
+ *
+ * @param <ReportT> the type of {@link ScanReport} this requirement can be evaluated against
+ * @param <ParameterT> the type of parameter this requirement holds
  */
 public abstract class PrimitiveRequirement<ReportT extends ScanReport, ParameterT>
         extends Requirement<ReportT> {

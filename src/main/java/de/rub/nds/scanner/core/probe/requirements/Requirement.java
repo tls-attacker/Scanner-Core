@@ -16,6 +16,8 @@ import java.util.List;
  * Abstract class to represent requirements of probes which can be evaluated for fulfillness, which
  * return their respective "requirement", and which allow to retrieve the not yet fulfilled
  * requirements.
+ *
+ * @param <ReportT> the type of scan report this requirement operates on
  */
 public abstract class Requirement<ReportT extends ScanReport> {
 

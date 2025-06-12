@@ -16,6 +16,8 @@ import java.util.List;
 /**
  * Represents a {@link Requirement} for required {@link AnalyzedProperty} properties which were
  * positively evaluated (TestResults.TRUE).
+ *
+ * @param <R> the type of {@link ScanReport} this requirement can be evaluated against
  */
 public class PropertyTrueRequirement<R extends ScanReport> extends PropertyValueRequirement<R> {
     public PropertyTrueRequirement(List<AnalyzedProperty> properties) {

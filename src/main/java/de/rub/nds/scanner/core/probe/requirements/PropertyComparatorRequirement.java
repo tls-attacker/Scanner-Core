@@ -19,6 +19,8 @@ import java.util.List;
  * the report. It contains the operators greater, smaller and equal. The comparison is [parameter
  * value] [Operator] [value to compare]. Furthermore, the evaluation function returns false for
  * illegal inputs.
+ *
+ * @param <R> the type of {@link ScanReport} this requirement can be evaluated against
  */
 public class PropertyComparatorRequirement<R extends ScanReport>
         extends PrimitiveRequirement<R, AnalyzedProperty> {
