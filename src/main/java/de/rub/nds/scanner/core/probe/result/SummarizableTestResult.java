@@ -9,12 +9,12 @@
 package de.rub.nds.scanner.core.probe.result;
 
 /**
- * Interface for complex test results that can be summarized into a single {@link TestResults}
- * value while maintaining detailed information.
+ * Interface for complex test results that can be summarized into a single {@link TestResults} value
+ * while maintaining detailed information.
  *
  * <p>SummarizableTestResult bridges the gap between detailed, complex test outcomes and simple
- * boolean or enumerated results. This interface allows sophisticated test results to participate
- * in the requirement system while preserving their detailed nature for reporting and analysis.
+ * boolean or enumerated results. This interface allows sophisticated test results to participate in
+ * the requirement system while preserving their detailed nature for reporting and analysis.
  *
  * <p>The summarization can occur in two ways:
  *

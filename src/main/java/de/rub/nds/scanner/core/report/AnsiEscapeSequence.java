@@ -22,8 +22,8 @@ package de.rub.nds.scanner.core.report;
  *   <li><strong>Line Operations:</strong> Erasing the current line content
  * </ul>
  *
- * <p>These sequences are commonly used together to create updating displays, such as progress
- * bars or status indicators that overwrite previous output rather than scrolling.
+ * <p>These sequences are commonly used together to create updating displays, such as progress bars
+ * or status indicators that overwrite previous output rather than scrolling.
  *
  * <p>Usage example:
  *
@@ -41,9 +41,9 @@ package de.rub.nds.scanner.core.report;
  * }
  * }</pre>
  *
- * <p><strong>Note:</strong> These escape sequences work only in ANSI-compatible terminals. They
- * are widely supported in Unix-like systems and modern Windows terminals but may not work in
- * all environments.
+ * <p><strong>Note:</strong> These escape sequences work only in ANSI-compatible terminals. They are
+ * widely supported in Unix-like systems and modern Windows terminals but may not work in all
+ * environments.
  *
  * @see AnsiColor
  */
@@ -61,8 +61,8 @@ public class AnsiEscapeSequence {
      * ANSI escape sequence to erase the entire current line.
      *
      * <p>This sequence clears all content on the current line where the cursor is positioned,
-     * leaving the cursor at the beginning of the now-empty line. The line itself remains
-     * (cursor doesn't move to previous line).
+     * leaving the cursor at the beginning of the now-empty line. The line itself remains (cursor
+     * doesn't move to previous line).
      */
     public static final String ANSI_ERASE_LINE = "\033[2K";
 }

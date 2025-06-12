@@ -19,8 +19,8 @@ import java.util.HashMap;
  * are automatically colored according to predefined rules.
  *
  * <p>The class maintains a mapping between {@link TestResult} objects and {@link AnsiColor} values,
- * allowing automatic color application when rendering results. Colors are applied with proper
- * reset sequences to avoid affecting subsequent output.
+ * allowing automatic color application when rendering results. Colors are applied with proper reset
+ * sequences to avoid affecting subsequent output.
  *
  * <p>Key features:
  *
@@ -96,8 +96,8 @@ public class ColorEncoding {
      * automatically adding the necessary ANSI escape sequences. If no color is mapped to the
      * result, or if the mapped color is DEFAULT_COLOR, the text is returned unchanged.
      *
-     * <p>The method ensures proper color reset by automatically appending the RESET sequence
-     * after colored text, preventing color bleeding to subsequent output.
+     * <p>The method ensures proper color reset by automatically appending the RESET sequence after
+     * colored text, preventing color bleeding to subsequent output.
      *
      * @param result the test result that determines the color to apply
      * @param encodedText the text to be colored

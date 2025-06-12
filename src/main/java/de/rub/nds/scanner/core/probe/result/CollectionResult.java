@@ -96,8 +96,8 @@ public class CollectionResult<T> implements TestResult {
     /**
      * Returns the collection of values contained in this result.
      *
-     * <p>This method provides access to the actual collection data. The returned collection
-     * should be treated as read-only to maintain result immutability.
+     * <p>This method provides access to the actual collection data. The returned collection should
+     * be treated as read-only to maintain result immutability.
      *
      * @return the collection of values of type T, never null
      */

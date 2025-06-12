@@ -14,9 +14,9 @@ import java.io.Serializable;
  * Core interface representing the result of a test or probe execution within the Scanner Core
  * framework.
  *
- * <p>TestResult serves as the foundation for all test outcomes, providing a consistent contract
- * for result handling, comparison, and serialization. All probe results must implement this
- * interface to ensure compatibility with the scanning and reporting infrastructure.
+ * <p>TestResult serves as the foundation for all test outcomes, providing a consistent contract for
+ * result handling, comparison, and serialization. All probe results must implement this interface
+ * to ensure compatibility with the scanning and reporting infrastructure.
  *
  * <p>The interface provides several key capabilities:
  *
