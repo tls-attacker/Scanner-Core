@@ -27,6 +27,11 @@ public class ProbeRequirementTest {
                 new ScanReport() {
                     @Override
                     public void serializeToJson(OutputStream stream) {}
+
+                    @Override
+                    public String getRemoteName() {
+                        return "";
+                    }
                 };
         TestProbe probe = new TestProbe();
 

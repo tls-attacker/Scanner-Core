@@ -11,6 +11,13 @@ package de.rub.nds.scanner.core.probe.result;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 
 public class StringResult extends ObjectResult<String> {
+
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private StringResult() {
+        super(null, null);
+    }
+
     public StringResult(AnalyzedProperty property, String value) {
         super(property, value);
     }

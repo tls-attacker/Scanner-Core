@@ -17,6 +17,13 @@ public class ScoreReport {
 
     private final Map<AnalyzedProperty, PropertyResultRatingInfluencer> influencers;
 
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private ScoreReport() {
+        this.score = 0;
+        this.influencers = Map.of();
+    }
+
     public ScoreReport(
             int score, Map<AnalyzedProperty, PropertyResultRatingInfluencer> influencers) {
         this.score = score;

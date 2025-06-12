@@ -27,16 +27,31 @@ public class PropertyComparatorRequirementTest {
                 new ScanReport() {
                     @Override
                     public void serializeToJson(OutputStream stream) {}
+
+                    @Override
+                    public String getRemoteName() {
+                        return "";
+                    }
                 };
         ScanReport report1 =
                 new ScanReport() {
                     @Override
                     public void serializeToJson(OutputStream stream) {}
+
+                    @Override
+                    public String getRemoteName() {
+                        return "";
+                    }
                 };
         ScanReport report2 =
                 new ScanReport() {
                     @Override
                     public void serializeToJson(OutputStream stream) {}
+
+                    @Override
+                    public String getRemoteName() {
+                        return "";
+                    }
                 };
         ListResult<Integer> listResult1 = new ListResult<>(property, List.of(0));
         ListResult<Integer> listResult2 = new ListResult<>(property, List.of(0, 1));

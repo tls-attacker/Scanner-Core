@@ -23,6 +23,11 @@ public class OrRequirementTest {
                 new ScanReport() {
                     @Override
                     public void serializeToJson(OutputStream stream) {}
+
+                    @Override
+                    public String getRemoteName() {
+                        return "";
+                    }
                 };
         Requirement<ScanReport>
                 requirement1 =

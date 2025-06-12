@@ -8,9 +8,11 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.io.Serializable;
 
 /** The interface for TestResults */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public interface TestResult extends Serializable {
 
     /**

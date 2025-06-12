@@ -12,6 +12,12 @@ import java.io.Serializable;
 
 public class DetailedResult<T extends Serializable> implements SummarizableTestResult {
 
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private DetailedResult() {
+        this(null, null);
+    }
+
     public static <T extends Serializable> DetailedResult<T> TRUE() {
         return new DetailedResult<>(TestResults.TRUE);
     }
