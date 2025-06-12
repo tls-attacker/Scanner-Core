@@ -110,32 +110,17 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
     }
 
     private TestResult convertToResult(AnalyzedProperty property, Object result) {
-        // TODO: Use pattern matching with java 17(+)
-        if (result instanceof TestResult) {
-            return (TestResult) result;
-        }
-        if (result instanceof String) {
-            return new StringResult(property, (String) result);
-        }
-        if (result instanceof Long) {
-            return new LongResult(property, (Long) result);
-        }
-        if (result instanceof Integer) {
-            return new IntegerResult(property, (Integer) result);
-        }
-        if (result instanceof BigInteger) {
-            return new BigIntegerResult(property, (BigInteger) result);
-        }
-        if (result instanceof Set) {
-            return new SetResult<>(property, (Set<?>) result);
-        }
-        if (result instanceof Map) {
-            return new MapResult<>(property, (Map<?, ?>) result);
-        }
-        if (result instanceof List) {
-            return new ListResult<>(property, (List<?>) result);
-        }
-        return new ObjectResult<>(property, result);
+        return switch (result) {
+            case TestResult testResult -> testResult;
+            case String stringValue -> new StringResult(property, stringValue);
+            case Long longValue -> new LongResult(property, longValue);
+            case Integer intValue -> new IntegerResult(property, intValue);
+            case BigInteger bigIntValue -> new BigIntegerResult(property, bigIntValue);
+            case Set<?> setValue -> new SetResult<>(property, setValue);
+            case Map<?, ?> mapValue -> new MapResult<>(property, mapValue);
+            case List<?> listValue -> new ListResult<>(property, listValue);
+            default -> new ObjectResult<>(property, result);
+        };
     }
 
     public final <T> void put(AnalyzedProperty property, T result) {

@@ -8,6 +8,7 @@
  */
 package de.rub.nds.scanner.core.util;
 
+import de.rub.nds.protocol.util.SilentByteArrayOutputStream;
 import jakarta.xml.bind.*;
 import jakarta.xml.bind.util.JAXBSource;
 import java.io.*;
@@ -59,7 +60,7 @@ public abstract class JaxbSerializer<T> {
     public void write(OutputStream outputStream, T obj) throws JAXBException, IOException {
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        try (ByteArrayOutputStream tempStream = new ByteArrayOutputStream()) {
+        try (SilentByteArrayOutputStream tempStream = new SilentByteArrayOutputStream()) {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
