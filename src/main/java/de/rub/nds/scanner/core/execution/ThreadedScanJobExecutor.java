@@ -8,6 +8,12 @@
  */
 package de.rub.nds.scanner.core.execution;
 
+import de.rub.nds.scanner.core.afterprobe.AfterProbe;
+import de.rub.nds.scanner.core.config.ExecutorConfig;
+import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
+import de.rub.nds.scanner.core.passive.TrackableValue;
+import de.rub.nds.scanner.core.probe.ScannerProbe;
+import de.rub.nds.scanner.core.report.ScanReport;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -18,14 +24,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.logging.LogManager;
-
-import de.rub.nds.scanner.core.afterprobe.AfterProbe;
-import de.rub.nds.scanner.core.config.ExecutorConfig;
-import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
-import de.rub.nds.scanner.core.passive.TrackableValue;
-import de.rub.nds.scanner.core.probe.ScannerProbe;
-import de.rub.nds.scanner.core.report.ScanReport;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ThreadedScanJobExecutor<
                 ReportT extends ScanReport,
