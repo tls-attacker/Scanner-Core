@@ -16,6 +16,14 @@ public class PerformanceData {
     private long startTime;
     private long stopTime;
 
+    @SuppressWarnings("unused")
+    private PerformanceData() {
+        // Default constructor for deserialization
+        this.type = null;
+        this.startTime = 0;
+        this.stopTime = 0;
+    }
+
     public PerformanceData(ProbeType type, long startTime, long stopTime) {
         this.type = type;
         this.startTime = startTime;

@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.probe.result;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.util.Collection;
 
@@ -24,7 +25,19 @@ import java.util.Collection;
 public class CollectionResult<T> implements TestResult {
 
     private final AnalyzedProperty property;
+
+    @JsonTypeInfo(
+            use = JsonTypeInfo.Id.CLASS,
+            include = JsonTypeInfo.As.PROPERTY,
+            property = "@class")
     protected final Collection<T> collection;
+
+    @SuppressWarnings("unused")
+    private CollectionResult() {
+        // Default constructor for deserialization
+        this.property = null;
+        this.collection = null;
+    }
 
     public CollectionResult(AnalyzedProperty property, Collection<T> collection) {
         this.property = property;

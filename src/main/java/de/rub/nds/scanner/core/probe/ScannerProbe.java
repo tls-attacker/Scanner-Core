@@ -111,6 +111,7 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
 
     private TestResult convertToResult(AnalyzedProperty property, Object result) {
         return switch (result) {
+            case null -> new ObjectResult<>(property, null);
             case TestResult testResult -> testResult;
             case String stringValue -> new StringResult(property, stringValue);
             case Long longValue -> new LongResult(property, longValue);
@@ -162,10 +163,10 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
-    public final void setPropertiesToCouldNotTest() {
+    public final void setPropertiesToCannotBeTested() {
         for (AnalyzedProperty property : propertiesMap.keySet()) {
             if (propertiesMap.get(property) == TestResults.UNASSIGNED_ERROR) {
-                propertiesMap.put(property, TestResults.COULD_NOT_TEST);
+                propertiesMap.put(property, TestResults.CANNOT_BE_TESTED);
             }
         }
     }

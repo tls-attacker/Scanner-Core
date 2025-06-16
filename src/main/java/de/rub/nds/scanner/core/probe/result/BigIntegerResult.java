@@ -12,6 +12,13 @@ import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.math.BigInteger;
 
 public class BigIntegerResult extends ObjectResult<BigInteger> {
+
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private BigIntegerResult() {
+        super(null, null);
+    }
+
     public BigIntegerResult(AnalyzedProperty property, BigInteger value) {
         super(property, value);
     }

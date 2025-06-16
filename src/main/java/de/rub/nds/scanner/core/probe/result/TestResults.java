@@ -8,10 +8,7 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -19,9 +16,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  * property.
  */
 @XmlRootElement(name = "result")
-@JsonIncludeProperties({"type", "value"})
-@JsonPropertyOrder({"type", "value"})
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum TestResults implements SummarizableTestResult {
     TRUE,
     FALSE,
@@ -35,10 +29,16 @@ public enum TestResults implements SummarizableTestResult {
     UNASSIGNED_ERROR,
     TIMEOUT;
 
+    private TestResults() {}
+
     @Override
-    @JsonProperty("value")
     public String getName() {
         return name();
+    }
+
+    @JsonCreator
+    public static TestResults fromString(String value) {
+        return TestResults.valueOf(value);
     }
 
     /**

@@ -22,6 +22,11 @@ public class NotRequirementTest {
                 new ScanReport() {
                     @Override
                     public void serializeToJson(OutputStream stream) {}
+
+                    @Override
+                    public String getRemoteName() {
+                        return "";
+                    }
                 };
         Requirement<ScanReport>
                 requirement1 = new NotRequirement<>(new UnfulfillableRequirement<>()),

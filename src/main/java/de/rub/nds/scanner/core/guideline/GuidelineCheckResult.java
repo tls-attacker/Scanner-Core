@@ -8,19 +8,30 @@
  */
 package de.rub.nds.scanner.core.guideline;
 
-public class GuidelineCheckResult {
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+public abstract class GuidelineCheckResult {
 
     private String checkName;
     private GuidelineAdherence adherence;
     private String hint;
 
-    public GuidelineCheckResult(String checkName, GuidelineAdherence adherence) {
+    @SuppressWarnings("unused")
+    // Default constructor for deserialization
+    private GuidelineCheckResult() {
+        this.checkName = null;
+        this.adherence = null;
+        this.hint = null;
+    }
+
+    protected GuidelineCheckResult(String checkName, GuidelineAdherence adherence) {
         this.checkName = checkName;
         this.adherence = adherence;
         this.hint = null;
     }
 
-    public GuidelineCheckResult(String checkName, GuidelineAdherence adherence, String hint) {
+    protected GuidelineCheckResult(String checkName, GuidelineAdherence adherence, String hint) {
         this.checkName = checkName;
         this.adherence = adherence;
         this.hint = hint;
