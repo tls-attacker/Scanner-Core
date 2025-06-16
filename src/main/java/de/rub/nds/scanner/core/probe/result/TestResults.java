@@ -33,7 +33,6 @@ public enum TestResults implements SummarizableTestResult {
     private TestResults() {}
 
     @Override
-    @JsonValue
     public String getName() {
         return name();
     }
