@@ -9,7 +9,6 @@
 package de.rub.nds.scanner.core.probe.result;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
