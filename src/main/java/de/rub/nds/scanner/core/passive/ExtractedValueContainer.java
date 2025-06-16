@@ -75,13 +75,4 @@ public class ExtractedValueContainer<ValueT> {
     public TrackableValue getType() {
         return type;
     }
-
-    /**
-     * Sets the type of this container. This is used during deserialization.
-     *
-     * @param type The TrackableValue type
-     */
-    public void setType(TrackableValue type) {
-        this.type = type;
-    }
 }
