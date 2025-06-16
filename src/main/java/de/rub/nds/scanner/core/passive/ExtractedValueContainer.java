@@ -23,7 +23,7 @@ public class ExtractedValueContainer<ValueT> {
             property = "@class")
     private List<Object> extractedValueList;
 
-    private TrackableValue type;
+    private final TrackableValue type;
 
     @SuppressWarnings("unused")
     // Default constructor for Jackson deserialization
