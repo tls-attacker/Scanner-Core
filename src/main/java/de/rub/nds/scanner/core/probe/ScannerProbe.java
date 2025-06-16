@@ -111,6 +111,7 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
 
     private TestResult convertToResult(AnalyzedProperty property, Object result) {
         return switch (result) {
+            case null -> new ObjectResult<>(property, null);
             case TestResult testResult -> testResult;
             case String stringValue -> new StringResult(property, stringValue);
             case Long longValue -> new LongResult(property, longValue);
