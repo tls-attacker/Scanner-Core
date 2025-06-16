@@ -20,7 +20,6 @@ public class NotApplicableResult implements TestResult {
     private final String reason;
 
     @SuppressWarnings("unused")
-    // Default constructor for deserialization
     private NotApplicableResult() {
         // Default constructor for deserialization
         this.property = null;

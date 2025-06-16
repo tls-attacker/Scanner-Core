@@ -33,7 +33,6 @@ public class CollectionResult<T> implements TestResult {
     protected final Collection<T> collection;
 
     @SuppressWarnings("unused")
-    // Default constructor for deserialization
     private CollectionResult() {
         // Default constructor for deserialization
         this.property = null;

@@ -19,7 +19,6 @@ import java.util.Set;
 public class SetResult<T> extends CollectionResult<T> {
 
     @SuppressWarnings("unused")
-    // Default constructor for deserialization
     private SetResult() {
         // Default constructor for deserialization
         super(null, null);

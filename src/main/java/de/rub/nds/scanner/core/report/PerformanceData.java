@@ -17,7 +17,6 @@ public class PerformanceData {
     private long stopTime;
 
     @SuppressWarnings("unused")
-    // Default constructor for deserialization
     private PerformanceData() {
         // Default constructor for deserialization
         this.type = null;

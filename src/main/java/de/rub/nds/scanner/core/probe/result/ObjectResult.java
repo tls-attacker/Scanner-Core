@@ -20,7 +20,6 @@ public class ObjectResult<T> implements TestResult {
     protected final T value;
 
     @SuppressWarnings("unused")
-    // Default constructor for deserialization
     private ObjectResult() {
         // Default constructor for deserialization
         this.property = null;
