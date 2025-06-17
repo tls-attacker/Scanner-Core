@@ -43,6 +43,9 @@ public class KeyValueContainer extends ReportContainer {
     }
 
     private String pad(String text, int size) {
+        if (text == null) {
+            text = "";
+        }
         if (text.length() < size) {
             return text + " ".repeat(size - text.length());
         } else if (text.length() > size) {
