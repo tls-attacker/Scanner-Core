@@ -43,7 +43,7 @@ public enum AnsiColor {
 
     static {
         MAP = new HashMap<>();
-        for (AnsiColor c : AnsiColor.values()) {
+        for (AnsiColor c : values()) {
             MAP.put(c.code, c);
         }
     }
