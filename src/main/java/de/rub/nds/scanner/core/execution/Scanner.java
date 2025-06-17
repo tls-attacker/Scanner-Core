@@ -19,6 +19,7 @@ import de.rub.nds.scanner.core.report.rating.ScoreReport;
 import de.rub.nds.scanner.core.report.rating.SiteReportRater;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -194,10 +195,12 @@ public abstract class Scanner<
         // Serialize report to file
         if (executorConfig.isWriteReportToFile()) {
             LOGGER.debug("Writing report to file");
-            try {
-                report.serializeToJson(new FileOutputStream(executorConfig.getOutputFile()));
+            try (FileOutputStream fos = new FileOutputStream(executorConfig.getOutputFile())) {
+                report.serializeToJson(fos);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException("Could not serialize report to file", e);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not write report to file", e);
             }
         }
 
