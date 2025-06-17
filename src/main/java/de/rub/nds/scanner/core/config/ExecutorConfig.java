@@ -17,6 +17,8 @@ import java.util.List;
 
 public final class ExecutorConfig {
 
+    private static final int DEFAULT_PROBE_TIMEOUT_MS = 1800000; // 30 minutes
+
     @Parameter(names = "-noColor", description = "If you use Windows or don't want colored text.")
     private boolean noColor = false;
 
@@ -39,7 +41,7 @@ public final class ExecutorConfig {
     @Parameter(
             names = "-probeTimeout",
             description = "The timeout for each probe in ms (default 1800000)")
-    private int probeTimeout = 1800000;
+    private int probeTimeout = DEFAULT_PROBE_TIMEOUT_MS;
 
     @Parameter(
             names = "-parallelProbes",

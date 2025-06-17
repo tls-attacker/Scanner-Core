@@ -10,7 +10,6 @@ package de.rub.nds.scanner.core.report.rating;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.TestResult;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -47,8 +46,7 @@ public class SiteReportRater {
         return new ScoreReport(score, ratingInfluencers);
     }
 
-    private int computeScore(
-            HashMap<AnalyzedProperty, PropertyResultRatingInfluencer> influencers) {
+    private int computeScore(Map<AnalyzedProperty, PropertyResultRatingInfluencer> influencers) {
         int score = 0;
         for (PropertyResultRatingInfluencer influencer : influencers.values()) {
             if (influencer.getInfluence() != null) {
