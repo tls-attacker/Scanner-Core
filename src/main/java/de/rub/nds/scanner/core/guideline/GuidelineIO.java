@@ -35,9 +35,11 @@ public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
         if (context == null) {
             // TODO we could do this scanning during building and then just collect the
             // results
-            // TODO it would also be good if we didn't have to hardcode the package name
-            // here, but I could not get it work without it. Hours wasted: 3
-            String packageName = "de.rub";
+            String packageName = analyzedPropertyClass.getPackage().getName();
+            // Fallback to de.rub if package extraction fails
+            if (packageName == null || packageName.isEmpty()) {
+                packageName = "de.rub";
+            }
             Reflections reflections =
                     new Reflections(
                             new ConfigurationBuilder()

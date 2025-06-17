@@ -66,6 +66,7 @@ public class Recommendation {
 
     public Recommendation(AnalyzedProperty analyzedProperty, String shortName) {
         this();
+        this.analyzedProperty = analyzedProperty;
         this.shortName = shortName;
     }
 
