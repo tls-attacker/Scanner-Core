@@ -26,6 +26,11 @@ public abstract class PrimitiveRequirement<ReportT extends ScanReport, Parameter
         this.parameters = Collections.unmodifiableList(parameters);
     }
 
+    /**
+     * Gets the parameters associated with this requirement.
+     *
+     * @return an unmodifiable list of parameters
+     */
     public List<ParameterT> getParameters() {
         return parameters;
     }

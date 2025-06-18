@@ -17,10 +17,20 @@ import java.util.stream.Collectors;
 public class ProbeRequirement<ReportT extends ScanReport>
         extends PrimitiveRequirement<ReportT, ProbeType> {
 
+    /**
+     * Constructs a new ProbeRequirement with the specified list of probe types.
+     *
+     * @param probes the probe types that must be executed
+     */
     public ProbeRequirement(List<ProbeType> probes) {
         super(probes);
     }
 
+    /**
+     * Constructs a new ProbeRequirement with the specified probe types.
+     *
+     * @param probes the probe types that must be executed
+     */
     public ProbeRequirement(ProbeType... probes) {
         super(List.of(probes));
     }

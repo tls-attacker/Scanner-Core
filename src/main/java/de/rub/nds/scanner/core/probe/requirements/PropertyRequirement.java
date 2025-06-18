@@ -21,10 +21,20 @@ import java.util.stream.Collectors;
 public class PropertyRequirement<R extends ScanReport>
         extends PrimitiveRequirement<R, AnalyzedProperty> {
 
+    /**
+     * Constructs a new PropertyRequirement with the specified list of properties.
+     *
+     * @param properties the properties that must be evaluated
+     */
     public PropertyRequirement(List<AnalyzedProperty> properties) {
         super(properties);
     }
 
+    /**
+     * Constructs a new PropertyRequirement with the specified properties.
+     *
+     * @param properties the properties that must be evaluated
+     */
     public PropertyRequirement(AnalyzedProperty... properties) {
         super(Arrays.asList(properties));
     }

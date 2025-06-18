@@ -17,6 +17,11 @@ public final class OrRequirement<ReportT extends ScanReport> extends LogicalRequ
 
     private final List<Requirement<ReportT>> requirements;
 
+    /**
+     * Constructs a new OrRequirement with the specified list of requirements.
+     *
+     * @param requirements the requirements to combine with OR logic
+     */
     public OrRequirement(List<Requirement<ReportT>> requirements) {
         this.requirements = Collections.unmodifiableList(requirements);
     }

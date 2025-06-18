@@ -71,10 +71,20 @@ public class PropertyComparatorRequirement<R extends ScanReport>
                         operator));
     }
 
+    /**
+     * Gets the comparison operator used in this requirement.
+     *
+     * @return the operator
+     */
     public Operator getOperator() {
         return operator;
     }
 
+    /**
+     * Gets the value to compare against.
+     *
+     * @return the comparison value
+     */
     public Integer getComparisonValue() {
         return comparisonValue;
     }

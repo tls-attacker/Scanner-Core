@@ -15,6 +15,11 @@ public final class NotRequirement<ReportT extends ScanReport> extends LogicalReq
 
     private final Requirement<ReportT> requirement;
 
+    /**
+     * Constructs a new NotRequirement that negates the specified requirement.
+     *
+     * @param requirement the requirement to negate
+     */
     public NotRequirement(Requirement<ReportT> requirement) {
         this.requirement = requirement;
     }

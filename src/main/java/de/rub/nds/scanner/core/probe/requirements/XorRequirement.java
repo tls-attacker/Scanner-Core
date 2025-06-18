@@ -15,6 +15,12 @@ public final class XorRequirement<ReportT extends ScanReport> extends LogicalReq
 
     private final Requirement<ReportT> a, b;
 
+    /**
+     * Constructs a new XorRequirement with two requirements combined with XOR logic.
+     *
+     * @param a the first requirement
+     * @param b the second requirement
+     */
     public XorRequirement(Requirement<ReportT> a, Requirement<ReportT> b) {
         this.a = a;
         this.b = b;

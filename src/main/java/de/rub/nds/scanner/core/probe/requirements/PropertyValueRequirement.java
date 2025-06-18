@@ -24,12 +24,24 @@ public class PropertyValueRequirement<R extends ScanReport>
 
     private final TestResult requiredTestResult;
 
+    /**
+     * Constructs a new PropertyValueRequirement with the specified required result and properties.
+     *
+     * @param requiredTestResult the expected test result value
+     * @param properties the properties to check
+     */
     public PropertyValueRequirement(
             TestResult requiredTestResult, List<AnalyzedProperty> properties) {
         super(properties);
         this.requiredTestResult = requiredTestResult;
     }
 
+    /**
+     * Constructs a new PropertyValueRequirement with the specified required result and properties.
+     *
+     * @param requiredTestResult the expected test result value
+     * @param properties the properties to check
+     */
     public PropertyValueRequirement(TestResult requiredTestResult, AnalyzedProperty... properties) {
         super(List.of(properties));
         this.requiredTestResult = requiredTestResult;
@@ -60,6 +72,11 @@ public class PropertyValueRequirement<R extends ScanReport>
         return true;
     }
 
+    /**
+     * Gets the required test result value for this requirement.
+     *
+     * @return the required test result
+     */
     public TestResult getRequiredTestResult() {
         return requiredTestResult;
     }

@@ -18,6 +18,11 @@ public final class AndRequirement<ReportT extends ScanReport> extends LogicalReq
 
     private final List<Requirement<ReportT>> requirements;
 
+    /**
+     * Constructs a new AndRequirement with the specified list of requirements.
+     *
+     * @param requirements the requirements to combine with AND logic
+     */
     public AndRequirement(List<Requirement<ReportT>> requirements) {
         this.requirements = Collections.unmodifiableList(requirements);
     }
