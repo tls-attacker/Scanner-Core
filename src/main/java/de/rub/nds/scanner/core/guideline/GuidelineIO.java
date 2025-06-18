@@ -31,8 +31,7 @@ public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
         this.context = getJAXBContext();
     }
 
-    private JAXBContext getJAXBContext()
-            throws JAXBException {
+    private JAXBContext getJAXBContext() throws JAXBException {
         if (context == null) {
             // TODO we could do this scanning during building and then just collect the
             // results
