@@ -104,6 +104,14 @@ public abstract class JaxbSerializer<T> {
         }
     }
 
+    /**
+     * Reads an object from an input stream using JAXB unmarshalling.
+     *
+     * @param inputStream the input stream to read from
+     * @return the deserialized object
+     * @throws JAXBException if an error occurs during JAXB unmarshalling
+     * @throws XMLStreamException if an error occurs during XML stream processing
+     */
     public T read(InputStream inputStream) throws JAXBException, XMLStreamException {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         unmarshaller.setEventHandler(
