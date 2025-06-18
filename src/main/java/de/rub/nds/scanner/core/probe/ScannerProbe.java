@@ -164,9 +164,9 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
     }
 
     public final void setPropertiesToCannotBeTested() {
-        for (AnalyzedProperty property : propertiesMap.keySet()) {
-            if (propertiesMap.get(property) == TestResults.UNASSIGNED_ERROR) {
-                propertiesMap.put(property, TestResults.CANNOT_BE_TESTED);
+        for (Map.Entry<AnalyzedProperty, TestResult> entry : propertiesMap.entrySet()) {
+            if (entry.getValue() == TestResults.UNASSIGNED_ERROR) {
+                entry.setValue(TestResults.CANNOT_BE_TESTED);
             }
         }
     }
@@ -178,8 +178,9 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
         boolean wasExecuted = getStartTime() != 0;
         mergeData(report);
-        for (AnalyzedProperty property : propertiesMap.keySet()) {
-            TestResult result = propertiesMap.get(property);
+        for (Map.Entry<AnalyzedProperty, TestResult> entry : propertiesMap.entrySet()) {
+            AnalyzedProperty property = entry.getKey();
+            TestResult result = entry.getValue();
             if (result == TestResults.UNASSIGNED_ERROR || result == null) {
                 if (wasExecuted) {
                     LOGGER.error(
