@@ -24,6 +24,10 @@ import org.junit.jupiter.api.Test;
 
 public class PropertyValueRequirementTest {
 
+    private static enum TestPropertyCategory implements AnalyzedPropertyCategory {
+        TEST_CATEGORY
+    }
+
     private static enum TestProperty implements AnalyzedProperty {
         PROPERTY_1,
         PROPERTY_2,
@@ -31,7 +35,7 @@ public class PropertyValueRequirementTest {
 
         @Override
         public AnalyzedPropertyCategory getCategory() {
-            return AnalyzedPropertyCategory.SECURITY;
+            return TestPropertyCategory.TEST_CATEGORY;
         }
 
         @Override
@@ -84,30 +88,31 @@ public class PropertyValueRequirementTest {
 
     @Test
     public void testConstructorWithList() {
-        List<AnalyzedProperty> properties = Arrays.asList(
-                TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
-        PropertyValueRequirement<ScanReport> requirement = 
+        List<AnalyzedProperty> properties =
+                Arrays.asList(TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
+        PropertyValueRequirement<ScanReport> requirement =
                 new PropertyValueRequirement<>(TestResults.TRUE, properties);
-        
+
         assertEquals(TestResults.TRUE, requirement.getRequiredTestResult());
         assertEquals(2, requirement.getParameters().size());
     }
 
     @Test
     public void testConstructorWithVarargs() {
-        PropertyValueRequirement<ScanReport> requirement = new PropertyValueRequirement<>(
-                TestResults.FALSE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
-        
+        PropertyValueRequirement<ScanReport> requirement =
+                new PropertyValueRequirement<>(
+                        TestResults.FALSE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
+
         assertEquals(TestResults.FALSE, requirement.getRequiredTestResult());
         assertEquals(2, requirement.getParameters().size());
     }
 
     @Test
     public void testEvaluateWithEmptyProperties() {
-        PropertyValueRequirement<ScanReport> requirement = 
+        PropertyValueRequirement<ScanReport> requirement =
                 new PropertyValueRequirement<>(TestResults.TRUE);
         TestScanReport report = new TestScanReport(new HashMap<>());
-        
+
         assertTrue(requirement.evaluate(report));
     }
 
@@ -116,11 +121,12 @@ public class PropertyValueRequirementTest {
         Map<AnalyzedProperty, TestResult> resultMap = new HashMap<>();
         resultMap.put(TestProperty.PROPERTY_1, TestResults.TRUE);
         resultMap.put(TestProperty.PROPERTY_2, TestResults.TRUE);
-        
-        PropertyValueRequirement<ScanReport> requirement = new PropertyValueRequirement<>(
-                TestResults.TRUE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
+
+        PropertyValueRequirement<ScanReport> requirement =
+                new PropertyValueRequirement<>(
+                        TestResults.TRUE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
         TestScanReport report = new TestScanReport(resultMap);
-        
+
         assertTrue(requirement.evaluate(report));
     }
 
@@ -129,11 +135,12 @@ public class PropertyValueRequirementTest {
         Map<AnalyzedProperty, TestResult> resultMap = new HashMap<>();
         resultMap.put(TestProperty.PROPERTY_1, TestResults.TRUE);
         resultMap.put(TestProperty.PROPERTY_2, TestResults.FALSE); // Doesn't match required TRUE
-        
-        PropertyValueRequirement<ScanReport> requirement = new PropertyValueRequirement<>(
-                TestResults.TRUE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
+
+        PropertyValueRequirement<ScanReport> requirement =
+                new PropertyValueRequirement<>(
+                        TestResults.TRUE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
         TestScanReport report = new TestScanReport(resultMap);
-        
+
         assertFalse(requirement.evaluate(report));
     }
 
@@ -142,11 +149,12 @@ public class PropertyValueRequirementTest {
         Map<AnalyzedProperty, TestResult> resultMap = new HashMap<>();
         resultMap.put(TestProperty.PROPERTY_1, TestResults.TRUE);
         // PROPERTY_2 is missing
-        
-        PropertyValueRequirement<ScanReport> requirement = new PropertyValueRequirement<>(
-                TestResults.TRUE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
+
+        PropertyValueRequirement<ScanReport> requirement =
+                new PropertyValueRequirement<>(
+                        TestResults.TRUE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
         TestScanReport report = new TestScanReport(resultMap);
-        
+
         assertFalse(requirement.evaluate(report));
     }
 
@@ -155,11 +163,12 @@ public class PropertyValueRequirementTest {
         Map<AnalyzedProperty, TestResult> resultMap = new HashMap<>();
         resultMap.put(TestProperty.PROPERTY_1, TestResults.TRUE);
         resultMap.put(TestProperty.PROPERTY_2, null);
-        
-        PropertyValueRequirement<ScanReport> requirement = new PropertyValueRequirement<>(
-                TestResults.TRUE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
+
+        PropertyValueRequirement<ScanReport> requirement =
+                new PropertyValueRequirement<>(
+                        TestResults.TRUE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
         TestScanReport report = new TestScanReport(resultMap);
-        
+
         assertFalse(requirement.evaluate(report));
     }
 
@@ -167,15 +176,14 @@ public class PropertyValueRequirementTest {
     public void testEvaluateWithTypeMismatchThrowsException() {
         Map<AnalyzedProperty, TestResult> resultMap = new HashMap<>();
         resultMap.put(TestProperty.PROPERTY_1, new CustomTestResult("custom"));
-        
-        PropertyValueRequirement<ScanReport> requirement = new PropertyValueRequirement<>(
-                TestResults.TRUE, TestProperty.PROPERTY_1);
+
+        PropertyValueRequirement<ScanReport> requirement =
+                new PropertyValueRequirement<>(TestResults.TRUE, TestProperty.PROPERTY_1);
         TestScanReport report = new TestScanReport(resultMap);
-        
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class, 
-                () -> requirement.evaluate(report));
-        
+
+        IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class, () -> requirement.evaluate(report));
+
         assertTrue(exception.getMessage().contains("Cannot evaluate Requirement for Property"));
         assertTrue(exception.getMessage().contains("PROPERTY_1"));
         assertNotNull(exception.getCause());
@@ -183,29 +191,30 @@ public class PropertyValueRequirementTest {
 
     @Test
     public void testToString() {
-        PropertyValueRequirement<ScanReport> requirement = new PropertyValueRequirement<>(
-                TestResults.TRUE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
-        
+        PropertyValueRequirement<ScanReport> requirement =
+                new PropertyValueRequirement<>(
+                        TestResults.TRUE, TestProperty.PROPERTY_1, TestProperty.PROPERTY_2);
+
         String expected = "PropertyValueRequirement[TRUE: PROPERTY_1 PROPERTY_2]";
         assertEquals(expected, requirement.toString());
     }
 
     @Test
     public void testToStringWithEmptyProperties() {
-        PropertyValueRequirement<ScanReport> requirement = 
+        PropertyValueRequirement<ScanReport> requirement =
                 new PropertyValueRequirement<>(TestResults.FALSE);
-        
+
         String expected = "PropertyValueRequirement[FALSE: ]";
         assertEquals(expected, requirement.toString());
     }
 
     @Test
     public void testGetRequiredTestResult() {
-        PropertyValueRequirement<ScanReport> requirement1 = 
+        PropertyValueRequirement<ScanReport> requirement1 =
                 new PropertyValueRequirement<>(TestResults.TRUE);
         assertEquals(TestResults.TRUE, requirement1.getRequiredTestResult());
-        
-        PropertyValueRequirement<ScanReport> requirement2 = 
+
+        PropertyValueRequirement<ScanReport> requirement2 =
                 new PropertyValueRequirement<>(TestResults.PARTIALLY);
         assertEquals(TestResults.PARTIALLY, requirement2.getRequiredTestResult());
     }
@@ -213,17 +222,16 @@ public class PropertyValueRequirementTest {
     @Test
     public void testWithAllTestResultTypes() {
         Map<AnalyzedProperty, TestResult> resultMap = new HashMap<>();
-        
+
         // Test with different TestResults enum values
         for (TestResults testResult : TestResults.values()) {
             resultMap.put(TestProperty.PROPERTY_1, testResult);
-            
-            PropertyValueRequirement<ScanReport> requirement = 
+
+            PropertyValueRequirement<ScanReport> requirement =
                     new PropertyValueRequirement<>(testResult, TestProperty.PROPERTY_1);
             TestScanReport report = new TestScanReport(resultMap);
-            
-            assertTrue(requirement.evaluate(report), 
-                    "Failed for TestResult: " + testResult);
+
+            assertTrue(requirement.evaluate(report), "Failed for TestResult: " + testResult);
         }
     }
 }
