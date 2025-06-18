@@ -36,8 +36,8 @@ public abstract class JaxbSerializer<T> {
 
     protected JaxbSerializer() {}
 
-    protected JaxbSerializer(Set<Class<?>> classesToBeBound) throws JAXBException {
-        this.context = getJAXBContext(classesToBeBound);
+    protected JaxbSerializer(JAXBContext context) {
+        this.context = context;
     }
 
     protected synchronized JAXBContext getJAXBContext(Set<Class<?>> classesToBeBound)

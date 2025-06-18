@@ -28,34 +28,30 @@ public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
     public GuidelineIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {
         // analyzedPropertyClass parameter kept for API compatibility
-        this.context = getJAXBContext();
+        super(createJAXBContext());
     }
 
-    private JAXBContext getJAXBContext() throws JAXBException {
-        if (context == null) {
-            // TODO we could do this scanning during building and then just collect the
-            // results
-            // TODO it would also be good if we didn't have to hardcode the package name
-            // here, but I could not get it work without it. Hours wasted: 3
-            String packageName = "de.rub";
-            Reflections reflections =
-                    new Reflections(
-                            new ConfigurationBuilder()
-                                    .setUrls(ClasspathHelper.forPackage(packageName))
-                                    .filterInputsBy(
-                                            new FilterBuilder().includePackage(packageName)));
-            Set<Class<? extends GuidelineCheck>> guidelineCheckClasses =
-                    reflections.getSubTypesOf(GuidelineCheck.class);
-            Set<Class<?>> classes = new HashSet<>();
-            classes.add(Guideline.class);
-            classes.addAll(guidelineCheckClasses);
-            LOGGER.debug("Registering GuidelineClasses in JAXBContext:");
-            for (Class tempClass : classes) {
-                LOGGER.debug(tempClass.getName());
-            }
-            context = JAXBContext.newInstance(classes.toArray(new Class[classes.size()]));
+    private static JAXBContext createJAXBContext() throws JAXBException {
+        // TODO we could do this scanning during building and then just collect the
+        // results
+        // TODO it would also be good if we didn't have to hardcode the package name
+        // here, but I could not get it work without it. Hours wasted: 3
+        String packageName = "de.rub";
+        Reflections reflections =
+                new Reflections(
+                        new ConfigurationBuilder()
+                                .setUrls(ClasspathHelper.forPackage(packageName))
+                                .filterInputsBy(new FilterBuilder().includePackage(packageName)));
+        Set<Class<? extends GuidelineCheck>> guidelineCheckClasses =
+                reflections.getSubTypesOf(GuidelineCheck.class);
+        Set<Class<?>> classes = new HashSet<>();
+        classes.add(Guideline.class);
+        classes.addAll(guidelineCheckClasses);
+        Logger logger = LogManager.getLogger();
+        logger.debug("Registering GuidelineClasses in JAXBContext:");
+        for (Class tempClass : classes) {
+            logger.debug(tempClass.getName());
         }
-
-        return context;
+        return JAXBContext.newInstance(classes.toArray(new Class[classes.size()]));
     }
 }

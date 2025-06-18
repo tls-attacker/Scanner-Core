@@ -10,6 +10,7 @@ package de.rub.nds.scanner.core.report.rating;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.util.JaxbSerializer;
+import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import java.util.Set;
 
@@ -17,11 +18,17 @@ public class RatingInfluencersIO extends JaxbSerializer<RatingInfluencers> {
 
     public RatingInfluencersIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {
-        super(
+        super(createContext(analyzedPropertyClass));
+    }
+
+    private static JAXBContext createContext(
+            Class<? extends AnalyzedProperty> analyzedPropertyClass) throws JAXBException {
+        Set<Class<?>> classes =
                 Set.of(
                         RatingInfluencers.class,
                         RatingInfluencer.class,
                         PropertyResultRatingInfluencer.class,
-                        analyzedPropertyClass));
+                        analyzedPropertyClass);
+        return JAXBContext.newInstance(classes.toArray(new Class[0]));
     }
 }
