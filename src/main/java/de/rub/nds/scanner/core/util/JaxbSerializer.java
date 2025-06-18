@@ -51,6 +51,14 @@ public abstract class JaxbSerializer<T> {
         return context;
     }
 
+    /**
+     * Writes the specified object to a file using JAXB marshalling.
+     *
+     * @param file the file to write to
+     * @param obj the object to serialize
+     * @throws IOException if an I/O error occurs during writing
+     * @throws JAXBException if an error occurs during JAXB marshalling
+     */
     public void write(File file, T obj) throws IOException, JAXBException {
         try (FileOutputStream fos = new FileOutputStream(file)) {
             write(fos, obj);
