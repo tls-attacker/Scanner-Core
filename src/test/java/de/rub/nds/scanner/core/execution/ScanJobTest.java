@@ -33,37 +33,23 @@ public class ScanJobTest {
         private final String name;
 
         TestProbe(String name) {
+            super(new TestProbeType(name));
             this.name = name;
         }
 
         @Override
-        public void executeTest(TestState state) {}
+        public void executeTest() {}
 
         @Override
-        public String getProbeName() {
-            return name;
-        }
-
-        @Override
-        public ProbeType getType() {
-            return null;
-        }
-
-        @Override
-        public boolean canBeExecuted(TestReport report) {
-            return true;
+        public de.rub.nds.scanner.core.probe.requirements.Requirement<TestReport> getRequirements() {
+            return report -> true;
         }
 
         @Override
         public void adjustConfig(TestReport report) {}
 
         @Override
-        public TestProbe prepare(TestReport report) {
-            return this;
-        }
-
-        @Override
-        public void merge(TestReport report) {}
+        protected void mergeData(TestReport report) {}
     }
 
     static class TestAfterProbe extends AfterProbe<TestReport> {
@@ -81,16 +67,27 @@ public class ScanJobTest {
         }
     }
 
-    interface ProbeType {}
+    static class TestProbeType implements de.rub.nds.scanner.core.probe.ProbeType {
+        private final String name;
+
+        TestProbeType(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
 
     @Test
     public void testConstructorWithEmptyLists() {
         List<TestProbe> probeList = new ArrayList<>();
         List<TestAfterProbe> afterList = new ArrayList<>();
-        
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
+
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
                 new ScanJob<>(probeList, afterList);
-        
+
         assertNotNull(scanJob.getProbeList());
         assertNotNull(scanJob.getAfterList());
         assertTrue(scanJob.getProbeList().isEmpty());
@@ -102,13 +99,13 @@ public class ScanJobTest {
         List<TestProbe> probeList = new ArrayList<>();
         probeList.add(new TestProbe("probe1"));
         probeList.add(new TestProbe("probe2"));
-        
+
         List<TestAfterProbe> afterList = new ArrayList<>();
         afterList.add(new TestAfterProbe("after1"));
-        
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
+
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
                 new ScanJob<>(probeList, afterList);
-        
+
         assertEquals(2, scanJob.getProbeList().size());
         assertEquals(1, scanJob.getAfterList().size());
     }
@@ -118,13 +115,13 @@ public class ScanJobTest {
         List<TestProbe> probeList = new ArrayList<>();
         TestProbe probe = new TestProbe("probe1");
         probeList.add(probe);
-        
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
+
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
                 new ScanJob<>(probeList, new ArrayList<>());
-        
+
         List<TestProbe> returnedList = scanJob.getProbeList();
         returnedList.add(new TestProbe("probe2"));
-        
+
         // Original list should not be modified
         assertEquals(1, scanJob.getProbeList().size());
         assertEquals(2, returnedList.size());
@@ -135,13 +132,13 @@ public class ScanJobTest {
         List<TestAfterProbe> afterList = new ArrayList<>();
         TestAfterProbe afterProbe = new TestAfterProbe("after1");
         afterList.add(afterProbe);
-        
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
+
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
                 new ScanJob<>(new ArrayList<>(), afterList);
-        
+
         List<TestAfterProbe> returnedList = scanJob.getAfterList();
         returnedList.add(new TestAfterProbe("after2"));
-        
+
         // Original list should not be modified
         assertEquals(1, scanJob.getAfterList().size());
         assertEquals(2, returnedList.size());
@@ -151,17 +148,17 @@ public class ScanJobTest {
     public void testImmutabilityOfInternalLists() {
         List<TestProbe> probeList = new ArrayList<>();
         probeList.add(new TestProbe("probe1"));
-        
+
         List<TestAfterProbe> afterList = new ArrayList<>();
         afterList.add(new TestAfterProbe("after1"));
-        
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
+
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
                 new ScanJob<>(probeList, afterList);
-        
+
         // Modify original lists
         probeList.add(new TestProbe("probe2"));
         afterList.add(new TestAfterProbe("after2"));
-        
+
         // ScanJob should not be affected
         assertEquals(1, scanJob.getProbeList().size());
         assertEquals(1, scanJob.getAfterList().size());
@@ -176,10 +173,10 @@ public class ScanJobTest {
         probeList.add(probe1);
         probeList.add(probe2);
         probeList.add(probe3);
-        
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
+
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
                 new ScanJob<>(probeList, new ArrayList<>());
-        
+
         List<TestProbe> returnedList = scanJob.getProbeList();
         assertEquals("probe1", returnedList.get(0).getProbeName());
         assertEquals("probe2", returnedList.get(1).getProbeName());

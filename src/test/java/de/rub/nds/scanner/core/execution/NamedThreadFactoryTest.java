@@ -21,10 +21,10 @@ public class NamedThreadFactoryTest {
     public void testNewThreadWithPrefix() {
         String prefix = "TestThread";
         NamedThreadFactory factory = new NamedThreadFactory(prefix);
-        
+
         Runnable runnable = () -> {};
         Thread thread = factory.newThread(runnable);
-        
+
         assertNotNull(thread);
         assertEquals(prefix + "-1", thread.getName());
     }
@@ -33,11 +33,11 @@ public class NamedThreadFactoryTest {
     public void testMultipleThreadsWithIncrementingNumbers() {
         String prefix = "Worker";
         NamedThreadFactory factory = new NamedThreadFactory(prefix);
-        
+
         Thread thread1 = factory.newThread(() -> {});
         Thread thread2 = factory.newThread(() -> {});
         Thread thread3 = factory.newThread(() -> {});
-        
+
         assertEquals(prefix + "-1", thread1.getName());
         assertEquals(prefix + "-2", thread2.getName());
         assertEquals(prefix + "-3", thread3.getName());
@@ -47,7 +47,7 @@ public class NamedThreadFactoryTest {
     public void testThreadsAreNotDaemon() {
         NamedThreadFactory factory = new NamedThreadFactory("Test");
         Thread thread = factory.newThread(() -> {});
-        
+
         // Default thread factory creates non-daemon threads
         assertTrue(!thread.isDaemon());
     }
@@ -56,10 +56,10 @@ public class NamedThreadFactoryTest {
     public void testThreadsWithDifferentPrefixes() {
         NamedThreadFactory factory1 = new NamedThreadFactory("Factory1");
         NamedThreadFactory factory2 = new NamedThreadFactory("Factory2");
-        
+
         Thread thread1 = factory1.newThread(() -> {});
         Thread thread2 = factory2.newThread(() -> {});
-        
+
         assertEquals("Factory1-1", thread1.getName());
         assertEquals("Factory2-1", thread2.getName());
     }
@@ -68,15 +68,16 @@ public class NamedThreadFactoryTest {
     public void testThreadExecutesRunnable() throws InterruptedException {
         NamedThreadFactory factory = new NamedThreadFactory("Executor");
         AtomicInteger counter = new AtomicInteger(0);
-        
-        Runnable runnable = () -> {
-            counter.incrementAndGet();
-        };
-        
+
+        Runnable runnable =
+                () -> {
+                    counter.incrementAndGet();
+                };
+
         Thread thread = factory.newThread(runnable);
         thread.start();
         thread.join();
-        
+
         assertEquals(1, counter.get());
     }
 
@@ -84,7 +85,7 @@ public class NamedThreadFactoryTest {
     public void testEmptyPrefix() {
         NamedThreadFactory factory = new NamedThreadFactory("");
         Thread thread = factory.newThread(() -> {});
-        
+
         assertEquals("-1", thread.getName());
     }
 
@@ -93,7 +94,7 @@ public class NamedThreadFactoryTest {
         String prefix = "Test-Thread_123@#$";
         NamedThreadFactory factory = new NamedThreadFactory(prefix);
         Thread thread = factory.newThread(() -> {});
-        
+
         assertEquals(prefix + "-1", thread.getName());
     }
 }

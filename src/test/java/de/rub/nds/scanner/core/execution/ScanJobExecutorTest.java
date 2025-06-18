@@ -18,16 +18,16 @@ public class ScanJobExecutorTest {
     // Mock ScanReport for testing
     static class TestReport extends ScanReport {
         private boolean executed = false;
-        
+
         @Override
         public String getRemoteName() {
             return "TestHost";
         }
-        
+
         public boolean isExecuted() {
             return executed;
         }
-        
+
         public void setExecuted(boolean executed) {
             this.executed = executed;
         }
@@ -37,22 +37,22 @@ public class ScanJobExecutorTest {
     static class TestScanJobExecutor extends ScanJobExecutor<TestReport> {
         private boolean shutdownCalled = false;
         private int executeCallCount = 0;
-        
+
         @Override
         public void execute(TestReport report) throws InterruptedException {
             executeCallCount++;
             report.setExecuted(true);
         }
-        
+
         @Override
         public void shutdown() {
             shutdownCalled = true;
         }
-        
+
         public boolean isShutdownCalled() {
             return shutdownCalled;
         }
-        
+
         public int getExecuteCallCount() {
             return executeCallCount;
         }
@@ -64,20 +64,19 @@ public class ScanJobExecutorTest {
         public void execute(TestReport report) throws InterruptedException {
             throw new InterruptedException("Test interruption");
         }
-        
+
         @Override
-        public void shutdown() {
-        }
+        public void shutdown() {}
     }
 
     @Test
     public void testExecuteMethod() throws InterruptedException {
         TestScanJobExecutor executor = new TestScanJobExecutor();
         TestReport report = new TestReport();
-        
+
         assertFalse(report.isExecuted());
         executor.execute(report);
-        
+
         assertTrue(report.isExecuted());
         assertEquals(1, executor.getExecuteCallCount());
     }
@@ -85,7 +84,7 @@ public class ScanJobExecutorTest {
     @Test
     public void testShutdownMethod() {
         TestScanJobExecutor executor = new TestScanJobExecutor();
-        
+
         assertFalse(executor.isShutdownCalled());
         executor.shutdown();
         assertTrue(executor.isShutdownCalled());
@@ -97,11 +96,11 @@ public class ScanJobExecutorTest {
         TestReport report1 = new TestReport();
         TestReport report2 = new TestReport();
         TestReport report3 = new TestReport();
-        
+
         executor.execute(report1);
         executor.execute(report2);
         executor.execute(report3);
-        
+
         assertEquals(3, executor.getExecuteCallCount());
         assertTrue(report1.isExecuted());
         assertTrue(report2.isExecuted());
@@ -112,7 +111,7 @@ public class ScanJobExecutorTest {
     public void testExecuteThrowsInterruptedException() {
         InterruptingExecutor executor = new InterruptingExecutor();
         TestReport report = new TestReport();
-        
+
         assertThrows(InterruptedException.class, () -> executor.execute(report));
     }
 
@@ -128,7 +127,7 @@ public class ScanJobExecutorTest {
         var method = ScanJobExecutor.class.getDeclaredMethod("execute", ScanReport.class);
         assertTrue(java.lang.reflect.Modifier.isAbstract(method.getModifiers()));
         assertEquals(void.class, method.getReturnType());
-        
+
         // Check that it declares InterruptedException
         Class<?>[] exceptionTypes = method.getExceptionTypes();
         assertEquals(1, exceptionTypes.length);

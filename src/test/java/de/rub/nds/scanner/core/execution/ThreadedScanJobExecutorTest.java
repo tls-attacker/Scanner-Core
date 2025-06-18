@@ -22,17 +22,18 @@ import de.rub.nds.scanner.core.report.ScanReport;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ThreadedScanJobExecutorTest {
 
     private ExecutorConfig executorConfig;
-    
+
     // Test implementations
     static class TestProbeType implements ProbeType {
         private final String name;
@@ -65,6 +66,7 @@ public class ThreadedScanJobExecutorTest {
     static class TestReport extends ScanReport {
         private final List<ProbeType> executedProbes = new ArrayList<>();
         private final List<ProbeType> unexecutedProbes = new ArrayList<>();
+        private final Map<TrackableValue, ExtractedValueContainer<?>> extractedContainers = new HashMap<>();
 
         @Override
         public String getRemoteName() {
@@ -90,64 +92,53 @@ public class ThreadedScanJobExecutorTest {
         public List<ProbeType> getUnexecutedProbes() {
             return unexecutedProbes;
         }
+
+        public Map<TrackableValue, ExtractedValueContainer<?>> getExtractedValueContainers() {
+            return extractedContainers;
+        }
+
+        @Override
+        public void putAllExtractedValueContainers(Map<TrackableValue, ExtractedValueContainer<?>> containers) {
+            extractedContainers.putAll(containers);
+        }
     }
 
     static class TestProbe extends ScannerProbe<TestReport, TestState> {
-        private final ProbeType type;
         private boolean canExecute = true;
         private boolean wasExecuted = false;
         private boolean shouldThrowException = false;
-        private final List<Requirement<TestReport>> requirements = new ArrayList<>();
+        private Requirement<TestReport> requirement = report -> canExecute;
 
         TestProbe(ProbeType type) {
-            this.type = type;
+            super(type);
             setWriter(new TestStatsWriter());
         }
 
         @Override
-        public TestProbe call() throws Exception {
+        public TestProbe call() {
             if (shouldThrowException) {
                 throw new RuntimeException("Test exception");
             }
+            super.call();
             wasExecuted = true;
             return this;
         }
 
         @Override
-        public void executeTest(TestState state) {
+        public void executeTest() {
             wasExecuted = true;
         }
 
         @Override
-        public String getProbeName() {
-            return type.getName();
-        }
-
-        @Override
-        public ProbeType getType() {
-            return type;
-        }
-
-        @Override
-        public boolean canBeExecuted(TestReport report) {
-            return canExecute;
+        public Requirement<TestReport> getRequirements() {
+            return requirement;
         }
 
         @Override
         public void adjustConfig(TestReport report) {}
 
         @Override
-        public TestProbe prepare(TestReport report) {
-            return this;
-        }
-
-        @Override
-        public void merge(TestReport report) {}
-
-        @Override
-        public List<Requirement<TestReport>> getRequirements() {
-            return requirements;
-        }
+        protected void mergeData(TestReport report) {}
 
         public void setCanExecute(boolean canExecute) {
             this.canExecute = canExecute;
@@ -162,7 +153,7 @@ public class ThreadedScanJobExecutorTest {
         }
 
         public void addRequirement(Requirement<TestReport> requirement) {
-            this.requirements.add(requirement);
+            this.requirement = requirement;
         }
     }
 
@@ -181,7 +172,7 @@ public class ThreadedScanJobExecutorTest {
 
     static class TestStatsWriter extends StatsWriter<TestState> {
         private int stateCount = 0;
-        
+
         @Override
         public void extract(TestState state) {}
 
@@ -223,18 +214,18 @@ public class ThreadedScanJobExecutorTest {
 
     @Test
     public void testBasicExecution() throws InterruptedException {
-        List<TestProbe> probeList = Arrays.asList(
-            new TestProbe(new TestProbeType("probe1")),
-            new TestProbe(new TestProbeType("probe2"))
-        );
+        List<TestProbe> probeList =
+                Arrays.asList(
+                        new TestProbe(new TestProbeType("probe1")),
+                        new TestProbe(new TestProbeType("probe2")));
         List<TestAfterProbe> afterList = Arrays.asList(new TestAfterProbe());
 
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
-            new ScanJob<>(probeList, afterList);
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
 
         try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
                 new ThreadedScanJobExecutor<>(executorConfig, scanJob, 2, "Test")) {
-            
+
             TestReport report = new TestReport();
             executor.execute(report);
 
@@ -254,12 +245,12 @@ public class ThreadedScanJobExecutorTest {
         List<TestProbe> probeList = Arrays.asList(executableProbe, nonExecutableProbe);
         List<TestAfterProbe> afterList = new ArrayList<>();
 
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
-            new ScanJob<>(probeList, afterList);
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
 
         try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
                 new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test")) {
-            
+
             TestReport report = new TestReport();
             executor.execute(report);
 
@@ -279,14 +270,14 @@ public class ThreadedScanJobExecutorTest {
         List<TestProbe> probeList = Arrays.asList(normalProbe, failingProbe);
         List<TestAfterProbe> afterList = new ArrayList<>();
 
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
-            new ScanJob<>(probeList, afterList);
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
 
         try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
                 new ThreadedScanJobExecutor<>(executorConfig, scanJob, 2, "Test")) {
-            
+
             TestReport report = new TestReport();
-            
+
             assertThrows(RuntimeException.class, () -> executor.execute(report));
         }
     }
@@ -298,27 +289,28 @@ public class ThreadedScanJobExecutorTest {
         probe2.setCanExecute(false); // Initially cannot execute
 
         // Add requirement that probe1 must be executed first
-        probe2.addRequirement(report -> 
-            report.getExecutedProbes().contains(new TestProbeType("probe1")));
+        probe2.addRequirement(
+                report -> report.getExecutedProbes().contains(new TestProbeType("probe1")));
 
         List<TestProbe> probeList = Arrays.asList(probe1, probe2);
         List<TestAfterProbe> afterList = new ArrayList<>();
 
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
-            new ScanJob<>(probeList, afterList);
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
 
         try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
                 new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test")) {
-            
+
             TestReport report = new TestReport();
-            
+
             // Simulate property change after probe1 executes
-            report.addPropertyChangeListener(evt -> {
-                if ("supportedProbe".equals(evt.getPropertyName()) && 
-                    evt.getNewValue().equals(new TestProbeType("probe1"))) {
-                    probe2.setCanExecute(true);
-                }
-            });
+            report.addPropertyChangeListener(
+                    evt -> {
+                        if ("supportedProbe".equals(evt.getPropertyName())
+                                && evt.getNewValue().equals(new TestProbeType("probe1"))) {
+                            probe2.setCanExecute(true);
+                        }
+                    });
 
             executor.execute(report);
 
@@ -332,7 +324,7 @@ public class ThreadedScanJobExecutorTest {
     public void testStatisticsCollection() throws InterruptedException {
         TestProbe probe1 = new TestProbe(new TestProbeType("probe1"));
         TestProbe probe2 = new TestProbe(new TestProbeType("probe2"));
-        
+
         TestStatsWriter writer1 = (TestStatsWriter) probe1.getWriter();
         TestStatsWriter writer2 = (TestStatsWriter) probe2.getWriter();
         writer1.setStateCount(5);
@@ -341,12 +333,12 @@ public class ThreadedScanJobExecutorTest {
         List<TestProbe> probeList = Arrays.asList(probe1, probe2);
         List<TestAfterProbe> afterList = new ArrayList<>();
 
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
-            new ScanJob<>(probeList, afterList);
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
 
         try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
                 new ThreadedScanJobExecutor<>(executorConfig, scanJob, 2, "Test")) {
-            
+
             TestReport report = new TestReport();
             executor.execute(report);
 
@@ -360,11 +352,11 @@ public class ThreadedScanJobExecutorTest {
         List<TestProbe> probeList = Arrays.asList(new TestProbe(new TestProbeType("probe1")));
         List<TestAfterProbe> afterList = new ArrayList<>();
 
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
-            new ScanJob<>(probeList, afterList);
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
 
         ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
-            new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test");
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test");
 
         TestReport report = new TestReport();
         executor.execute(report);
@@ -378,11 +370,11 @@ public class ThreadedScanJobExecutorTest {
         List<TestProbe> probeList = Arrays.asList(new TestProbe(new TestProbeType("probe1")));
         List<TestAfterProbe> afterList = new ArrayList<>();
 
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
-            new ScanJob<>(probeList, afterList);
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
 
         ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
-            new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test");
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test");
 
         TestReport report = new TestReport();
         executor.execute(report);
@@ -395,20 +387,21 @@ public class ThreadedScanJobExecutorTest {
         List<TestProbe> probeList = Arrays.asList(new TestProbe(new TestProbeType("probe1")));
         List<TestAfterProbe> afterList = new ArrayList<>();
 
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
-            new ScanJob<>(probeList, afterList);
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
 
-        ThreadPoolExecutor customExecutor = new ScannerThreadPoolExecutor(
-            1, new NamedThreadFactory("Custom"), new Semaphore(0), 5000);
+        ThreadPoolExecutor customExecutor =
+                new ScannerThreadPoolExecutor(
+                        1, new NamedThreadFactory("Custom"), new Semaphore(0), 5000);
 
         ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
-            new ThreadedScanJobExecutor<>(executorConfig, scanJob, customExecutor);
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, customExecutor);
 
         TestReport report = new TestReport();
         executor.execute(report);
 
         assertEquals(1, report.getExecutedProbes().size());
-        
+
         executor.shutdown();
         customExecutor.shutdown();
     }
@@ -418,16 +411,17 @@ public class ThreadedScanJobExecutorTest {
         List<TestProbe> probeList = new ArrayList<>();
         List<TestAfterProbe> afterList = new ArrayList<>();
 
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
-            new ScanJob<>(probeList, afterList);
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
 
         try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
                 new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test")) {
-            
+
             // Test with non-ScanReport source
-            PropertyChangeEvent event = new PropertyChangeEvent(
-                new Object(), "supportedProbe", null, new TestProbeType("test"));
-            
+            PropertyChangeEvent event =
+                    new PropertyChangeEvent(
+                            new Object(), "supportedProbe", null, new TestProbeType("test"));
+
             executor.propertyChange(event); // Should log error but not throw
         }
     }
@@ -437,12 +431,12 @@ public class ThreadedScanJobExecutorTest {
         List<TestProbe> probeList = new ArrayList<>();
         List<TestAfterProbe> afterList = Arrays.asList(new TestAfterProbe());
 
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
-            new ScanJob<>(probeList, afterList);
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
 
         try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
                 new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test")) {
-            
+
             TestReport report = new TestReport();
             executor.execute(report);
 
@@ -459,19 +453,19 @@ public class ThreadedScanJobExecutorTest {
         List<TestProbe> probeList = Arrays.asList(probe1, probe2);
         List<TestAfterProbe> afterList = new ArrayList<>();
 
-        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob = 
-            new ScanJob<>(probeList, afterList);
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
 
         try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
                 new ThreadedScanJobExecutor<>(executorConfig, scanJob, 2, "Test")) {
-            
+
             TestReport report = new TestReport();
             executor.execute(report);
 
             // Should merge containers of same type
             assertEquals(1, report.getExtractedValueContainers().size());
-            ExtractedValueContainer<?> container = 
-                report.getExtractedValueContainers().get(TestTrackableValue.TEST_VALUE);
+            ExtractedValueContainer<?> container =
+                    report.getExtractedValueContainers().get(TestTrackableValue.TEST_VALUE);
             assertNotNull(container);
             // Each probe contributes 2 values, so we should have 4 total
             assertEquals(4, container.getExtractedValueList().size());

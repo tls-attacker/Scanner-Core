@@ -13,31 +13,23 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.rub.nds.scanner.core.afterprobe.AfterProbe;
 import de.rub.nds.scanner.core.config.ExecutorConfig;
 import de.rub.nds.scanner.core.guideline.Guideline;
-import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.StatsWriter;
-import de.rub.nds.scanner.core.passive.TrackableValue;
 import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.report.ScanReport;
-import de.rub.nds.scanner.core.report.rating.PropertyResultRatingInfluencer;
-import de.rub.nds.scanner.core.report.rating.RatingInfluencer;
-import de.rub.nds.scanner.core.report.rating.ScoreReport;
 import de.rub.nds.scanner.core.report.rating.SiteReportRater;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 public class ScannerTest {
 
-    @TempDir
-    private File tempDir;
+    @TempDir private File tempDir;
 
     private ExecutorConfig executorConfig;
 
@@ -76,44 +68,28 @@ public class ScannerTest {
     }
 
     static class TestProbe extends ScannerProbe<TestReport, TestState> {
-        private final ProbeType type;
         private boolean executed = false;
         private boolean canExecute = true;
 
         TestProbe(ProbeType type) {
-            this.type = type;
+            super(type);
         }
 
         @Override
-        public void executeTest(TestState state) {
+        public void executeTest() {
             executed = true;
         }
 
         @Override
-        public String getProbeName() {
-            return type.getName();
-        }
-
-        @Override
-        public ProbeType getType() {
-            return type;
-        }
-
-        @Override
-        public boolean canBeExecuted(TestReport report) {
-            return canExecute;
+        public de.rub.nds.scanner.core.probe.requirements.Requirement<TestReport> getRequirements() {
+            return report -> canExecute;
         }
 
         @Override
         public void adjustConfig(TestReport report) {}
 
         @Override
-        public TestProbe prepare(TestReport report) {
-            return this;
-        }
-
-        @Override
-        public void merge(TestReport report) {}
+        protected void mergeData(TestReport report) {}
 
         public boolean isExecuted() {
             return executed;
@@ -155,7 +131,8 @@ public class ScannerTest {
             super(config);
         }
 
-        TestScanner(ExecutorConfig config, List<TestProbe> probeList, List<TestAfterProbe> afterList) {
+        TestScanner(
+                ExecutorConfig config, List<TestProbe> probeList, List<TestAfterProbe> afterList) {
             super(config, probeList, afterList);
         }
 
@@ -253,7 +230,7 @@ public class ScannerTest {
     public void testScanWithProbesConstructor() {
         List<TestProbe> probeList = new ArrayList<>();
         probeList.add(new TestProbe(new TestProbeType("probe1")));
-        
+
         List<TestAfterProbe> afterList = new ArrayList<>();
         afterList.add(new TestAfterProbe());
 
@@ -282,7 +259,7 @@ public class ScannerTest {
     public void testRegisterProbeForExecution() {
         TestScanner scanner = new TestScanner(executorConfig);
         TestProbe probe = new TestProbe(new TestProbeType("test"));
-        
+
         scanner.registerProbeForExecution(probe);
         // Since this adds to internal probe list, we can't directly verify
         // But the test ensures no exceptions are thrown
@@ -292,7 +269,7 @@ public class ScannerTest {
     public void testRegisterProbeWithExecuteByDefault() {
         TestScanner scanner = new TestScanner(executorConfig);
         TestProbe probe = new TestProbe(new TestProbeType("test"));
-        
+
         scanner.registerProbeForExecution(probe, false);
         // Test with executeByDefault = false
     }
@@ -301,10 +278,10 @@ public class ScannerTest {
     public void testRegisterProbeWithSpecificProbesConfig() {
         executorConfig.setProbes(List.of(new TestProbeType("allowed")));
         TestScanner scanner = new TestScanner(executorConfig);
-        
+
         TestProbe allowedProbe = new TestProbe(new TestProbeType("allowed"));
         TestProbe notAllowedProbe = new TestProbe(new TestProbeType("notallowed"));
-        
+
         scanner.registerProbeForExecution(allowedProbe);
         scanner.registerProbeForExecution(notAllowedProbe);
     }
@@ -313,7 +290,7 @@ public class ScannerTest {
     public void testRegisterProbeWithExcludedProbes() {
         executorConfig.setExcludedProbes(List.of(new TestProbeType("excluded")));
         TestScanner scanner = new TestScanner(executorConfig);
-        
+
         TestProbe excludedProbe = new TestProbe(new TestProbeType("excluded"));
         scanner.registerProbeForExecution(excludedProbe);
     }
@@ -322,7 +299,7 @@ public class ScannerTest {
     public void testRegisterAfterProbe() {
         TestScanner scanner = new TestScanner(executorConfig);
         TestAfterProbe afterProbe = new TestAfterProbe();
-        
+
         scanner.registerProbeForExecution(afterProbe);
     }
 
@@ -333,24 +310,25 @@ public class ScannerTest {
         scanner.setSiteReportRater(rater);
 
         TestReport report = scanner.scan();
-        
+
         assertNotNull(report.getScoreReport());
     }
 
     @Test
     public void testScanWithGuidelines() {
         TestScanner scanner = new TestScanner(executorConfig);
-        
-        Guideline<TestReport> guideline = new Guideline<>("TestGuideline", null) {
-            @Override
-            public String getRequirementLevel() {
-                return "MUST";
-            }
-        };
-        
+
+        Guideline<TestReport> guideline =
+                new Guideline<>("TestGuideline", null) {
+                    @Override
+                    public String getRequirementLevel() {
+                        return "MUST";
+                    }
+                };
+
         scanner.setGuidelines(List.of(guideline));
         TestReport report = scanner.scan();
-        
+
         assertNotNull(report);
     }
 
@@ -375,17 +353,17 @@ public class ScannerTest {
         executorConfig.setOutputFile(invalidFile);
 
         TestScanner scanner = new TestScanner(executorConfig);
-        
+
         assertThrows(RuntimeException.class, scanner::scan);
     }
 
     @Test
     public void testAutoCloseable() throws Exception {
         TestScanner scanner = new TestScanner(executorConfig);
-        
+
         // Test that Scanner implements AutoCloseable
         assertTrue(scanner instanceof AutoCloseable);
-        
+
         // Test close method
         scanner.close();
     }
@@ -403,15 +381,17 @@ public class ScannerTest {
     @Test
     public void testInterruptedScan() throws InterruptedException {
         TestScanner scanner = new TestScanner(executorConfig);
-        
-        Thread testThread = new Thread(() -> {
-            Thread.currentThread().interrupt();
-            scanner.scan();
-        });
-        
+
+        Thread testThread =
+                new Thread(
+                        () -> {
+                            Thread.currentThread().interrupt();
+                            scanner.scan();
+                        });
+
         testThread.start();
         testThread.join();
-        
+
         assertTrue(testThread.isInterrupted() || !testThread.isAlive());
     }
 }
