@@ -26,6 +26,9 @@ public class PropertyComparatorRequirement<R extends ScanReport>
     private final Operator operator;
     private final Integer comparisonValue;
 
+    /**
+     * Comparison operators for property size evaluation.
+     */
     public enum Operator {
         GREATER,
         SMALLER,
@@ -71,14 +74,29 @@ public class PropertyComparatorRequirement<R extends ScanReport>
                         operator));
     }
 
+    /**
+     * Returns the comparison operator used in this requirement.
+     *
+     * @return the comparison operator
+     */
     public Operator getOperator() {
         return operator;
     }
 
+    /**
+     * Returns the value against which the property collection size is compared.
+     *
+     * @return the comparison value
+     */
     public Integer getComparisonValue() {
         return comparisonValue;
     }
 
+    /**
+     * Returns a string representation of this requirement in the format "PropertyComparatorRequirement[property operator value]".
+     *
+     * @return string representation of the comparator requirement
+     */
     @Override
     public String toString() {
         return String.format(
