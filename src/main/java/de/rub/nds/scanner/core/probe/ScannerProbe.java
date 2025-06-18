@@ -34,10 +34,20 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
     private long startTime;
     private long stopTime;
 
+    /**
+     * Constructs a new ScannerProbe with the specified probe type.
+     *
+     * @param type the type of this probe
+     */
     public ScannerProbe(ProbeType type) {
         this.type = type;
     }
 
+    /**
+     * Executes this probe and returns itself after completion.
+     *
+     * @return this probe instance after execution
+     */
     @Override
     public ScannerProbe<ReportT, StateT> call() {
         LOGGER.debug("Executing: {}", getProbeName());
@@ -49,6 +59,12 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         return this;
     }
 
+    /**
+     * Determines whether this probe can be executed based on the requirements evaluation.
+     *
+     * @param report the report to evaluate requirements against
+     * @return true if the probe can be executed, false otherwise
+     */
     public final boolean canBeExecuted(ReportT report) {
         try {
             return getRequirements().evaluate(report);
@@ -68,6 +84,15 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
+    /**
+     * Sets a property value if the determining property is FALSE.
+     *
+     * @param determiningProperty the property to check
+     * @param propertyToSet the property to set
+     * @param actualResult the result to set if condition is met
+     * @param notApplicableReason reason to provide if condition is not met
+     * @param <T> the type of the actual result
+     */
     public final <T> void putIfFalse(
             AnalyzedProperty determiningProperty,
             AnalyzedProperty propertyToSet,
@@ -81,6 +106,15 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
                 TestResults.FALSE);
     }
 
+    /**
+     * Sets a property value if the determining property is TRUE.
+     *
+     * @param determiningProperty the property to check
+     * @param propertyToSet the property to set
+     * @param actualResult the result to set if condition is met
+     * @param notApplicableReason reason to provide if condition is not met
+     * @param <T> the type of the actual result
+     */
     public final <T> void putIfTrue(
             AnalyzedProperty determiningProperty,
             AnalyzedProperty propertyToSet,
@@ -94,6 +128,16 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
                 TestResults.TRUE);
     }
 
+    /**
+     * Sets a property value if the determining property equals the expected value.
+     *
+     * @param determiningProperty the property to check
+     * @param propertyToSet the property to set
+     * @param actualResult the result to set if condition is met
+     * @param notApplicableReason reason to provide if condition is not met
+     * @param expectedValue the expected value to compare against
+     * @param <T> the type of the actual result
+     */
     public final <T> void putIfEqual(
             AnalyzedProperty determiningProperty,
             AnalyzedProperty propertyToSet,
@@ -124,6 +168,13 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         };
     }
 
+    /**
+     * Sets a property to the specified result value.
+     *
+     * @param property the property to set
+     * @param result the result value to set
+     * @param <T> the type of the result
+     */
     public final <T> void put(AnalyzedProperty property, T result) {
         TestResult internalResult = convertToResult(property, result);
 
@@ -163,6 +214,9 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
+    /**
+     * Sets all unassigned properties to CANNOT_BE_TESTED status.
+     */
     public final void setPropertiesToCannotBeTested() {
         for (AnalyzedProperty property : propertiesMap.keySet()) {
             if (propertiesMap.get(property) == TestResults.UNASSIGNED_ERROR) {
@@ -171,6 +225,11 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
+    /**
+     * Merges the results of this probe into the provided report.
+     *
+     * @param report the report to merge results into
+     */
     public final void merge(ReportT report) {
         if (getStartTime() != 0 && getStopTime() != 0) {
             report.recordProbePerformance(
@@ -202,34 +261,74 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
+    /**
+     * Gets the requirements that must be satisfied for this probe to execute.
+     *
+     * @return the requirements for this probe
+     */
     public abstract Requirement<ReportT> getRequirements();
 
+    /**
+     * Adjusts the configuration based on the provided report.
+     *
+     * @param report the report used to adjust the configuration
+     */
     public abstract void adjustConfig(ReportT report);
 
     protected abstract void executeTest();
 
     protected abstract void mergeData(ReportT report);
 
+    /**
+     * Gets the type of this probe.
+     *
+     * @return the probe type
+     */
     public ProbeType getType() {
         return type;
     }
 
+    /**
+     * Gets the start time of the probe execution in milliseconds.
+     *
+     * @return the start time
+     */
     public long getStartTime() {
         return startTime;
     }
 
+    /**
+     * Gets the stop time of the probe execution in milliseconds.
+     *
+     * @return the stop time
+     */
     public long getStopTime() {
         return stopTime;
     }
 
+    /**
+     * Gets the name of this probe.
+     *
+     * @return the probe name
+     */
     public String getProbeName() {
         return getType().getName();
     }
 
+    /**
+     * Gets the stats writer associated with this probe.
+     *
+     * @return the stats writer
+     */
     public StatsWriter<StateT> getWriter() {
         return writer;
     }
 
+    /**
+     * Sets the stats writer for this probe.
+     *
+     * @param writer the stats writer to set
+     */
     public void setWriter(StatsWriter<StateT> writer) {
         this.writer = writer;
     }
