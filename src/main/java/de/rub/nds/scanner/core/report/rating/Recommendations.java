@@ -17,6 +17,11 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Container class for a collection of recommendations. This class manages multiple
+ * Recommendation instances and provides methods to retrieve specific recommendations
+ * based on analyzed properties and test results.
+ */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Recommendations implements Serializable {
@@ -28,18 +33,42 @@ public class Recommendations implements Serializable {
     @SuppressWarnings("unused")
     private Recommendations() {}
 
+    /**
+     * Constructs a Recommendations container with the specified list of recommendations.
+     *
+     * @param recommendations the list of recommendations to manage
+     */
     public Recommendations(List<Recommendation> recommendations) {
         this.recommendations = recommendations;
     }
 
+    /**
+     * Gets the list of recommendations.
+     *
+     * @return the list of recommendations
+     */
     public List<Recommendation> getRecommendations() {
         return recommendations;
     }
 
+    /**
+     * Sets the list of recommendations.
+     *
+     * @param recommendations the list of recommendations to set
+     */
     public void setRecommendations(List<Recommendation> recommendations) {
         this.recommendations = recommendations;
     }
 
+    /**
+     * Gets the property result recommendation for a specific analyzed property and test result.
+     * If no matching recommendation is found, returns a default recommendation with
+     * "No recommendation found" messages.
+     *
+     * @param property the analyzed property to search for
+     * @param result the test result to match
+     * @return the matching property result recommendation or a default if not found
+     */
     public PropertyResultRecommendation getPropertyRecommendation(
             AnalyzedProperty property, TestResult result) {
         for (Recommendation r : recommendations) {
@@ -53,6 +82,14 @@ public class Recommendations implements Serializable {
                 Recommendation.NO_RECOMMENDATION_FOUND);
     }
 
+    /**
+     * Gets the recommendation for a specific analyzed property. If no matching
+     * recommendation is found, returns a new recommendation with the property's
+     * string representation as the short name.
+     *
+     * @param property the analyzed property to search for
+     * @return the matching recommendation or a new basic recommendation if not found
+     */
     public Recommendation getRecommendation(AnalyzedProperty property) {
         for (Recommendation r : recommendations) {
             if (r.getAnalyzedProperty() == property) {
