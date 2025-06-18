@@ -75,12 +75,29 @@ public class ScannerThreadPoolExecutor extends ScheduledThreadPoolExecutor {
         return future;
     }
 
+    /**
+     * Submits a Runnable task for execution and returns a Future representing that task.
+     * The task will be automatically cancelled if it exceeds the configured timeout.
+     *
+     * @param <T> the type of the result
+     * @param task the task to submit
+     * @param result the result to return when the task completes
+     * @return a Future representing pending completion of the task
+     */
     public <T> Future<T> submit(Runnable task, T result) {
         Future<T> future = super.submit(task, result);
         cancelFuture(future);
         return future;
     }
 
+    /**
+     * Submits a value-returning task for execution and returns a Future representing the pending results.
+     * The task will be automatically cancelled if it exceeds the configured timeout.
+     *
+     * @param <T> the type of the task's result
+     * @param task the task to submit
+     * @return a Future representing pending completion of the task
+     */
     public <T> Future<T> submit(Callable<T> task) {
         Future<T> future = super.submit(task);
         cancelFuture(future);
