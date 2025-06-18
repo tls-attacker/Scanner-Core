@@ -20,10 +20,21 @@ public enum ScannerDetail {
         this.levelValue = levelValue;
     }
 
+    /**
+     * Returns the numeric level value associated with this scanner detail level.
+     *
+     * @return the level value as an integer
+     */
     public int getLevelValue() {
         return levelValue;
     }
 
+    /**
+     * Checks if this scanner detail level is greater than or equal to the specified detail level.
+     *
+     * @param detail the scanner detail level to compare against
+     * @return true if this level is greater than or equal to the specified level, false otherwise
+     */
     public boolean isGreaterEqualTo(ScannerDetail detail) {
         return levelValue >= detail.getLevelValue();
     }
