@@ -27,6 +27,7 @@ public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
 
     public GuidelineIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {
+        // analyzedPropertyClass parameter kept for API compatibility
         this.context = getJAXBContext();
     }
 
