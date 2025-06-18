@@ -326,10 +326,12 @@ public class ScannerTest {
     @Test
     public void testScanWithSiteReportRater() {
         TestScanner scanner = new TestScanner(executorConfig);
-        de.rub.nds.scanner.core.report.rating.RatingInfluencers influencers = 
-            new de.rub.nds.scanner.core.report.rating.RatingInfluencers(new java.util.LinkedList<>());
-        de.rub.nds.scanner.core.report.rating.Recommendations recommendations = 
-            new de.rub.nds.scanner.core.report.rating.Recommendations(new java.util.LinkedList<>());
+        de.rub.nds.scanner.core.report.rating.RatingInfluencers influencers =
+                new de.rub.nds.scanner.core.report.rating.RatingInfluencers(
+                        new java.util.LinkedList<>());
+        de.rub.nds.scanner.core.report.rating.Recommendations recommendations =
+                new de.rub.nds.scanner.core.report.rating.Recommendations(
+                        new java.util.LinkedList<>());
         SiteReportRater rater = new SiteReportRater(influencers, recommendations);
         scanner.setSiteReportRater(rater);
 
@@ -342,8 +344,7 @@ public class ScannerTest {
     public void testScanWithGuidelines() {
         TestScanner scanner = new TestScanner(executorConfig);
 
-        Guideline<TestReport> guideline =
-                new Guideline<TestReport>("TestGuideline", null);
+        Guideline<TestReport> guideline = new Guideline<TestReport>("TestGuideline", "http://example.com", new ArrayList<>());
 
         scanner.setGuidelines(List.of(guideline));
         TestReport report = scanner.scan();

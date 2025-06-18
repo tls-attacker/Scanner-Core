@@ -23,8 +23,10 @@ import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,8 +66,8 @@ public class ThreadedScanJobExecutorTest {
     static class TestState {}
 
     static class TestReport extends ScanReport {
-        private final List<ProbeType> executedProbeTypes = new ArrayList<>();
-        private final List<ProbeType> unexecutedProbeTypes = new ArrayList<>();
+        private final Set<ProbeType> executedProbeTypes = new HashSet<>();
+        private final Set<ProbeType> unexecutedProbeTypes = new HashSet<>();
         private final Map<TrackableValue, ExtractedValueContainer<?>> extractedContainers =
                 new HashMap<>();
 
@@ -91,11 +93,11 @@ public class ThreadedScanJobExecutorTest {
             super.markProbeAsUnexecuted(probe);
         }
 
-        public List<ProbeType> getExecutedProbeTypes() {
+        public Set<ProbeType> getExecutedProbeTypes() {
             return executedProbeTypes;
         }
 
-        public List<ProbeType> getUnexecutedProbeTypes() {
+        public Set<ProbeType> getUnexecutedProbeTypes() {
             return unexecutedProbeTypes;
         }
 
@@ -114,7 +116,8 @@ public class ThreadedScanJobExecutorTest {
         private boolean canExecute = true;
         private boolean wasExecuted = false;
         private boolean shouldThrowException = false;
-        private Requirement<TestReport> requirement = new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
+        private Requirement<TestReport> requirement =
+                new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
 
         TestProbe(ProbeType type) {
             super(type);
@@ -150,9 +153,11 @@ public class ThreadedScanJobExecutorTest {
         public void setCanExecute(boolean canExecute) {
             this.canExecute = canExecute;
             if (canExecute) {
-                this.requirement = new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
+                this.requirement =
+                        new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
             } else {
-                this.requirement = new de.rub.nds.scanner.core.probe.requirements.UnfulfillableRequirement<>();
+                this.requirement =
+                        new de.rub.nds.scanner.core.probe.requirements.UnfulfillableRequirement<>();
             }
         }
 
