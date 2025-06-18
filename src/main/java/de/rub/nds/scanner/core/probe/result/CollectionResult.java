@@ -39,11 +39,22 @@ public class CollectionResult<T> implements TestResult {
         this.collection = null;
     }
 
+    /**
+     * Constructs a CollectionResult with the specified property and collection.
+     *
+     * @param property the analyzed property associated with this result
+     * @param collection the collection of values for this result
+     */
     public CollectionResult(AnalyzedProperty property, Collection<T> collection) {
         this.property = property;
         this.collection = collection;
     }
 
+    /**
+     * Returns the analyzed property associated with this result.
+     *
+     * @return the analyzed property
+     */
     public AnalyzedProperty getProperty() {
         return property;
     }
