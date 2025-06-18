@@ -27,10 +27,10 @@ public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
 
     public GuidelineIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {
-        this.context = getJAXBContext(analyzedPropertyClass);
+        this.context = getJAXBContext();
     }
 
-    private JAXBContext getJAXBContext(Class<? extends AnalyzedProperty> analyzedPropertyClass)
+    private JAXBContext getJAXBContext()
             throws JAXBException {
         if (context == null) {
             // TODO we could do this scanning during building and then just collect the
