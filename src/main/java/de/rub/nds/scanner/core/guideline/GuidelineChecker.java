@@ -24,6 +24,11 @@ public class GuidelineChecker<ReportT extends ScanReport> {
         this.guideline = guideline;
     }
 
+    /**
+     * Evaluates all checks in the guideline against the provided report and adds the results to the report.
+     *
+     * @param report the scan report to evaluate and fill with guideline results
+     */
     public void fillReport(ReportT report) {
         List<GuidelineCheckResult> results = new ArrayList<>();
         for (GuidelineCheck<ReportT> check : guideline.getChecks()) {
