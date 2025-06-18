@@ -14,6 +14,11 @@ package de.rub.nds.scanner.core.probe.result;
  * error)
  */
 public interface SummarizableTestResult extends TestResult {
+    /**
+     * Gets the summarized test result.
+     *
+     * @return the summarized result
+     */
     TestResults getSummarizedResult();
 
     /**

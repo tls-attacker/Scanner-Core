@@ -26,6 +26,12 @@ public class NotApplicableResult implements TestResult {
         this.reason = null;
     }
 
+    /**
+     * Constructs a new NotApplicableResult with the specified property and reason.
+     *
+     * @param property the analyzed property
+     * @param reason the reason why the test is not applicable
+     */
     public NotApplicableResult(AnalyzedProperty property, String reason) {
         this.property = property;
         this.reason = reason;
@@ -41,6 +47,11 @@ public class NotApplicableResult implements TestResult {
         return false;
     }
 
+    /**
+     * Gets the reason why the test is not applicable.
+     *
+     * @return the reason
+     */
     public String getReason() {
         return reason;
     }

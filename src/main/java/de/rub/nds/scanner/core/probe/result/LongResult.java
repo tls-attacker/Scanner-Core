@@ -18,6 +18,12 @@ public class LongResult extends ObjectResult<Long> {
         super(null, null);
     }
 
+    /**
+     * Constructs a new LongResult with the specified property and value.
+     *
+     * @param property the analyzed property
+     * @param value the Long value
+     */
     public LongResult(AnalyzedProperty property, Long value) {
         super(property, value);
     }

@@ -18,6 +18,12 @@ public class StringResult extends ObjectResult<String> {
         super(null, null);
     }
 
+    /**
+     * Constructs a new StringResult with the specified property and value.
+     *
+     * @param property the analyzed property
+     * @param value the String value
+     */
     public StringResult(AnalyzedProperty property, String value) {
         super(property, value);
     }

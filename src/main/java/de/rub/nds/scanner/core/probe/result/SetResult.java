@@ -24,6 +24,12 @@ public class SetResult<T> extends CollectionResult<T> {
         super(null, null);
     }
 
+    /**
+     * Constructs a new SetResult with the specified property and set.
+     *
+     * @param property the analyzed property
+     * @param set the set of values
+     */
     public SetResult(AnalyzedProperty property, Set<T> set) {
         super(property, set);
     }

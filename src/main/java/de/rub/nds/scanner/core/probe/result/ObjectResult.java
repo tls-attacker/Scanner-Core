@@ -26,19 +26,42 @@ public class ObjectResult<T> implements TestResult {
         this.value = null;
     }
 
+    /**
+     * Constructs a new ObjectResult with the specified property and value.
+     *
+     * @param property the analyzed property
+     * @param value the result value
+     */
     public ObjectResult(AnalyzedProperty property, T value) {
         this.property = property;
         this.value = value;
     }
 
+    /**
+     * Gets the value of this result.
+     *
+     * @return the result value
+     */
     public T getValue() {
         return value;
     }
 
+    /**
+     * Gets the analyzed property associated with this result.
+     *
+     * @return the analyzed property
+     */
     public AnalyzedProperty getProperty() {
         return property;
     }
 
+    /**
+     * Gets the value cast to the specified class type.
+     *
+     * @param valueClass the class to cast the value to
+     * @param <S> the target type
+     * @return the value cast to the specified type
+     */
     public <S> S getValue(Class<S> valueClass) {
         return valueClass.cast(value);
     }

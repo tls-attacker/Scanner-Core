@@ -25,6 +25,12 @@ public class ListResult<T> extends CollectionResult<T> {
         super(null, null);
     }
 
+    /**
+     * Constructs a new ListResult with the specified property and list.
+     *
+     * @param property the analyzed property
+     * @param list the list of values
+     */
     public ListResult(AnalyzedProperty property, List<T> list) {
         super(property, list);
     }

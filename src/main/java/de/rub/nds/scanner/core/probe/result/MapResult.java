@@ -34,11 +34,22 @@ public class MapResult<S, T> implements TestResult {
         this.map = null;
     }
 
+    /**
+     * Constructs a new MapResult with the specified property and map.
+     *
+     * @param property the analyzed property
+     * @param map the map of key-value pairs
+     */
     public MapResult(AnalyzedProperty property, Map<S, T> map) {
         this.property = property;
         this.map = map;
     }
 
+    /**
+     * Gets the analyzed property associated with this result.
+     *
+     * @return the analyzed property
+     */
     public AnalyzedProperty getProperty() {
         return property;
     }
