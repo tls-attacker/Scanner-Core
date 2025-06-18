@@ -53,10 +53,13 @@ public class Guideline<ReportT extends ScanReport> implements Serializable {
     }
 
     public List<GuidelineCheck<ReportT>> getChecks() {
-        return Collections.unmodifiableList(checks);
+        return checks != null ? Collections.unmodifiableList(checks) : Collections.emptyList();
     }
 
     public void addCheck(GuidelineCheck<ReportT> check) {
+        if (checks == null) {
+            checks = new ArrayList<>();
+        }
         checks.add(check);
     }
 }
