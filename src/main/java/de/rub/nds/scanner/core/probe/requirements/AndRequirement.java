@@ -18,6 +18,11 @@ public final class AndRequirement<ReportT extends ScanReport> extends LogicalReq
 
     private final List<Requirement<ReportT>> requirements;
 
+    /**
+     * Constructs a new AndRequirement that evaluates to true when all requirements are satisfied.
+     *
+     * @param requirements the list of requirements (all must be satisfied)
+     */
     public AndRequirement(List<Requirement<ReportT>> requirements) {
         this.requirements = Collections.unmodifiableList(requirements);
     }
@@ -35,11 +40,21 @@ public final class AndRequirement<ReportT extends ScanReport> extends LogicalReq
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    /**
+     * Returns an unmodifiable list of all requirements contained in this AND requirement.
+     *
+     * @return the list of contained requirements
+     */
     @Override
     public List<Requirement<ReportT>> getContainedRequirements() {
         return requirements;
     }
 
+    /**
+     * Returns a string representation of this AND requirement in the format "(req1 and req2 and ...)".
+     *
+     * @return string representation of the AND requirement
+     */
     @Override
     public String toString() {
         return String.format(
