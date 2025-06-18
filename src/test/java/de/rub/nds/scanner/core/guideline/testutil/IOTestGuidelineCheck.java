@@ -13,7 +13,6 @@ import de.rub.nds.scanner.core.guideline.GuidelineAdherence;
 import de.rub.nds.scanner.core.guideline.GuidelineCheck;
 import de.rub.nds.scanner.core.guideline.GuidelineCheckResult;
 import de.rub.nds.scanner.core.guideline.RequirementLevel;
-import de.rub.nds.scanner.core.report.ScanReport;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
@@ -32,17 +31,5 @@ public class IOTestGuidelineCheck extends GuidelineCheck<IOTestScanReport> {
     @Override
     public GuidelineCheckResult evaluate(IOTestScanReport report) {
         return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
-    }
-}
-
-public class IOTestScanReport extends ScanReport {
-    @Override
-    public void serializeToJson(java.io.OutputStream outputStream) {
-        // Test implementation - do nothing
-    }
-
-    @Override
-    public String getRemoteName() {
-        return "TestRemote";
     }
 }

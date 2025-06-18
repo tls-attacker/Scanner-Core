@@ -10,11 +10,11 @@ package de.rub.nds.scanner.core.guideline;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import de.rub.nds.scanner.core.guideline.testutil.IOTestGuidelineCheck;
+import de.rub.nds.scanner.core.guideline.testutil.IOTestScanReport;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
 import de.rub.nds.scanner.core.probe.result.TestResults;
-import de.rub.nds.scanner.core.guideline.testutil.IOTestGuidelineCheck;
-import de.rub.nds.scanner.core.guideline.testutil.IOTestScanReport;
 import jakarta.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -86,7 +86,8 @@ class GuidelineIOTest {
                 new Guideline<>(
                         "Stream Test",
                         "https://stream.test",
-                        Arrays.asList(new IOTestGuidelineCheck("StreamCheck", RequirementLevel.MAY)));
+                        Arrays.asList(
+                                new IOTestGuidelineCheck("StreamCheck", RequirementLevel.MAY)));
 
         // Write to stream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -182,7 +183,8 @@ class GuidelineIOTest {
                         "Reflection Test",
                         "https://reflection.test",
                         Arrays.asList(
-                                new IOTestGuidelineCheck("ReflectionCheck", RequirementLevel.MUST)));
+                                new IOTestGuidelineCheck(
+                                        "ReflectionCheck", RequirementLevel.MUST)));
 
         // If reflection worked, serialization should succeed
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -198,7 +200,8 @@ class GuidelineIOTest {
                         "Format Test",
                         "https://format.test",
                         Arrays.asList(
-                                new IOTestGuidelineCheck("FormatCheck", RequirementLevel.MUST_NOT)));
+                                new IOTestGuidelineCheck(
+                                        "FormatCheck", RequirementLevel.MUST_NOT)));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         io.write(baos, guideline);
