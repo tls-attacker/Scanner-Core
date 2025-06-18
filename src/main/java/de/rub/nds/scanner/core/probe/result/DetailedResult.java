@@ -83,15 +83,30 @@ public class DetailedResult<T extends Serializable> implements SummarizableTestR
         this(summary, null);
     }
 
+    /**
+     * Returns the details associated with this result.
+     *
+     * @return the details, or null if no details were provided
+     */
     public T getDetails() {
         return details;
     }
 
+    /**
+     * Returns the summarized result.
+     *
+     * @return the summary TestResults value
+     */
     @Override
     public TestResults getSummarizedResult() {
         return summary;
     }
 
+    /**
+     * Indicates whether the summary was explicitly set.
+     *
+     * @return always true for DetailedResult
+     */
     @Override
     public boolean isExplicitSummary() {
         return true;
