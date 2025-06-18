@@ -20,6 +20,9 @@ public class ProbeTypeConverter implements IStringConverter<ProbeType> {
 
     private Set<Class<? extends ProbeType>> probeTypeClasses;
 
+    /**
+     * Constructs a new ProbeTypeConverter that discovers ProbeType implementations.
+     */
     public ProbeTypeConverter() {
         String packageName = "de.rub";
         Reflections reflections =
@@ -33,6 +36,12 @@ public class ProbeTypeConverter implements IStringConverter<ProbeType> {
                         .collect(Collectors.toSet());
     }
 
+    /**
+     * Converts a string value to a ProbeType instance.
+     *
+     * @param value the string representation of the probe type
+     * @return the converted ProbeType instance, or null if conversion fails
+     */
     @Override
     public ProbeType convert(String value) {
         for (Class<? extends ProbeType> probeTypeClass : probeTypeClasses) {
