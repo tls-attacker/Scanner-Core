@@ -66,6 +66,19 @@ public final class ExecutorConfig {
         // Default constructor
     }
 
+    public ExecutorConfig(ExecutorConfig other) {
+        this.noColor = other.noColor;
+        this.scanDetail = other.scanDetail;
+        this.postAnalysisDetail = other.postAnalysisDetail;
+        this.reportDetail = other.reportDetail;
+        this.outputFile = other.outputFile;
+        this.probeTimeout = other.probeTimeout;
+        this.parallelProbes = other.parallelProbes;
+        this.overallThreads = other.overallThreads;
+        this.excludedProbes = other.excludedProbes == null ? new LinkedList<>() : new LinkedList<>(other.excludedProbes);
+        this.probes = other.probes == null ? null : new LinkedList<>(other.probes);
+    }
+
     public List<ProbeType> getExcludedProbes() {
         return new LinkedList<>(excludedProbes);
     }

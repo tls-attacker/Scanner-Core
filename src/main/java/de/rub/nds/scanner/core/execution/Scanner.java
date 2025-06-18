@@ -45,7 +45,7 @@ public abstract class Scanner<
      * @param executorConfig The executor configuration to use.
      */
     public Scanner(ExecutorConfig executorConfig) {
-        this.executorConfig = executorConfig;
+        this.executorConfig = new ExecutorConfig(executorConfig);
         probeList = new LinkedList<>();
         afterList = new LinkedList<>();
         fillProbeListsAtScanStart = true;
@@ -60,7 +60,7 @@ public abstract class Scanner<
      */
     public Scanner(
             ExecutorConfig executorConfig, List<ProbeT> probeList, List<AfterProbeT> afterList) {
-        this.executorConfig = executorConfig;
+        this.executorConfig = new ExecutorConfig(executorConfig);
         this.probeList = new LinkedList<>(probeList);
         this.afterList = new LinkedList<>(afterList);
         fillProbeListsAtScanStart = false;
