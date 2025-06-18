@@ -135,6 +135,23 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        PropertyResultRatingInfluencer that = (PropertyResultRatingInfluencer) obj;
+        return Objects.equals(scoreCap, that.scoreCap) && Objects.equals(influence, that.influence);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(scoreCap, influence);
+    }
+
+    @Override
     public String toString() {
         return "PropertyResultRatingInfluencer{"
                 + "result="
