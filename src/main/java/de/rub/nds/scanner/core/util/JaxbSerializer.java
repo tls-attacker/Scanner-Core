@@ -65,6 +65,14 @@ public abstract class JaxbSerializer<T> {
         }
     }
 
+    /**
+     * Writes the specified object to an output stream using JAXB marshalling.
+     *
+     * @param outputStream the output stream to write to
+     * @param obj the object to serialize
+     * @throws JAXBException if an error occurs during JAXB marshalling
+     * @throws IOException if an I/O error occurs during writing
+     */
     public void write(OutputStream outputStream, T obj) throws JAXBException, IOException {
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
