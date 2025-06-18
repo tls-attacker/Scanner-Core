@@ -19,8 +19,18 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public interface AnalyzedProperty {
 
+    /**
+     * Gets the category of this analyzed property.
+     *
+     * @return the property category
+     */
     AnalyzedPropertyCategory getCategory();
 
+    /**
+     * Gets the name of this analyzed property.
+     *
+     * @return the property name
+     */
     @JsonValue
     String getName();
 }
