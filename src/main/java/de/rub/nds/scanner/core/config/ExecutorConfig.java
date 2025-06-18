@@ -169,6 +169,6 @@ public final class ExecutorConfig {
     }
 
     public boolean isMultithreaded() {
-        return (parallelProbes > 1 || overallThreads > 1);
+        return parallelProbes > 1 || overallThreads > 1;
     }
 }

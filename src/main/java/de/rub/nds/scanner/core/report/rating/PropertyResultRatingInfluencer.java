@@ -84,7 +84,7 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     }
 
     public boolean hasScoreCap() {
-        return (scoreCap != null && scoreCap != 0);
+        return scoreCap != null && scoreCap != 0;
     }
 
     public void setResult(TestResult result) {
@@ -117,7 +117,7 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
 
     @JsonIgnore
     public boolean isBadInfluence() {
-        return (influence != null && influence < 0 || scoreCap != null);
+        return influence != null && influence < 0 || scoreCap != null;
     }
 
     @Override
