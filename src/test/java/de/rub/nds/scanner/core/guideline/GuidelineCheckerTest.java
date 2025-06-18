@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.guideline;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
+import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
 import de.rub.nds.scanner.core.probe.result.TestResult;
 import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.ScanReport;
@@ -36,6 +37,11 @@ class GuidelineCheckerTest {
         public String getName() {
             return name;
         }
+
+        @Override
+        public AnalyzedPropertyCategory getCategory() {
+            return new TestPropertyCategory();
+        }
     }
 
     private static class TestScanReport extends ScanReport {
@@ -58,6 +64,16 @@ class GuidelineCheckerTest {
 
         public GuidelineReport getAddedReport() {
             return addedReport;
+        }
+
+        @Override
+        public void serializeToJson(java.io.OutputStream outputStream) {
+            // Test implementation - do nothing
+        }
+
+        @Override
+        public String getRemoteName() {
+            return "TestRemote";
         }
     }
 
@@ -118,15 +134,13 @@ class GuidelineCheckerTest {
 
     @Test
     void testFillReportWithPassingChecks() {
-        List<GuidelineCheck<TestScanReport>> checks = Arrays.asList(
-            new PassingCheck("Check1"),
-            new PassingCheck("Check2")
-        );
+        List<GuidelineCheck<TestScanReport>> checks =
+                Arrays.asList(new PassingCheck("Check1"), new PassingCheck("Check2"));
         guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
-        
+
         checker.fillReport(report);
-        
+
         GuidelineReport addedReport = report.getAddedReport();
         assertNotNull(addedReport);
         assertEquals("Test Guideline", addedReport.getName());
@@ -138,16 +152,16 @@ class GuidelineCheckerTest {
 
     @Test
     void testFillReportWithFailingChecks() {
-        List<GuidelineCheck<TestScanReport>> checks = Arrays.asList(
-            new PassingCheck("Check1"),
-            new FailingCheck("Check2"),
-            new FailingCheck("Check3")
-        );
+        List<GuidelineCheck<TestScanReport>> checks =
+                Arrays.asList(
+                        new PassingCheck("Check1"),
+                        new FailingCheck("Check2"),
+                        new FailingCheck("Check3"));
         guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
-        
+
         checker.fillReport(report);
-        
+
         GuidelineReport addedReport = report.getAddedReport();
         assertNotNull(addedReport);
         assertEquals(3, addedReport.getResults().size());
@@ -159,25 +173,25 @@ class GuidelineCheckerTest {
     void testFillReportWithUnmetConditions() {
         TestAnalyzedProperty property = new TestAnalyzedProperty("TestProp");
         GuidelineCheckCondition condition = new GuidelineCheckCondition(property, TestResults.TRUE);
-        
-        List<GuidelineCheck<TestScanReport>> checks = Arrays.asList(
-            new PassingCheck("Check1"),
-            new ConditionalCheck("ConditionalCheck", condition)
-        );
+
+        List<GuidelineCheck<TestScanReport>> checks =
+                Arrays.asList(
+                        new PassingCheck("Check1"),
+                        new ConditionalCheck("ConditionalCheck", condition));
         guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
-        
+
         // Set condition to false
         report.putResult(property, TestResults.FALSE);
-        
+
         checker.fillReport(report);
-        
+
         GuidelineReport addedReport = report.getAddedReport();
         assertNotNull(addedReport);
         assertEquals(2, addedReport.getResults().size());
         assertEquals(1, addedReport.getAdhered().size());
         assertEquals(1, addedReport.getConditionNotMet().size());
-        
+
         GuidelineCheckResult conditionNotMetResult = addedReport.getConditionNotMet().get(0);
         assertEquals("ConditionalCheck", conditionNotMetResult.getCheckName());
         assertEquals(GuidelineAdherence.CONDITION_NOT_MET, conditionNotMetResult.getAdherence());
@@ -188,18 +202,17 @@ class GuidelineCheckerTest {
     void testFillReportWithMetConditions() {
         TestAnalyzedProperty property = new TestAnalyzedProperty("TestProp");
         GuidelineCheckCondition condition = new GuidelineCheckCondition(property, TestResults.TRUE);
-        
-        List<GuidelineCheck<TestScanReport>> checks = Arrays.asList(
-            new ConditionalCheck("ConditionalCheck", condition)
-        );
+
+        List<GuidelineCheck<TestScanReport>> checks =
+                Arrays.asList(new ConditionalCheck("ConditionalCheck", condition));
         guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
-        
+
         // Set condition to true
         report.putResult(property, TestResults.TRUE);
-        
+
         checker.fillReport(report);
-        
+
         GuidelineReport addedReport = report.getAddedReport();
         assertNotNull(addedReport);
         assertEquals(1, addedReport.getResults().size());
@@ -210,22 +223,22 @@ class GuidelineCheckerTest {
     @Test
     void testFillReportWithExceptionThrowingCheck() {
         RuntimeException exception = new RuntimeException("Test exception");
-        List<GuidelineCheck<TestScanReport>> checks = Arrays.asList(
-            new PassingCheck("Check1"),
-            new ExceptionThrowingCheck("ExceptionCheck", exception),
-            new PassingCheck("Check3")
-        );
+        List<GuidelineCheck<TestScanReport>> checks =
+                Arrays.asList(
+                        new PassingCheck("Check1"),
+                        new ExceptionThrowingCheck("ExceptionCheck", exception),
+                        new PassingCheck("Check3"));
         guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
-        
+
         checker.fillReport(report);
-        
+
         GuidelineReport addedReport = report.getAddedReport();
         assertNotNull(addedReport);
         assertEquals(3, addedReport.getResults().size());
         assertEquals(2, addedReport.getAdhered().size());
         assertEquals(1, addedReport.getFailedChecks().size());
-        
+
         GuidelineCheckResult failedResult = addedReport.getFailedChecks().get(0);
         assertEquals("ExceptionCheck", failedResult.getCheckName());
         assertEquals(GuidelineAdherence.CHECK_FAILED, failedResult.getAdherence());
@@ -235,18 +248,18 @@ class GuidelineCheckerTest {
     @Test
     void testFillReportWithError() {
         Error error = new OutOfMemoryError("Test error");
-        List<GuidelineCheck<TestScanReport>> checks = Arrays.asList(
-            new ExceptionThrowingCheck("ErrorCheck", new RuntimeException(error))
-        );
+        List<GuidelineCheck<TestScanReport>> checks =
+                Arrays.asList(
+                        new ExceptionThrowingCheck("ErrorCheck", new RuntimeException(error)));
         guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
-        
+
         checker.fillReport(report);
-        
+
         GuidelineReport addedReport = report.getAddedReport();
         assertNotNull(addedReport);
         assertEquals(1, addedReport.getFailedChecks().size());
-        
+
         GuidelineCheckResult failedResult = addedReport.getFailedChecks().get(0);
         assertEquals(GuidelineAdherence.CHECK_FAILED, failedResult.getAdherence());
     }
@@ -255,9 +268,9 @@ class GuidelineCheckerTest {
     void testFillReportWithEmptyChecks() {
         guideline = new Guideline<>("Test Guideline", "https://test.com", new ArrayList<>());
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
-        
+
         checker.fillReport(report);
-        
+
         GuidelineReport addedReport = report.getAddedReport();
         assertNotNull(addedReport);
         assertEquals(0, addedReport.getResults().size());
@@ -267,21 +280,21 @@ class GuidelineCheckerTest {
     void testFillReportWithMixedResults() {
         TestAnalyzedProperty property = new TestAnalyzedProperty("TestProp");
         GuidelineCheckCondition condition = new GuidelineCheckCondition(property, TestResults.TRUE);
-        
-        List<GuidelineCheck<TestScanReport>> checks = Arrays.asList(
-            new PassingCheck("PassCheck"),
-            new FailingCheck("FailCheck"),
-            new ConditionalCheck("UnmetConditionCheck", condition),
-            new ExceptionThrowingCheck("ExceptionCheck", new RuntimeException("Test"))
-        );
+
+        List<GuidelineCheck<TestScanReport>> checks =
+                Arrays.asList(
+                        new PassingCheck("PassCheck"),
+                        new FailingCheck("FailCheck"),
+                        new ConditionalCheck("UnmetConditionCheck", condition),
+                        new ExceptionThrowingCheck("ExceptionCheck", new RuntimeException("Test")));
         guideline = new Guideline<>("Mixed Guideline", "https://mixed.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
-        
+
         // Set condition to false
         report.putResult(property, TestResults.FALSE);
-        
+
         checker.fillReport(report);
-        
+
         GuidelineReport addedReport = report.getAddedReport();
         assertNotNull(addedReport);
         assertEquals(4, addedReport.getResults().size());

@@ -20,9 +20,10 @@ class MissingRequirementGuidelineResultTest {
     void testConstructorWithNameAndAdherence() {
         String checkName = "TestCheck";
         GuidelineAdherence adherence = GuidelineAdherence.CONDITION_NOT_MET;
-        
-        MissingRequirementGuidelineResult result = new MissingRequirementGuidelineResult(checkName, adherence);
-        
+
+        MissingRequirementGuidelineResult result =
+                new MissingRequirementGuidelineResult(checkName, adherence);
+
         assertEquals(checkName, result.getCheckName());
         assertEquals(adherence, result.getAdherence());
         assertNull(result.getHint());
@@ -33,9 +34,10 @@ class MissingRequirementGuidelineResultTest {
         String checkName = "TestCheck";
         GuidelineAdherence adherence = GuidelineAdherence.CONDITION_NOT_MET;
         String hint = "Precondition not satisfied";
-        
-        MissingRequirementGuidelineResult result = new MissingRequirementGuidelineResult(checkName, adherence, hint);
-        
+
+        MissingRequirementGuidelineResult result =
+                new MissingRequirementGuidelineResult(checkName, adherence, hint);
+
         assertEquals(checkName, result.getCheckName());
         assertEquals(adherence, result.getAdherence());
         assertEquals(hint, result.getHint());
@@ -48,7 +50,7 @@ class MissingRequirementGuidelineResultTest {
         java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         Object instance = constructor.newInstance();
-        
+
         assertNotNull(instance);
         MissingRequirementGuidelineResult result = (MissingRequirementGuidelineResult) instance;
         assertNull(result.getCheckName());
@@ -57,13 +59,14 @@ class MissingRequirementGuidelineResultTest {
 
     @Test
     void testInheritanceFromGuidelineCheckResult() {
-        MissingRequirementGuidelineResult result = new MissingRequirementGuidelineResult("Test", GuidelineAdherence.CONDITION_NOT_MET);
-        
+        MissingRequirementGuidelineResult result =
+                new MissingRequirementGuidelineResult("Test", GuidelineAdherence.CONDITION_NOT_MET);
+
         // Test inherited setters
         result.setCheckName("NewName");
         result.setAdherence(GuidelineAdherence.ADHERED);
         result.setHint("New hint");
-        
+
         assertEquals("NewName", result.getCheckName());
         assertEquals(GuidelineAdherence.ADHERED, result.getAdherence());
         assertEquals("New hint", result.getHint());

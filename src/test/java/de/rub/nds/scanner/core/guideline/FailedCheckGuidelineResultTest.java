@@ -20,9 +20,9 @@ class FailedCheckGuidelineResultTest {
     void testConstructorWithNameAndAdherence() {
         String checkName = "TestCheck";
         GuidelineAdherence adherence = GuidelineAdherence.CHECK_FAILED;
-        
+
         FailedCheckGuidelineResult result = new FailedCheckGuidelineResult(checkName, adherence);
-        
+
         assertEquals(checkName, result.getCheckName());
         assertEquals(adherence, result.getAdherence());
         assertNull(result.getHint());
@@ -33,9 +33,10 @@ class FailedCheckGuidelineResultTest {
         String checkName = "TestCheck";
         GuidelineAdherence adherence = GuidelineAdherence.CHECK_FAILED;
         String hint = "This check failed due to an exception";
-        
-        FailedCheckGuidelineResult result = new FailedCheckGuidelineResult(checkName, adherence, hint);
-        
+
+        FailedCheckGuidelineResult result =
+                new FailedCheckGuidelineResult(checkName, adherence, hint);
+
         assertEquals(checkName, result.getCheckName());
         assertEquals(adherence, result.getAdherence());
         assertEquals(hint, result.getHint());
@@ -48,7 +49,7 @@ class FailedCheckGuidelineResultTest {
         java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         Object instance = constructor.newInstance();
-        
+
         assertNotNull(instance);
         FailedCheckGuidelineResult result = (FailedCheckGuidelineResult) instance;
         assertNull(result.getCheckName());
@@ -57,13 +58,14 @@ class FailedCheckGuidelineResultTest {
 
     @Test
     void testInheritanceFromGuidelineCheckResult() {
-        FailedCheckGuidelineResult result = new FailedCheckGuidelineResult("Test", GuidelineAdherence.CHECK_FAILED);
-        
+        FailedCheckGuidelineResult result =
+                new FailedCheckGuidelineResult("Test", GuidelineAdherence.CHECK_FAILED);
+
         // Test inherited setters
         result.setCheckName("NewName");
         result.setAdherence(GuidelineAdherence.VIOLATED);
         result.setHint("New hint");
-        
+
         assertEquals("NewName", result.getCheckName());
         assertEquals(GuidelineAdherence.VIOLATED, result.getAdherence());
         assertEquals("New hint", result.getHint());

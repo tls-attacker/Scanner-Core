@@ -23,7 +23,8 @@ class GuidelineCheckResultTest {
             super(checkName, adherence);
         }
 
-        public ConcreteGuidelineCheckResult(String checkName, GuidelineAdherence adherence, String hint) {
+        public ConcreteGuidelineCheckResult(
+                String checkName, GuidelineAdherence adherence, String hint) {
             super(checkName, adherence, hint);
         }
 
@@ -37,9 +38,10 @@ class GuidelineCheckResultTest {
     void testConstructorWithNameAndAdherence() {
         String checkName = "TestCheck";
         GuidelineAdherence adherence = GuidelineAdherence.ADHERED;
-        
-        ConcreteGuidelineCheckResult result = new ConcreteGuidelineCheckResult(checkName, adherence);
-        
+
+        ConcreteGuidelineCheckResult result =
+                new ConcreteGuidelineCheckResult(checkName, adherence);
+
         assertEquals(checkName, result.getCheckName());
         assertEquals(adherence, result.getAdherence());
         assertNull(result.getHint());
@@ -50,9 +52,10 @@ class GuidelineCheckResultTest {
         String checkName = "TestCheck";
         GuidelineAdherence adherence = GuidelineAdherence.VIOLATED;
         String hint = "Test hint";
-        
-        ConcreteGuidelineCheckResult result = new ConcreteGuidelineCheckResult(checkName, adherence, hint);
-        
+
+        ConcreteGuidelineCheckResult result =
+                new ConcreteGuidelineCheckResult(checkName, adherence, hint);
+
         assertEquals(checkName, result.getCheckName());
         assertEquals(adherence, result.getAdherence());
         assertEquals(hint, result.getHint());
@@ -60,12 +63,13 @@ class GuidelineCheckResultTest {
 
     @Test
     void testSettersAndGetters() {
-        ConcreteGuidelineCheckResult result = new ConcreteGuidelineCheckResult("InitialName", GuidelineAdherence.ADHERED);
-        
+        ConcreteGuidelineCheckResult result =
+                new ConcreteGuidelineCheckResult("InitialName", GuidelineAdherence.ADHERED);
+
         result.setCheckName("UpdatedName");
         result.setAdherence(GuidelineAdherence.VIOLATED);
         result.setHint("Updated hint");
-        
+
         assertEquals("UpdatedName", result.getCheckName());
         assertEquals(GuidelineAdherence.VIOLATED, result.getAdherence());
         assertEquals("Updated hint", result.getHint());
@@ -78,7 +82,7 @@ class GuidelineCheckResultTest {
         java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         Object instance = constructor.newInstance();
-        
+
         assertNotNull(instance);
         ConcreteGuidelineCheckResult result = (ConcreteGuidelineCheckResult) instance;
         assertNull(result.getCheckName());
@@ -91,7 +95,7 @@ class GuidelineCheckResultTest {
         // Verify the class has the JsonTypeInfo annotation for polymorphic deserialization
         Class<?> clazz = GuidelineCheckResult.class;
         JsonTypeInfo annotation = clazz.getAnnotation(JsonTypeInfo.class);
-        
+
         assertNotNull(annotation);
         assertEquals(JsonTypeInfo.Id.CLASS, annotation.use());
         assertEquals(JsonTypeInfo.As.PROPERTY, annotation.include());

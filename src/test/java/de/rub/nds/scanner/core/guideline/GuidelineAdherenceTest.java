@@ -38,7 +38,9 @@ class GuidelineAdherenceTest {
     void testValueOf() {
         assertEquals(GuidelineAdherence.ADHERED, GuidelineAdherence.valueOf("ADHERED"));
         assertEquals(GuidelineAdherence.VIOLATED, GuidelineAdherence.valueOf("VIOLATED"));
-        assertEquals(GuidelineAdherence.CONDITION_NOT_MET, GuidelineAdherence.valueOf("CONDITION_NOT_MET"));
+        assertEquals(
+                GuidelineAdherence.CONDITION_NOT_MET,
+                GuidelineAdherence.valueOf("CONDITION_NOT_MET"));
         assertEquals(GuidelineAdherence.CHECK_FAILED, GuidelineAdherence.valueOf("CHECK_FAILED"));
     }
 }

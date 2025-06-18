@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.guideline;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
+import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
 import de.rub.nds.scanner.core.probe.result.TestResult;
 import de.rub.nds.scanner.core.probe.result.TestResults;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -35,15 +36,20 @@ class GuidelineCheckConditionTest {
         public String getName() {
             return name;
         }
+
+        @Override
+        public AnalyzedPropertyCategory getCategory() {
+            return new TestPropertyCategory();
+        }
     }
 
     @Test
     void testConstructorWithAnalyzedPropertyAndResult() {
         AnalyzedProperty property = new TestAnalyzedProperty("TestProperty");
         TestResult result = TestResults.TRUE;
-        
+
         GuidelineCheckCondition condition = new GuidelineCheckCondition(property, result);
-        
+
         assertEquals(property, condition.getAnalyzedProperty());
         assertEquals(result, condition.getResult());
         assertNull(condition.getAnd());
@@ -54,21 +60,23 @@ class GuidelineCheckConditionTest {
     void testSetAnalyzedProperty() {
         GuidelineCheckCondition condition = new GuidelineCheckCondition(null, TestResults.FALSE);
         AnalyzedProperty property = new TestAnalyzedProperty("NewProperty");
-        
+
         condition.setAnalyzedProperty(property);
-        
+
         assertEquals(property, condition.getAnalyzedProperty());
     }
 
     @Test
     void testStaticAndFactory() {
-        List<GuidelineCheckCondition> conditions = Arrays.asList(
-            new GuidelineCheckCondition(new TestAnalyzedProperty("Prop1"), TestResults.TRUE),
-            new GuidelineCheckCondition(new TestAnalyzedProperty("Prop2"), TestResults.FALSE)
-        );
-        
+        List<GuidelineCheckCondition> conditions =
+                Arrays.asList(
+                        new GuidelineCheckCondition(
+                                new TestAnalyzedProperty("Prop1"), TestResults.TRUE),
+                        new GuidelineCheckCondition(
+                                new TestAnalyzedProperty("Prop2"), TestResults.FALSE));
+
         GuidelineCheckCondition andCondition = GuidelineCheckCondition.and(conditions);
-        
+
         assertNotNull(andCondition.getAnd());
         assertEquals(2, andCondition.getAnd().size());
         assertNull(andCondition.getOr());
@@ -78,14 +86,17 @@ class GuidelineCheckConditionTest {
 
     @Test
     void testStaticOrFactory() {
-        List<GuidelineCheckCondition> conditions = Arrays.asList(
-            new GuidelineCheckCondition(new TestAnalyzedProperty("Prop1"), TestResults.TRUE),
-            new GuidelineCheckCondition(new TestAnalyzedProperty("Prop2"), TestResults.FALSE),
-            new GuidelineCheckCondition(new TestAnalyzedProperty("Prop3"), TestResults.NOT_TESTED_YET)
-        );
-        
+        List<GuidelineCheckCondition> conditions =
+                Arrays.asList(
+                        new GuidelineCheckCondition(
+                                new TestAnalyzedProperty("Prop1"), TestResults.TRUE),
+                        new GuidelineCheckCondition(
+                                new TestAnalyzedProperty("Prop2"), TestResults.FALSE),
+                        new GuidelineCheckCondition(
+                                new TestAnalyzedProperty("Prop3"), TestResults.NOT_TESTED_YET));
+
         GuidelineCheckCondition orCondition = GuidelineCheckCondition.or(conditions);
-        
+
         assertNotNull(orCondition.getOr());
         assertEquals(3, orCondition.getOr().size());
         assertNull(orCondition.getAnd());
@@ -96,40 +107,50 @@ class GuidelineCheckConditionTest {
     @Test
     void testGetAndReturnsUnmodifiableList() {
         List<GuidelineCheckCondition> conditions = new ArrayList<>();
-        conditions.add(new GuidelineCheckCondition(new TestAnalyzedProperty("Prop1"), TestResults.TRUE));
-        
+        conditions.add(
+                new GuidelineCheckCondition(new TestAnalyzedProperty("Prop1"), TestResults.TRUE));
+
         GuidelineCheckCondition andCondition = GuidelineCheckCondition.and(conditions);
-        
+
         List<GuidelineCheckCondition> andList = andCondition.getAnd();
-        assertThrows(UnsupportedOperationException.class, () -> 
-            andList.add(new GuidelineCheckCondition(new TestAnalyzedProperty("New"), TestResults.FALSE))
-        );
+        assertThrows(
+                UnsupportedOperationException.class,
+                () ->
+                        andList.add(
+                                new GuidelineCheckCondition(
+                                        new TestAnalyzedProperty("New"), TestResults.FALSE)));
     }
 
     @Test
     void testGetOrReturnsUnmodifiableList() {
         List<GuidelineCheckCondition> conditions = new ArrayList<>();
-        conditions.add(new GuidelineCheckCondition(new TestAnalyzedProperty("Prop1"), TestResults.TRUE));
-        
+        conditions.add(
+                new GuidelineCheckCondition(new TestAnalyzedProperty("Prop1"), TestResults.TRUE));
+
         GuidelineCheckCondition orCondition = GuidelineCheckCondition.or(conditions);
-        
+
         List<GuidelineCheckCondition> orList = orCondition.getOr();
-        assertThrows(UnsupportedOperationException.class, () -> 
-            orList.add(new GuidelineCheckCondition(new TestAnalyzedProperty("New"), TestResults.FALSE))
-        );
+        assertThrows(
+                UnsupportedOperationException.class,
+                () ->
+                        orList.add(
+                                new GuidelineCheckCondition(
+                                        new TestAnalyzedProperty("New"), TestResults.FALSE)));
     }
 
     @Test
     void testGetAndWithNullList() {
-        GuidelineCheckCondition condition = new GuidelineCheckCondition(new TestAnalyzedProperty("Prop"), TestResults.TRUE);
-        
+        GuidelineCheckCondition condition =
+                new GuidelineCheckCondition(new TestAnalyzedProperty("Prop"), TestResults.TRUE);
+
         assertNull(condition.getAnd());
     }
 
     @Test
     void testGetOrWithNullList() {
-        GuidelineCheckCondition condition = new GuidelineCheckCondition(new TestAnalyzedProperty("Prop"), TestResults.TRUE);
-        
+        GuidelineCheckCondition condition =
+                new GuidelineCheckCondition(new TestAnalyzedProperty("Prop"), TestResults.TRUE);
+
         assertNull(condition.getOr());
     }
 
@@ -140,7 +161,7 @@ class GuidelineCheckConditionTest {
         java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         Object instance = constructor.newInstance();
-        
+
         assertNotNull(instance);
         GuidelineCheckCondition condition = (GuidelineCheckCondition) instance;
         assertNull(condition.getAnalyzedProperty());
@@ -152,7 +173,7 @@ class GuidelineCheckConditionTest {
     @Test
     void testXmlAnnotations() {
         Class<?> clazz = GuidelineCheckCondition.class;
-        
+
         // Verify XML annotations
         assertNotNull(clazz.getAnnotation(XmlRootElement.class));
         XmlAccessorType accessorType = clazz.getAnnotation(XmlAccessorType.class);
@@ -163,18 +184,25 @@ class GuidelineCheckConditionTest {
     @Test
     void testNestedAndOrConditions() {
         // Create nested conditions to test complex scenarios
-        GuidelineCheckCondition innerAnd = GuidelineCheckCondition.and(Arrays.asList(
-            new GuidelineCheckCondition(new TestAnalyzedProperty("A"), TestResults.TRUE),
-            new GuidelineCheckCondition(new TestAnalyzedProperty("B"), TestResults.TRUE)
-        ));
-        
-        GuidelineCheckCondition innerOr = GuidelineCheckCondition.or(Arrays.asList(
-            new GuidelineCheckCondition(new TestAnalyzedProperty("C"), TestResults.FALSE),
-            new GuidelineCheckCondition(new TestAnalyzedProperty("D"), TestResults.TRUE)
-        ));
-        
-        GuidelineCheckCondition complex = GuidelineCheckCondition.and(Arrays.asList(innerAnd, innerOr));
-        
+        GuidelineCheckCondition innerAnd =
+                GuidelineCheckCondition.and(
+                        Arrays.asList(
+                                new GuidelineCheckCondition(
+                                        new TestAnalyzedProperty("A"), TestResults.TRUE),
+                                new GuidelineCheckCondition(
+                                        new TestAnalyzedProperty("B"), TestResults.TRUE)));
+
+        GuidelineCheckCondition innerOr =
+                GuidelineCheckCondition.or(
+                        Arrays.asList(
+                                new GuidelineCheckCondition(
+                                        new TestAnalyzedProperty("C"), TestResults.FALSE),
+                                new GuidelineCheckCondition(
+                                        new TestAnalyzedProperty("D"), TestResults.TRUE)));
+
+        GuidelineCheckCondition complex =
+                GuidelineCheckCondition.and(Arrays.asList(innerAnd, innerOr));
+
         assertNotNull(complex.getAnd());
         assertEquals(2, complex.getAnd().size());
         assertNotNull(complex.getAnd().get(0).getAnd());

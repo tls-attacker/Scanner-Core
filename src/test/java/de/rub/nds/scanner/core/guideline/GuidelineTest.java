@@ -25,7 +25,15 @@ class GuidelineTest {
 
     // Mock implementation for testing
     private static class TestScanReport extends ScanReport {
-        // Minimal implementation for testing
+        @Override
+        public void serializeToJson(java.io.OutputStream outputStream) {
+            // Test implementation - do nothing
+        }
+
+        @Override
+        public String getRemoteName() {
+            return "TestRemote";
+        }
     }
 
     private static class TestGuidelineCheck extends GuidelineCheck<TestScanReport> {
@@ -43,17 +51,15 @@ class GuidelineTest {
     void testConstructorWithParameters() {
         String name = "Test Guideline";
         String link = "https://example.com/guideline";
-        List<GuidelineCheck<TestScanReport>> checks = Arrays.asList(
-            new TestGuidelineCheck("Check1"),
-            new TestGuidelineCheck("Check2")
-        );
-        
+        List<GuidelineCheck<TestScanReport>> checks =
+                Arrays.asList(new TestGuidelineCheck("Check1"), new TestGuidelineCheck("Check2"));
+
         Guideline<TestScanReport> guideline = new Guideline<>(name, link, checks);
-        
+
         assertEquals(name, guideline.getName());
         assertEquals(link, guideline.getLink());
         assertEquals(2, guideline.getChecks().size());
-        
+
         // Verify defensive copy
         checks.clear();
         assertEquals(2, guideline.getChecks().size());
@@ -61,21 +67,23 @@ class GuidelineTest {
 
     @Test
     void testSettersAndGetters() {
-        Guideline<TestScanReport> guideline = new Guideline<>("Initial", "https://initial.com", new ArrayList<>());
-        
+        Guideline<TestScanReport> guideline =
+                new Guideline<>("Initial", "https://initial.com", new ArrayList<>());
+
         guideline.setName("Updated Name");
         guideline.setLink("https://updated.com");
-        
+
         assertEquals("Updated Name", guideline.getName());
         assertEquals("https://updated.com", guideline.getLink());
     }
 
     @Test
     void testAddCheck() {
-        Guideline<TestScanReport> guideline = new Guideline<>("Test", "https://test.com", new ArrayList<>());
-        
+        Guideline<TestScanReport> guideline =
+                new Guideline<>("Test", "https://test.com", new ArrayList<>());
+
         assertEquals(0, guideline.getChecks().size());
-        
+
         guideline.addCheck(new TestGuidelineCheck("NewCheck"));
         assertEquals(1, guideline.getChecks().size());
         assertEquals("NewCheck", guideline.getChecks().get(0).getName());
@@ -83,18 +91,20 @@ class GuidelineTest {
 
     @Test
     void testGetChecksReturnsUnmodifiableList() {
-        List<GuidelineCheck<TestScanReport>> checks = Arrays.asList(new TestGuidelineCheck("Check1"));
+        List<GuidelineCheck<TestScanReport>> checks =
+                Arrays.asList(new TestGuidelineCheck("Check1"));
         Guideline<TestScanReport> guideline = new Guideline<>("Test", "https://test.com", checks);
-        
+
         List<GuidelineCheck<TestScanReport>> returnedChecks = guideline.getChecks();
-        assertThrows(UnsupportedOperationException.class, () -> 
-            returnedChecks.add(new TestGuidelineCheck("NewCheck"))
-        );
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> returnedChecks.add(new TestGuidelineCheck("NewCheck")));
     }
 
     @Test
     void testImplementsSerializable() {
-        Guideline<TestScanReport> guideline = new Guideline<>("Test", "https://test.com", new ArrayList<>());
+        Guideline<TestScanReport> guideline =
+                new Guideline<>("Test", "https://test.com", new ArrayList<>());
         assertTrue(guideline instanceof Serializable);
     }
 
@@ -105,7 +115,7 @@ class GuidelineTest {
         java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         Object instance = constructor.newInstance();
-        
+
         assertNotNull(instance);
         Guideline<?> guideline = (Guideline<?>) instance;
         assertNull(guideline.getName());
@@ -116,16 +126,16 @@ class GuidelineTest {
     @Test
     void testXmlAnnotations() {
         Class<?> clazz = Guideline.class;
-        
+
         // Verify XML annotations
         XmlRootElement rootElement = clazz.getAnnotation(XmlRootElement.class);
         assertNotNull(rootElement);
         assertEquals("guideline", rootElement.name());
-        
+
         XmlType xmlType = clazz.getAnnotation(XmlType.class);
         assertNotNull(xmlType);
-        assertArrayEquals(new String[]{"name", "link", "checks"}, xmlType.propOrder());
-        
+        assertArrayEquals(new String[] {"name", "link", "checks"}, xmlType.propOrder());
+
         XmlAccessorType accessorType = clazz.getAnnotation(XmlAccessorType.class);
         assertNotNull(accessorType);
         assertEquals(XmlAccessType.FIELD, accessorType.value());
@@ -134,9 +144,10 @@ class GuidelineTest {
     @Test
     void testGenericType() {
         // Test with different report types
-        Guideline<TestScanReport> testGuideline = new Guideline<>("Test", "https://test.com", new ArrayList<>());
+        Guideline<TestScanReport> testGuideline =
+                new Guideline<>("Test", "https://test.com", new ArrayList<>());
         assertNotNull(testGuideline);
-        
+
         // The generic type ensures type safety at compile time
         testGuideline.addCheck(new TestGuidelineCheck("TypedCheck"));
         assertEquals(1, testGuideline.getChecks().size());
