@@ -89,6 +89,15 @@ public abstract class JaxbSerializer<T> {
         }
     }
 
+    /**
+     * Reads an object from a file using JAXB unmarshalling.
+     *
+     * @param file the file to read from
+     * @return the deserialized object
+     * @throws IOException if an I/O error occurs during reading
+     * @throws JAXBException if an error occurs during JAXB unmarshalling
+     * @throws XMLStreamException if an error occurs during XML stream processing
+     */
     public T read(File file) throws IOException, JAXBException, XMLStreamException {
         try (FileInputStream fis = new FileInputStream(file)) {
             return read(fis);
