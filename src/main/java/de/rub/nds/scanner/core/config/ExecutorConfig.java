@@ -67,11 +67,11 @@ public final class ExecutorConfig {
     }
 
     public List<ProbeType> getExcludedProbes() {
-        return excludedProbes;
+        return new LinkedList<>(excludedProbes);
     }
 
     public void setExcludedProbes(List<ProbeType> excludedProbes) {
-        this.excludedProbes = excludedProbes;
+        this.excludedProbes = new LinkedList<>(excludedProbes);
     }
 
     public ScannerDetail getScanDetail() {
@@ -107,11 +107,11 @@ public final class ExecutorConfig {
     }
 
     public List<ProbeType> getProbes() {
-        return probes;
+        return probes == null ? null : new LinkedList<>(probes);
     }
 
     public void setProbes(List<ProbeType> probes) {
-        this.probes = probes;
+        this.probes = probes == null ? null : new LinkedList<>(probes);
     }
 
     public void setProbes(ProbeType... probes) {

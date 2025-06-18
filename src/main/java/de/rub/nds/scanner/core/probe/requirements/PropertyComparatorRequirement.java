@@ -83,6 +83,8 @@ public class PropertyComparatorRequirement<R extends ScanReport>
     public String toString() {
         return String.format(
                 "PropertyComparatorRequirement[%s %s %s]",
-                parameters.get(0), operator, comparisonValue);
+                parameters.isEmpty() ? "(no parameter)" : parameters.get(0),
+                operator != null ? operator : "(no operator)",
+                comparisonValue != null ? comparisonValue : "(no value)");
     }
 }
