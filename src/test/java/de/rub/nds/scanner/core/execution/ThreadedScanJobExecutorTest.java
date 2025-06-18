@@ -64,9 +64,10 @@ public class ThreadedScanJobExecutorTest {
     static class TestState {}
 
     static class TestReport extends ScanReport {
-        private final List<ProbeType> executedProbes = new ArrayList<>();
-        private final List<ProbeType> unexecutedProbes = new ArrayList<>();
-        private final Map<TrackableValue, ExtractedValueContainer<?>> extractedContainers = new HashMap<>();
+        private final List<ProbeType> executedProbeTypes = new ArrayList<>();
+        private final List<ProbeType> unexecutedProbeTypes = new ArrayList<>();
+        private final Map<TrackableValue, ExtractedValueContainer<?>> extractedContainers =
+                new HashMap<>();
 
         @Override
         public String getRemoteName() {
@@ -74,23 +75,28 @@ public class ThreadedScanJobExecutorTest {
         }
 
         @Override
+        public void serializeToJson(java.io.OutputStream outputStream) {
+            // Simple implementation for testing
+        }
+
+        @Override
         public void markProbeAsExecuted(ScannerProbe<?, ?> probe) {
-            executedProbes.add(probe.getType());
-            firePropertyChange("supportedProbe", null, probe.getType());
+            executedProbeTypes.add(probe.getType());
+            super.markProbeAsExecuted(probe);
         }
 
         @Override
         public void markProbeAsUnexecuted(ScannerProbe<?, ?> probe) {
-            unexecutedProbes.add(probe.getType());
-            firePropertyChange("unsupportedProbe", null, probe.getType());
+            unexecutedProbeTypes.add(probe.getType());
+            super.markProbeAsUnexecuted(probe);
         }
 
-        public List<ProbeType> getExecutedProbes() {
-            return executedProbes;
+        public List<ProbeType> getExecutedProbeTypes() {
+            return executedProbeTypes;
         }
 
-        public List<ProbeType> getUnexecutedProbes() {
-            return unexecutedProbes;
+        public List<ProbeType> getUnexecutedProbeTypes() {
+            return unexecutedProbeTypes;
         }
 
         public Map<TrackableValue, ExtractedValueContainer<?>> getExtractedValueContainers() {
@@ -98,7 +104,8 @@ public class ThreadedScanJobExecutorTest {
         }
 
         @Override
-        public void putAllExtractedValueContainers(Map<TrackableValue, ExtractedValueContainer<?>> containers) {
+        public void putAllExtractedValueContainers(
+                Map<TrackableValue, ExtractedValueContainer<?>> containers) {
             extractedContainers.putAll(containers);
         }
     }
@@ -107,7 +114,7 @@ public class ThreadedScanJobExecutorTest {
         private boolean canExecute = true;
         private boolean wasExecuted = false;
         private boolean shouldThrowException = false;
-        private Requirement<TestReport> requirement = report -> canExecute;
+        private Requirement<TestReport> requirement = new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
 
         TestProbe(ProbeType type) {
             super(type);
@@ -142,6 +149,11 @@ public class ThreadedScanJobExecutorTest {
 
         public void setCanExecute(boolean canExecute) {
             this.canExecute = canExecute;
+            if (canExecute) {
+                this.requirement = new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
+            } else {
+                this.requirement = new de.rub.nds.scanner.core.probe.requirements.UnfulfillableRequirement<>();
+            }
         }
 
         public boolean wasExecuted() {
@@ -229,7 +241,7 @@ public class ThreadedScanJobExecutorTest {
             TestReport report = new TestReport();
             executor.execute(report);
 
-            assertEquals(2, report.getExecutedProbes().size());
+            assertEquals(2, report.getExecutedProbeTypes().size());
             assertTrue(probeList.get(0).wasExecuted());
             assertTrue(probeList.get(1).wasExecuted());
             assertTrue(afterList.get(0).isAnalyzed());
@@ -254,8 +266,8 @@ public class ThreadedScanJobExecutorTest {
             TestReport report = new TestReport();
             executor.execute(report);
 
-            assertEquals(1, report.getExecutedProbes().size());
-            assertEquals(1, report.getUnexecutedProbes().size());
+            assertEquals(1, report.getExecutedProbeTypes().size());
+            assertEquals(1, report.getUnexecutedProbeTypes().size());
             assertTrue(executableProbe.wasExecuted());
             assertFalse(nonExecutableProbe.wasExecuted());
         }
@@ -290,7 +302,12 @@ public class ThreadedScanJobExecutorTest {
 
         // Add requirement that probe1 must be executed first
         probe2.addRequirement(
-                report -> report.getExecutedProbes().contains(new TestProbeType("probe1")));
+                new de.rub.nds.scanner.core.probe.requirements.Requirement<TestReport>() {
+                    @Override
+                    public boolean evaluate(TestReport report) {
+                        return report.getExecutedProbeTypes().contains(new TestProbeType("probe1"));
+                    }
+                });
 
         List<TestProbe> probeList = Arrays.asList(probe1, probe2);
         List<TestAfterProbe> afterList = new ArrayList<>();
@@ -314,7 +331,7 @@ public class ThreadedScanJobExecutorTest {
 
             executor.execute(report);
 
-            assertEquals(2, report.getExecutedProbes().size());
+            assertEquals(2, report.getExecutedProbeTypes().size());
             assertTrue(probe1.wasExecuted());
             assertTrue(probe2.wasExecuted());
         }
@@ -400,7 +417,7 @@ public class ThreadedScanJobExecutorTest {
         TestReport report = new TestReport();
         executor.execute(report);
 
-        assertEquals(1, report.getExecutedProbes().size());
+        assertEquals(1, report.getExecutedProbeTypes().size());
 
         executor.shutdown();
         customExecutor.shutdown();
@@ -440,7 +457,7 @@ public class ThreadedScanJobExecutorTest {
             TestReport report = new TestReport();
             executor.execute(report);
 
-            assertTrue(report.getExecutedProbes().isEmpty());
+            assertTrue(report.getExecutedProbeTypes().isEmpty());
             assertTrue(afterList.get(0).isAnalyzed()); // After probes should still run
         }
     }

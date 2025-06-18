@@ -24,6 +24,11 @@ public class ScanJobExecutorTest {
             return "TestHost";
         }
 
+        @Override
+        public void serializeToJson(java.io.OutputStream outputStream) {
+            // Simple implementation for testing
+        }
+
         public boolean isExecuted() {
             return executed;
         }

@@ -58,6 +58,16 @@ public class ScannerTest {
             return remoteName;
         }
 
+        @Override
+        public void serializeToJson(java.io.OutputStream outputStream) {
+            // Simple implementation for testing
+            try {
+                outputStream.write("{\"remoteName\":\"TestHost\"}".getBytes());
+            } catch (java.io.IOException e) {
+                // Ignore for testing
+            }
+        }
+
         public void setPrerequisitesFulfilled(boolean fulfilled) {
             this.prerequisitesFulfilled = fulfilled;
         }
@@ -81,8 +91,13 @@ public class ScannerTest {
         }
 
         @Override
-        public de.rub.nds.scanner.core.probe.requirements.Requirement<TestReport> getRequirements() {
-            return report -> canExecute;
+        public de.rub.nds.scanner.core.probe.requirements.Requirement<TestReport>
+                getRequirements() {
+            if (canExecute) {
+                return new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
+            } else {
+                return new de.rub.nds.scanner.core.probe.requirements.UnfulfillableRequirement<>();
+            }
         }
 
         @Override
@@ -134,6 +149,11 @@ public class ScannerTest {
         TestScanner(
                 ExecutorConfig config, List<TestProbe> probeList, List<TestAfterProbe> afterList) {
             super(config, probeList, afterList);
+        }
+
+        @Override
+        public void close() {
+            // Implementation for AutoCloseable
         }
 
         @Override
@@ -306,7 +326,11 @@ public class ScannerTest {
     @Test
     public void testScanWithSiteReportRater() {
         TestScanner scanner = new TestScanner(executorConfig);
-        SiteReportRater rater = new SiteReportRater(new ArrayList<>());
+        de.rub.nds.scanner.core.report.rating.RatingInfluencers influencers = 
+            new de.rub.nds.scanner.core.report.rating.RatingInfluencers(new java.util.LinkedList<>());
+        de.rub.nds.scanner.core.report.rating.Recommendations recommendations = 
+            new de.rub.nds.scanner.core.report.rating.Recommendations(new java.util.LinkedList<>());
+        SiteReportRater rater = new SiteReportRater(influencers, recommendations);
         scanner.setSiteReportRater(rater);
 
         TestReport report = scanner.scan();
@@ -319,12 +343,7 @@ public class ScannerTest {
         TestScanner scanner = new TestScanner(executorConfig);
 
         Guideline<TestReport> guideline =
-                new Guideline<>("TestGuideline", null) {
-                    @Override
-                    public String getRequirementLevel() {
-                        return "MUST";
-                    }
-                };
+                new Guideline<TestReport>("TestGuideline", null);
 
         scanner.setGuidelines(List.of(guideline));
         TestReport report = scanner.scan();
@@ -335,8 +354,7 @@ public class ScannerTest {
     @Test
     public void testScanWithFileOutput() throws IOException {
         File outputFile = new File(tempDir, "test-report.json");
-        executorConfig.setWriteReportToFile(true);
-        executorConfig.setOutputFile(outputFile);
+        executorConfig.setOutputFile(outputFile.getAbsolutePath());
 
         TestScanner scanner = new TestScanner(executorConfig);
         TestReport report = scanner.scan();
@@ -349,8 +367,7 @@ public class ScannerTest {
     @Test
     public void testScanWithInvalidOutputFile() {
         File invalidFile = new File("/invalid/path/that/does/not/exist/report.json");
-        executorConfig.setWriteReportToFile(true);
-        executorConfig.setOutputFile(invalidFile);
+        executorConfig.setOutputFile(invalidFile.getAbsolutePath());
 
         TestScanner scanner = new TestScanner(executorConfig);
 

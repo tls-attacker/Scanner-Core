@@ -25,6 +25,11 @@ public class ScanJobTest {
         public String getRemoteName() {
             return "TestHost";
         }
+
+        @Override
+        public void serializeToJson(java.io.OutputStream outputStream) {
+            // Simple implementation for testing
+        }
     }
 
     static class TestState {}
@@ -41,8 +46,9 @@ public class ScanJobTest {
         public void executeTest() {}
 
         @Override
-        public de.rub.nds.scanner.core.probe.requirements.Requirement<TestReport> getRequirements() {
-            return report -> true;
+        public de.rub.nds.scanner.core.probe.requirements.Requirement<TestReport>
+                getRequirements() {
+            return new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
         }
 
         @Override
