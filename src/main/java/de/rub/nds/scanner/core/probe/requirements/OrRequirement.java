@@ -17,6 +17,11 @@ public final class OrRequirement<ReportT extends ScanReport> extends LogicalRequ
 
     private final List<Requirement<ReportT>> requirements;
 
+    /**
+     * Constructs a new OrRequirement that evaluates to true when at least one of the requirements is satisfied.
+     *
+     * @param requirements the list of requirements (at least one must be satisfied)
+     */
     public OrRequirement(List<Requirement<ReportT>> requirements) {
         this.requirements = Collections.unmodifiableList(requirements);
     }
@@ -26,6 +31,11 @@ public final class OrRequirement<ReportT extends ScanReport> extends LogicalRequ
         return requirements.stream().anyMatch(requirement -> requirement.evaluate(report));
     }
 
+    /**
+     * Returns a string representation of this OR requirement in the format "(req1 or req2 or ...)".
+     *
+     * @return string representation of the OR requirement
+     */
     @Override
     public String toString() {
         return String.format(
@@ -33,6 +43,11 @@ public final class OrRequirement<ReportT extends ScanReport> extends LogicalRequ
                 requirements.stream().map(Object::toString).collect(Collectors.joining(" or ")));
     }
 
+    /**
+     * Returns an unmodifiable list of all requirements contained in this OR requirement.
+     *
+     * @return the list of contained requirements
+     */
     @Override
     public List<Requirement<ReportT>> getContainedRequirements() {
         return requirements;
