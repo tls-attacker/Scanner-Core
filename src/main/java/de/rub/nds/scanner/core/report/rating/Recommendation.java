@@ -52,11 +52,20 @@ public class Recommendation {
 
     private List<PropertyResultRecommendation> propertyRecommendations;
 
+    /**
+     * Constructs an empty Recommendation with empty lists for property recommendations and links.
+     */
     public Recommendation() {
         propertyRecommendations = new LinkedList<>();
         links = new LinkedList<>();
     }
 
+    /**
+     * Constructs a Recommendation with the specified property and recommendations list.
+     *
+     * @param analyzedProperty the analyzed property this recommendation applies to
+     * @param propertyRecommendations the list of property result recommendations
+     */
     public Recommendation(
             AnalyzedProperty analyzedProperty,
             List<PropertyResultRecommendation> propertyRecommendations) {
@@ -64,12 +73,27 @@ public class Recommendation {
         this.propertyRecommendations = propertyRecommendations;
     }
 
+    /**
+     * Constructs a Recommendation with a property and short name.
+     *
+     * @param analyzedProperty the analyzed property this recommendation applies to
+     * @param shortName the short name for this recommendation
+     */
     public Recommendation(AnalyzedProperty analyzedProperty, String shortName) {
         this();
         this.analyzedProperty = analyzedProperty;
         this.shortName = shortName;
     }
 
+    /**
+     * Constructs a Recommendation with detailed information.
+     *
+     * @param analyzedProperty the analyzed property this recommendation applies to
+     * @param shortName the short name for this recommendation
+     * @param shortDescription the short description of the recommendation
+     * @param detailedDescription the detailed description of the recommendation
+     * @param links additional reference links
+     */
     public Recommendation(
             AnalyzedProperty analyzedProperty,
             String shortName,
@@ -84,6 +108,15 @@ public class Recommendation {
         this.links.addAll(Arrays.asList(links));
     }
 
+    /**
+     * Constructs a Recommendation with a single property recommendation.
+     *
+     * @param analyzedProperty the analyzed property this recommendation applies to
+     * @param shortName the short name for this recommendation
+     * @param shortDescription the short description of the recommendation
+     * @param propertyRecommendation the property result recommendation to add
+     * @param links additional reference links
+     */
     public Recommendation(
             AnalyzedProperty analyzedProperty,
             String shortName,
@@ -98,6 +131,16 @@ public class Recommendation {
         this.links.addAll(Arrays.asList(links));
     }
 
+    /**
+     * Constructs a Recommendation with detailed information and a single property recommendation.
+     *
+     * @param analyzedProperty the analyzed property this recommendation applies to
+     * @param shortName the short name for this recommendation
+     * @param shortDescription the short description of the recommendation
+     * @param detailedDescription the detailed description of the recommendation
+     * @param propertyRecommendation the property result recommendation to add
+     * @param links additional reference links
+     */
     public Recommendation(
             AnalyzedProperty analyzedProperty,
             String shortName,
@@ -114,6 +157,17 @@ public class Recommendation {
         this.links.addAll(Arrays.asList(links));
     }
 
+    /**
+     * Constructs a fully-specified Recommendation with all fields.
+     *
+     * @param analyzedProperty the analyzed property this recommendation applies to
+     * @param shortName the short name for this recommendation
+     * @param shortDescription the short description of the recommendation
+     * @param detailedDescription the detailed description of the recommendation
+     * @param testDocumentation the test documentation
+     * @param links the list of reference links
+     * @param propertyRecommendations the list of property result recommendations
+     */
     public Recommendation(
             AnalyzedProperty analyzedProperty,
             String shortName,
@@ -131,14 +185,30 @@ public class Recommendation {
         this.propertyRecommendations = propertyRecommendations;
     }
 
+    /**
+     * Gets the analyzed property this recommendation applies to.
+     *
+     * @return the analyzed property
+     */
     public AnalyzedProperty getAnalyzedProperty() {
         return analyzedProperty;
     }
 
+    /**
+     * Sets the analyzed property.
+     *
+     * @param analyzedProperty the analyzed property to set
+     */
     public void setAnalyzedProperty(AnalyzedProperty analyzedProperty) {
         this.analyzedProperty = analyzedProperty;
     }
 
+    /**
+     * Gets the short name of this recommendation.
+     * If no short name is set, returns the analyzed property's string representation.
+     *
+     * @return the short name or property string if short name is null or empty
+     */
     public String getShortName() {
         if (shortName == null || shortName.equals("")) {
             return analyzedProperty.toString();
@@ -147,43 +217,96 @@ public class Recommendation {
         }
     }
 
+    /**
+     * Sets the short name.
+     *
+     * @param shortName the short name to set
+     */
     public void setShortName(String shortName) {
         this.shortName = shortName;
     }
 
+    /**
+     * Gets the short description of this recommendation.
+     *
+     * @return the short description
+     */
     public String getShortDescription() {
         return shortDescription;
     }
 
+    /**
+     * Sets the short description.
+     *
+     * @param shortDescription the short description to set
+     */
     public void setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
     }
 
+    /**
+     * Gets the detailed description of this recommendation.
+     *
+     * @return the detailed description
+     */
     public String getDetailedDescription() {
         return detailedDescription;
     }
 
+    /**
+     * Sets the detailed description.
+     *
+     * @param detailedDescription the detailed description to set
+     */
     public void setDetailedDescription(String detailedDescription) {
         this.detailedDescription = detailedDescription;
     }
 
+    /**
+     * Gets the test documentation.
+     *
+     * @return the test documentation
+     */
     public String getTestDocumentation() {
         return testDocumentation;
     }
 
+    /**
+     * Sets the test documentation.
+     *
+     * @param testDocumentation the test documentation to set
+     */
     public void setTestDocumentation(String testDocumentation) {
         this.testDocumentation = testDocumentation;
     }
 
+    /**
+     * Gets the list of property result recommendations.
+     *
+     * @return the list of property recommendations
+     */
     public List<PropertyResultRecommendation> getPropertyRecommendations() {
         return propertyRecommendations;
     }
 
+    /**
+     * Sets the property recommendations.
+     *
+     * @param propertyRecommendations the list of property recommendations to set
+     */
     public void setPropertyRecommendations(
             List<PropertyResultRecommendation> propertyRecommendations) {
         this.propertyRecommendations = propertyRecommendations;
     }
 
+    /**
+     * Gets the property result recommendation for a specific test result.
+     * If no matching recommendation is found, returns a default recommendation
+     * with NO_INFORMATION_FOUND and NO_RECOMMENDATION_FOUND messages.
+     *
+     * @param result the test result to find a recommendation for
+     * @return the matching property result recommendation or a default one
+     */
     public PropertyResultRecommendation getPropertyResultRecommendation(TestResult result) {
         for (PropertyResultRecommendation r : propertyRecommendations) {
             if (r.getResult() == result) {
@@ -194,10 +317,20 @@ public class Recommendation {
                 result, NO_INFORMATION_FOUND, NO_RECOMMENDATION_FOUND);
     }
 
+    /**
+     * Gets the list of reference links.
+     *
+     * @return the list of links
+     */
     public List<String> getLinks() {
         return links;
     }
 
+    /**
+     * Sets the reference links.
+     *
+     * @param links the list of links to set
+     */
     public void setLinks(List<String> links) {
         this.links = links;
     }
