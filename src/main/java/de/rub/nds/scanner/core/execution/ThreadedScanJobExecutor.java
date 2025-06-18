@@ -27,6 +27,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * A threaded implementation of ScanJobExecutor that executes scan probes concurrently.
+ * This executor manages probe dependencies, schedules executable probes, and collects results.
+ *
+ * @param <ReportT> the type of scan report
+ * @param <ProbeT> the type of scanner probe
+ * @param <AfterProbeT> the type of after-probe
+ * @param <StateT> the type of state object used by probes
+ */
 public class ThreadedScanJobExecutor<
                 ReportT extends ScanReport,
                 ProbeT extends ScannerProbe<ReportT, StateT>,
@@ -53,6 +62,14 @@ public class ThreadedScanJobExecutor<
     private int probeCount;
     private int finishedProbes = 0;
 
+    /**
+     * Creates a new ThreadedScanJobExecutor with a custom thread pool.
+     *
+     * @param config the executor configuration
+     * @param scanJob the scan job containing probes to execute
+     * @param threadCount the number of threads in the pool
+     * @param prefix the prefix for thread names
+     */
     public ThreadedScanJobExecutor(
             ExecutorConfig config,
             ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob,
@@ -67,6 +84,13 @@ public class ThreadedScanJobExecutor<
         this.futureResults = new LinkedList<>();
     }
 
+    /**
+     * Creates a new ThreadedScanJobExecutor with an existing thread pool executor.
+     *
+     * @param config the executor configuration
+     * @param scanJob the scan job containing probes to execute
+     * @param executor the thread pool executor to use
+     */
     public ThreadedScanJobExecutor(
             ExecutorConfig config,
             ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob,
@@ -77,6 +101,13 @@ public class ThreadedScanJobExecutor<
         this.futureResults = new LinkedList<>();
     }
 
+    /**
+     * Executes the scan job by running probes concurrently and populating the report with results.
+     * This method manages probe dependencies and ensures probes are executed in the correct order.
+     *
+     * @param report the report to populate with scan results
+     * @throws InterruptedException if the execution is interrupted
+     */
     @Override
     public void execute(ReportT report) throws InterruptedException {
         probeCount = scanJob.getProbeList().size();
@@ -183,16 +214,30 @@ public class ThreadedScanJobExecutor<
         LOGGER.debug("Finished analysis");
     }
 
+    /**
+     * Closes this executor by shutting down the underlying thread pool.
+     * This method is called automatically when used in a try-with-resources statement.
+     */
     @Override
     public void close() {
         shutdown();
     }
 
+    /**
+     * Shuts down the underlying thread pool executor.
+     * No new tasks will be accepted after this method is called.
+     */
     @Override
     public void shutdown() {
         executor.shutdown();
     }
 
+    /**
+     * Handles property change events from the scan report.
+     * When probe support status changes, this method re-evaluates which probes can be executed.
+     *
+     * @param event the property change event
+     */
     @Override
     public synchronized void propertyChange(PropertyChangeEvent event) {
         if (!event.getPropertyName().equals("supportedProbe")
@@ -206,6 +251,12 @@ public class ThreadedScanJobExecutor<
         }
     }
 
+    /**
+     * Checks which probes can be executed based on their requirements and schedules them for execution.
+     * This method is called whenever the report state changes to re-evaluate probe eligibility.
+     *
+     * @param report the current scan report
+     */
     public synchronized void checkExecutableProbesAndSchedule(ReportT report) {
         List<ProbeT> newNotSchedulesTasksList = new LinkedList<>();
         for (ProbeT probe : notScheduledTasks) {
