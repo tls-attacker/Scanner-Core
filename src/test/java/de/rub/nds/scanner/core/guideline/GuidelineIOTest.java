@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
 import de.rub.nds.scanner.core.probe.result.TestResults;
-import de.rub.nds.scanner.core.report.ScanReport;
+import de.rub.nds.scanner.core.guideline.testutil.IOTestGuidelineCheck;
+import de.rub.nds.scanner.core.guideline.testutil.IOTestScanReport;
 import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,35 +45,6 @@ class GuidelineIOTest {
         }
     }
 
-    private static class TestScanReport extends ScanReport {
-        @Override
-        public void serializeToJson(java.io.OutputStream outputStream) {
-            // Test implementation - do nothing
-        }
-
-        @Override
-        public String getRemoteName() {
-            return "TestRemote";
-        }
-    }
-
-    @XmlRootElement(name = "ioTestGuidelineCheck")
-    public static class TestGuidelineCheck extends GuidelineCheck<TestScanReport> {
-        // Public constructor for JAXB
-        public TestGuidelineCheck() {
-            super("TestCheck", RequirementLevel.MUST);
-        }
-
-        public TestGuidelineCheck(String name, RequirementLevel level) {
-            super(name, level);
-        }
-
-        @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
-            return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
-        }
-    }
-
     @Test
     void testConstructorWithAnalyzedPropertyClass() throws JAXBException {
         GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
@@ -85,13 +56,13 @@ class GuidelineIOTest {
         GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
 
         // Create a guideline
-        Guideline<TestScanReport> guideline =
+        Guideline<IOTestScanReport> guideline =
                 new Guideline<>(
                         "Test Guideline",
                         "https://test.com",
                         Arrays.asList(
-                                new TestGuidelineCheck("Check1", RequirementLevel.MUST),
-                                new TestGuidelineCheck("Check2", RequirementLevel.SHOULD)));
+                                new IOTestGuidelineCheck("Check1", RequirementLevel.MUST),
+                                new IOTestGuidelineCheck("Check2", RequirementLevel.SHOULD)));
 
         // Write to file
         File file = new File(tempDir, "guideline.xml");
@@ -111,11 +82,11 @@ class GuidelineIOTest {
         GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
 
         // Create a guideline
-        Guideline<TestScanReport> guideline =
+        Guideline<IOTestScanReport> guideline =
                 new Guideline<>(
                         "Stream Test",
                         "https://stream.test",
-                        Arrays.asList(new TestGuidelineCheck("StreamCheck", RequirementLevel.MAY)));
+                        Arrays.asList(new IOTestGuidelineCheck("StreamCheck", RequirementLevel.MAY)));
 
         // Write to stream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -139,10 +110,10 @@ class GuidelineIOTest {
         TestAnalyzedProperty property = new TestAnalyzedProperty("TestProp");
         GuidelineCheckCondition condition = new GuidelineCheckCondition(property, TestResults.TRUE);
 
-        TestGuidelineCheck checkWithCondition =
-                new TestGuidelineCheck("ConditionalCheck", RequirementLevel.SHOULD);
+        IOTestGuidelineCheck checkWithCondition =
+                new IOTestGuidelineCheck("ConditionalCheck", RequirementLevel.SHOULD);
 
-        Guideline<TestScanReport> guideline =
+        Guideline<IOTestScanReport> guideline =
                 new Guideline<>(
                         "Conditional Test",
                         "https://conditional.test",
@@ -163,7 +134,7 @@ class GuidelineIOTest {
     void testEmptyGuideline() throws Exception {
         GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
 
-        Guideline<TestScanReport> emptyGuideline =
+        Guideline<IOTestScanReport> emptyGuideline =
                 new Guideline<>("Empty", "https://empty.test", Arrays.asList());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -202,16 +173,16 @@ class GuidelineIOTest {
     @Test
     void testReflectionScanning() throws Exception {
         // This test verifies that the reflection scanning works
-        // The GuidelineIO constructor should find TestGuidelineCheck via reflection
+        // The GuidelineIO constructor should find IOTestGuidelineCheck via reflection
         GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
 
         // Create guideline with our test check
-        Guideline<TestScanReport> guideline =
+        Guideline<IOTestScanReport> guideline =
                 new Guideline<>(
                         "Reflection Test",
                         "https://reflection.test",
                         Arrays.asList(
-                                new TestGuidelineCheck("ReflectionCheck", RequirementLevel.MUST)));
+                                new IOTestGuidelineCheck("ReflectionCheck", RequirementLevel.MUST)));
 
         // If reflection worked, serialization should succeed
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -222,12 +193,12 @@ class GuidelineIOTest {
     void testXmlFormatting() throws Exception {
         GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
 
-        Guideline<TestScanReport> guideline =
+        Guideline<IOTestScanReport> guideline =
                 new Guideline<>(
                         "Format Test",
                         "https://format.test",
                         Arrays.asList(
-                                new TestGuidelineCheck("FormatCheck", RequirementLevel.MUST_NOT)));
+                                new IOTestGuidelineCheck("FormatCheck", RequirementLevel.MUST_NOT)));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         io.write(baos, guideline);
