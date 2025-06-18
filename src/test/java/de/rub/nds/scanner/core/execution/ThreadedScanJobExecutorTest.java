@@ -9,7 +9,6 @@
 package de.rub.nds.scanner.core.execution;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import de.rub.nds.scanner.core.afterprobe.AfterProbe;
 import de.rub.nds.scanner.core.config.ExecutorConfig;
@@ -29,7 +28,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 public class ThreadedScanJobExecutorTest {
 
