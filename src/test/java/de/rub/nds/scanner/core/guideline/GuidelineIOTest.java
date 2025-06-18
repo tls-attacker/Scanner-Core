@@ -57,7 +57,7 @@ class GuidelineIOTest {
         }
     }
 
-    @XmlRootElement(name = "testGuidelineCheck")
+    @XmlRootElement(name = "ioTestGuidelineCheck")
     public static class TestGuidelineCheck extends GuidelineCheck<TestScanReport> {
         // Public constructor for JAXB
         public TestGuidelineCheck() {

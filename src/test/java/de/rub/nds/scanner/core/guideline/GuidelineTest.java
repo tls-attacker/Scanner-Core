@@ -51,8 +51,10 @@ class GuidelineTest {
     void testConstructorWithParameters() {
         String name = "Test Guideline";
         String link = "https://example.com/guideline";
-        List<GuidelineCheck<TestScanReport>> checks =
-                Arrays.asList(new TestGuidelineCheck("Check1"), new TestGuidelineCheck("Check2"));
+        List<GuidelineCheck<TestScanReport>> checks = new ArrayList<>();
+        checks.add(new TestGuidelineCheck("Check1"));
+        checks.add(new TestGuidelineCheck("Check2"));
+        List<GuidelineCheck<TestScanReport>> originalList = new ArrayList<>(checks);
 
         Guideline<TestScanReport> guideline = new Guideline<>(name, link, checks);
 
