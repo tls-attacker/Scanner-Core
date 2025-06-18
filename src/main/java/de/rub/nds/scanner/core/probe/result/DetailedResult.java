@@ -18,18 +18,44 @@ public class DetailedResult<T extends Serializable> implements SummarizableTestR
         this(null, null);
     }
 
+    /**
+     * Creates a DetailedResult with a TRUE summary and no details.
+     *
+     * @param <T> the type of details
+     * @return a DetailedResult with TRUE summary
+     */
     public static <T extends Serializable> DetailedResult<T> TRUE() {
         return new DetailedResult<>(TestResults.TRUE);
     }
 
+    /**
+     * Creates a DetailedResult with a TRUE summary and specified details.
+     *
+     * @param <T> the type of details
+     * @param details the details to include
+     * @return a DetailedResult with TRUE summary and details
+     */
     public static <T extends Serializable> DetailedResult<T> TRUE(T details) {
         return new DetailedResult<>(TestResults.TRUE, details);
     }
 
+    /**
+     * Creates a DetailedResult with a FALSE summary and no details.
+     *
+     * @param <T> the type of details
+     * @return a DetailedResult with FALSE summary
+     */
     public static <T extends Serializable> DetailedResult<T> FALSE() {
         return new DetailedResult<>(TestResults.FALSE);
     }
 
+    /**
+     * Creates a DetailedResult with a FALSE summary and specified details.
+     *
+     * @param <T> the type of details
+     * @param details the details to include
+     * @return a DetailedResult with FALSE summary and details
+     */
     public static <T extends Serializable> DetailedResult<T> FALSE(T details) {
         return new DetailedResult<>(TestResults.FALSE, details);
     }
@@ -37,11 +63,22 @@ public class DetailedResult<T extends Serializable> implements SummarizableTestR
     private final T details;
     private final TestResults summary;
 
+    /**
+     * Constructs a DetailedResult with the specified summary and details.
+     *
+     * @param summary the summary result
+     * @param details the details associated with this result
+     */
     public DetailedResult(TestResults summary, T details) {
         this.details = details;
         this.summary = summary;
     }
 
+    /**
+     * Constructs a DetailedResult with the specified summary and no details.
+     *
+     * @param summary the summary result
+     */
     public DetailedResult(TestResults summary) {
         this(summary, null);
     }
