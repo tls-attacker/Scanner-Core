@@ -36,6 +36,12 @@ public class Guideline<ReportT extends ScanReport> implements Serializable {
         this.checks = new ArrayList<>(checks);
     }
 
+    public Guideline(Guideline<ReportT> other) {
+        this.name = other.name;
+        this.link = other.link;
+        this.checks = new ArrayList<>(other.checks);
+    }
+
     public String getName() {
         return name;
     }

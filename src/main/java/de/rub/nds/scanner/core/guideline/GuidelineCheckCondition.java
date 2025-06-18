@@ -48,6 +48,20 @@ public class GuidelineCheckCondition {
         this.result = result;
     }
 
+    public GuidelineCheckCondition(GuidelineCheckCondition other) {
+        if (other == null) {
+            return;
+        }
+        this.analyzedProperty = other.analyzedProperty;
+        this.result = other.result;
+        if (other.and != null) {
+            this.and = new java.util.ArrayList<>(other.and);
+        }
+        if (other.or != null) {
+            this.or = new java.util.ArrayList<>(other.or);
+        }
+    }
+
     public static GuidelineCheckCondition and(List<GuidelineCheckCondition> conditions) {
         return new GuidelineCheckCondition(conditions, null);
     }

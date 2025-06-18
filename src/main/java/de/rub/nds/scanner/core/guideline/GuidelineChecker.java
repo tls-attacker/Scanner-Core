@@ -21,7 +21,7 @@ public class GuidelineChecker<ReportT extends ScanReport> {
     private final Guideline<ReportT> guideline;
 
     public GuidelineChecker(Guideline<ReportT> guideline) {
-        this.guideline = guideline;
+        this.guideline = new Guideline<>(guideline);
     }
 
     public void fillReport(ReportT report) {

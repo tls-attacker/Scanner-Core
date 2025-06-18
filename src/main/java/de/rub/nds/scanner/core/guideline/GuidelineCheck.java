@@ -37,7 +37,7 @@ public abstract class GuidelineCheck<ReportT extends ScanReport> {
             String name, RequirementLevel requirementLevel, GuidelineCheckCondition condition) {
         this.name = name;
         this.requirementLevel = requirementLevel;
-        this.condition = condition;
+        this.condition = condition == null ? null : new GuidelineCheckCondition(condition);
     }
 
     public abstract GuidelineCheckResult evaluate(ReportT report);
@@ -80,6 +80,6 @@ public abstract class GuidelineCheck<ReportT extends ScanReport> {
     }
 
     public GuidelineCheckCondition getCondition() {
-        return condition;
+        return condition == null ? null : new GuidelineCheckCondition(condition);
     }
 }
