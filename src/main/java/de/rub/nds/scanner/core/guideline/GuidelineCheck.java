@@ -13,9 +13,10 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import java.io.Serializable;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class GuidelineCheck<ReportT extends ScanReport> {
+public abstract class GuidelineCheck<ReportT extends ScanReport> implements Serializable {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
