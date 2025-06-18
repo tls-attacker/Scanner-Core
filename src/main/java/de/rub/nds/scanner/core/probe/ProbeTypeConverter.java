@@ -46,9 +46,8 @@ public class ProbeTypeConverter implements IStringConverter<ProbeType> {
                 if (convertedType != null) {
                     return convertedType;
                 }
-            } catch (Exception e) {
-                // Expected when value doesn't match any enum constant - continue to next type
-                // No action needed, we'll try the next probe type class
+            } catch (Exception ignored) {
+                // Ignore conversion failures and try next method
             }
         }
         return null;
