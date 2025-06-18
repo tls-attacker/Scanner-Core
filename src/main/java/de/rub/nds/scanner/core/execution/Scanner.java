@@ -25,6 +25,16 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Abstract base class for implementing scanners.
+ * This class provides the core scanning framework, including probe execution,
+ * report generation, scoring, and guideline evaluation.
+ *
+ * @param <ReportT> the type of scan report
+ * @param <ProbeT> the type of scanner probe
+ * @param <AfterProbeT> the type of after-probe
+ * @param <StateT> the type of state object used by probes
+ */
 public abstract class Scanner<
                 ReportT extends ScanReport,
                 ProbeT extends ScannerProbe<ReportT, StateT>,
