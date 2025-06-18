@@ -14,10 +14,17 @@ package de.rub.nds.scanner.core.probe.result;
  * error)
  */
 public interface SummarizableTestResult extends TestResult {
+    /**
+     * Returns the summarized result of this complex test result.
+     *
+     * @return the summarized TestResults value
+     */
     TestResults getSummarizedResult();
 
     /**
-     * @return Whether the summary was explicitly set instead of generated on the fly.
+     * Indicates whether the summary was explicitly set instead of generated on the fly.
+     *
+     * @return true if the summary was explicitly set, false if generated dynamically
      */
     boolean isExplicitSummary();
 
