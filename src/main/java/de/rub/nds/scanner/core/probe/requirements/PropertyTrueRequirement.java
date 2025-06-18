@@ -18,10 +18,20 @@ import java.util.List;
  * positively evaluated (TestResults.TRUE).
  */
 public class PropertyTrueRequirement<R extends ScanReport> extends PropertyValueRequirement<R> {
+    /**
+     * Constructs a new PropertyTrueRequirement that checks if the specified properties evaluate to TRUE.
+     *
+     * @param properties the list of properties that must evaluate to TRUE
+     */
     public PropertyTrueRequirement(List<AnalyzedProperty> properties) {
         super(TestResults.TRUE, properties);
     }
 
+    /**
+     * Constructs a new PropertyTrueRequirement that checks if the specified properties evaluate to TRUE.
+     *
+     * @param properties varargs of properties that must evaluate to TRUE
+     */
     public PropertyTrueRequirement(AnalyzedProperty... properties) {
         super(TestResults.TRUE, properties);
     }
