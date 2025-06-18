@@ -62,7 +62,7 @@ public class ThreadedScanJobExecutor<
         executor =
                 new ScannerThreadPoolExecutor(
                         threadCount, new NamedThreadFactory(prefix), semaphore, probeTimeout);
-        this.config = config;
+        this.config = new ExecutorConfig(config);
         this.scanJob = scanJob;
         this.futureResults = new LinkedList<>();
     }
@@ -72,7 +72,7 @@ public class ThreadedScanJobExecutor<
             ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob,
             ThreadPoolExecutor executor) {
         this.executor = executor;
-        this.config = config;
+        this.config = new ExecutorConfig(config);
         this.scanJob = scanJob;
         this.futureResults = new LinkedList<>();
     }
