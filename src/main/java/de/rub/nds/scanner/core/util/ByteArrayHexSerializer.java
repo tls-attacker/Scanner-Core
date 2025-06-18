@@ -45,6 +45,9 @@ public class ByteArrayHexSerializer extends StdSerializer<byte[]> {
     }
 
     private static String bytesToRawHexString(byte[] bytes) {
+        if (bytes == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
             sb.append(String.format("%02x", b));

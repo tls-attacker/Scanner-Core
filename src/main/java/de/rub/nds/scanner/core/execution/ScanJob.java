@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.execution;
 import de.rub.nds.scanner.core.afterprobe.AfterProbe;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.report.ScanReport;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ScanJob<
@@ -23,15 +24,15 @@ public class ScanJob<
     private final List<AfterProbeT> afterList;
 
     public ScanJob(List<ProbeT> probeList, List<AfterProbeT> afterList) {
-        this.probeList = probeList;
-        this.afterList = afterList;
+        this.probeList = new LinkedList<>(probeList);
+        this.afterList = new LinkedList<>(afterList);
     }
 
     public List<ProbeT> getProbeList() {
-        return probeList;
+        return new LinkedList<>(probeList);
     }
 
     public List<AfterProbeT> getAfterList() {
-        return afterList;
+        return new LinkedList<>(afterList);
     }
 }

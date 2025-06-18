@@ -46,8 +46,8 @@ public class ProbeTypeConverter implements IStringConverter<ProbeType> {
                 if (convertedType != null) {
                     return convertedType;
                 }
-            } catch (Exception e) {
-                // Ignore
+            } catch (Exception ignored) {
+                // Ignore conversion failures and try next method
             }
         }
         return null;

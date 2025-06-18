@@ -29,7 +29,7 @@ public enum TestResults implements SummarizableTestResult {
     UNASSIGNED_ERROR,
     TIMEOUT;
 
-    private TestResults() {}
+    TestResults() {}
 
     @Override
     public String getName() {
