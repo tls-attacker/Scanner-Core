@@ -50,8 +50,8 @@ public class ThreadedScanJobExecutor<
     // Used for waiting for Threads in the ThreadPoolExecutor
     private final Semaphore semaphore = new Semaphore(0);
 
-    private int probeCount;
-    private int finishedProbes = 0;
+    private volatile int probeCount;
+    private volatile int finishedProbes = 0;
 
     public ThreadedScanJobExecutor(
             ExecutorConfig config,

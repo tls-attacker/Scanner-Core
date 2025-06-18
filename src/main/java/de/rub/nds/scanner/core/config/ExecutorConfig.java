@@ -75,7 +75,10 @@ public final class ExecutorConfig {
         this.probeTimeout = other.probeTimeout;
         this.parallelProbes = other.parallelProbes;
         this.overallThreads = other.overallThreads;
-        this.excludedProbes = other.excludedProbes == null ? new LinkedList<>() : new LinkedList<>(other.excludedProbes);
+        this.excludedProbes =
+                other.excludedProbes == null
+                        ? new LinkedList<>()
+                        : new LinkedList<>(other.excludedProbes);
         this.probes = other.probes == null ? null : new LinkedList<>(other.probes);
     }
 
