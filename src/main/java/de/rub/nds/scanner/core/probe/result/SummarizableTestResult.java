@@ -9,13 +9,13 @@
 package de.rub.nds.scanner.core.probe.result;
 
 /**
- * A complex test result that can still be summarized into a single TestResults. This summary might
+ * A complicated test result that can still be summarized into a single TestResults. This summary might
  * be generated on the fly (from the contained details), or set explicitly (e.g. in case of an
  * error)
  */
 public interface SummarizableTestResult extends TestResult {
     /**
-     * Returns the summarized result of this complex test result.
+     * Returns the summarized result of this test result.
      *
      * @return the summarized TestResults value
      */
