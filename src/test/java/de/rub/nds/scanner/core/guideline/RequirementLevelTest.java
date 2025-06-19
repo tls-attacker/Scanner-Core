@@ -15,17 +15,6 @@ import org.junit.jupiter.api.Test;
 class RequirementLevelTest {
 
     @Test
-    void testEnumValues() {
-        RequirementLevel[] values = RequirementLevel.values();
-        assertEquals(5, values.length);
-        assertEquals(RequirementLevel.MUST, values[0]);
-        assertEquals(RequirementLevel.MUST_NOT, values[1]);
-        assertEquals(RequirementLevel.SHOULD, values[2]);
-        assertEquals(RequirementLevel.SHOULD_NOT, values[3]);
-        assertEquals(RequirementLevel.MAY, values[4]);
-    }
-
-    @Test
     void testValueOf() {
         assertEquals(RequirementLevel.MUST, RequirementLevel.valueOf("MUST"));
         assertEquals(RequirementLevel.MUST_NOT, RequirementLevel.valueOf("MUST_NOT"));

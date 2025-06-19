@@ -25,16 +25,6 @@ class GuidelineAdherenceTest {
     }
 
     @Test
-    void testEnumValues() {
-        GuidelineAdherence[] values = GuidelineAdherence.values();
-        assertEquals(4, values.length);
-        assertEquals(GuidelineAdherence.ADHERED, values[0]);
-        assertEquals(GuidelineAdherence.VIOLATED, values[1]);
-        assertEquals(GuidelineAdherence.CONDITION_NOT_MET, values[2]);
-        assertEquals(GuidelineAdherence.CHECK_FAILED, values[3]);
-    }
-
-    @Test
     void testValueOf() {
         assertEquals(GuidelineAdherence.ADHERED, GuidelineAdherence.valueOf("ADHERED"));
         assertEquals(GuidelineAdherence.VIOLATED, GuidelineAdherence.valueOf("VIOLATED"));

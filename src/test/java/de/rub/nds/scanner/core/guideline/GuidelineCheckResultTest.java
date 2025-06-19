@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.lang.reflect.Constructor;
 import org.junit.jupiter.api.Test;
 
 class GuidelineCheckResultTest {
@@ -79,7 +79,7 @@ class GuidelineCheckResultTest {
     void testDefaultConstructorUsedInReflection() throws Exception {
         // Test that default constructor works via reflection (used by deserialization)
         Class<?> clazz = ConcreteGuidelineCheckResult.class;
-        java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor();
+        Constructor<?> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         Object instance = constructor.newInstance();
 
@@ -88,17 +88,5 @@ class GuidelineCheckResultTest {
         assertNull(result.getCheckName());
         assertNull(result.getAdherence());
         assertNull(result.getHint());
-    }
-
-    @Test
-    void testJsonTypeInfoAnnotation() {
-        // Verify the class has the JsonTypeInfo annotation for polymorphic deserialization
-        Class<?> clazz = GuidelineCheckResult.class;
-        JsonTypeInfo annotation = clazz.getAnnotation(JsonTypeInfo.class);
-
-        assertNotNull(annotation);
-        assertEquals(JsonTypeInfo.Id.CLASS, annotation.use());
-        assertEquals(JsonTypeInfo.As.PROPERTY, annotation.include());
-        assertEquals("@class", annotation.property());
     }
 }

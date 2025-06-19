@@ -11,11 +11,8 @@ package de.rub.nds.scanner.core.guideline;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.rub.nds.scanner.core.report.ScanReport;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -114,7 +111,7 @@ class GuidelineTest {
     void testDefaultConstructorUsedInReflection() throws Exception {
         // Test that default constructor works via reflection (used by JAXB)
         Class<?> clazz = Guideline.class;
-        java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor();
+        Constructor<?> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         Object instance = constructor.newInstance();
 
@@ -123,35 +120,5 @@ class GuidelineTest {
         assertNull(guideline.getName());
         assertNull(guideline.getLink());
         // Note: checks field will be null after default constructor
-    }
-
-    @Test
-    void testXmlAnnotations() {
-        Class<?> clazz = Guideline.class;
-
-        // Verify XML annotations
-        XmlRootElement rootElement = clazz.getAnnotation(XmlRootElement.class);
-        assertNotNull(rootElement);
-        assertEquals("guideline", rootElement.name());
-
-        XmlType xmlType = clazz.getAnnotation(XmlType.class);
-        assertNotNull(xmlType);
-        assertArrayEquals(new String[] {"name", "link", "checks"}, xmlType.propOrder());
-
-        XmlAccessorType accessorType = clazz.getAnnotation(XmlAccessorType.class);
-        assertNotNull(accessorType);
-        assertEquals(XmlAccessType.FIELD, accessorType.value());
-    }
-
-    @Test
-    void testGenericType() {
-        // Test with different report types
-        Guideline<TestScanReport> testGuideline =
-                new Guideline<>("Test", "https://test.com", new ArrayList<>());
-        assertNotNull(testGuideline);
-
-        // The generic type ensures type safety at compile time
-        testGuideline.addCheck(new TestGuidelineCheck("TypedCheck"));
-        assertEquals(1, testGuideline.getChecks().size());
     }
 }

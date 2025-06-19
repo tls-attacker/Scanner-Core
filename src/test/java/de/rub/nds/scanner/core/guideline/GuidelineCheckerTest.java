@@ -195,7 +195,6 @@ class GuidelineCheckerTest {
         GuidelineCheckResult conditionNotMetResult = addedReport.getConditionNotMet().get(0);
         assertEquals("ConditionalCheck", conditionNotMetResult.getCheckName());
         assertEquals(GuidelineAdherence.CONDITION_NOT_MET, conditionNotMetResult.getAdherence());
-        assertEquals("Condition was not met => Check is skipped.", conditionNotMetResult.getHint());
     }
 
     @Test

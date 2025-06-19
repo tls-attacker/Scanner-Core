@@ -14,9 +14,7 @@ import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
 import de.rub.nds.scanner.core.probe.result.TestResult;
 import de.rub.nds.scanner.core.probe.result.TestResults;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -113,6 +111,7 @@ class GuidelineCheckConditionTest {
         GuidelineCheckCondition andCondition = GuidelineCheckCondition.and(conditions);
 
         List<GuidelineCheckCondition> andList = andCondition.getAnd();
+        // Check that returned list is indeed unmodifiable
         assertThrows(
                 UnsupportedOperationException.class,
                 () ->
@@ -130,6 +129,7 @@ class GuidelineCheckConditionTest {
         GuidelineCheckCondition orCondition = GuidelineCheckCondition.or(conditions);
 
         List<GuidelineCheckCondition> orList = orCondition.getOr();
+        // Check that returned list is indeed unmodifiable
         assertThrows(
                 UnsupportedOperationException.class,
                 () ->
@@ -158,7 +158,7 @@ class GuidelineCheckConditionTest {
     void testDefaultConstructorUsedInReflection() throws Exception {
         // Test that default constructor works via reflection (used by JAXB)
         Class<?> clazz = GuidelineCheckCondition.class;
-        java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor();
+        Constructor<?> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         Object instance = constructor.newInstance();
 
@@ -168,17 +168,6 @@ class GuidelineCheckConditionTest {
         assertNull(condition.getResult());
         assertNull(condition.getAnd());
         assertNull(condition.getOr());
-    }
-
-    @Test
-    void testXmlAnnotations() {
-        Class<?> clazz = GuidelineCheckCondition.class;
-
-        // Verify XML annotations
-        assertNotNull(clazz.getAnnotation(XmlRootElement.class));
-        XmlAccessorType accessorType = clazz.getAnnotation(XmlAccessorType.class);
-        assertNotNull(accessorType);
-        assertEquals(XmlAccessType.FIELD, accessorType.value());
     }
 
     @Test

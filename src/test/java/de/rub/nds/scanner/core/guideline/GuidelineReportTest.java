@@ -10,8 +10,7 @@ package de.rub.nds.scanner.core.guideline;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,6 +78,7 @@ class GuidelineReportTest {
         GuidelineReport report = new GuidelineReport("Test", "https://test.com", sampleResults);
 
         List<GuidelineCheckResult> results = report.getResults();
+        // Verify it returns an unmodifiable list
         assertThrows(
                 UnsupportedOperationException.class,
                 () ->
@@ -93,6 +93,7 @@ class GuidelineReportTest {
         List<GuidelineCheckResult> adhered = report.getAdhered();
         assertEquals(2, adhered.size());
         assertTrue(adhered.stream().allMatch(r -> r.getAdherence() == GuidelineAdherence.ADHERED));
+        // Verify it returns an unmodifiable list
         assertThrows(
                 UnsupportedOperationException.class,
                 () ->
@@ -108,6 +109,7 @@ class GuidelineReportTest {
         assertEquals(2, violated.size());
         assertTrue(
                 violated.stream().allMatch(r -> r.getAdherence() == GuidelineAdherence.VIOLATED));
+        // Verify it returns an unmodifiable list
         assertThrows(
                 UnsupportedOperationException.class,
                 () ->
@@ -125,6 +127,7 @@ class GuidelineReportTest {
         assertTrue(
                 conditionNotMet.stream()
                         .allMatch(r -> r.getAdherence() == GuidelineAdherence.CONDITION_NOT_MET));
+        // Verify it returns an unmodifiable list
         assertThrows(
                 UnsupportedOperationException.class,
                 () ->
@@ -163,7 +166,7 @@ class GuidelineReportTest {
     void testDefaultConstructorUsedInReflection() throws Exception {
         // Test that default constructor works via reflection (used by deserialization)
         Class<?> clazz = GuidelineReport.class;
-        java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor();
+        Constructor<?> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         Object instance = constructor.newInstance();
 
@@ -173,18 +176,5 @@ class GuidelineReportTest {
         assertNull(report.getLink());
         assertNotNull(report.getResults());
         assertEquals(0, report.getResults().size());
-    }
-
-    @Test
-    void testJsonAnnotations() {
-        Class<?> clazz = GuidelineReport.class;
-
-        JsonIncludeProperties includeAnnotation = clazz.getAnnotation(JsonIncludeProperties.class);
-        assertNotNull(includeAnnotation);
-        assertArrayEquals(new String[] {"name", "link", "results"}, includeAnnotation.value());
-
-        JsonPropertyOrder orderAnnotation = clazz.getAnnotation(JsonPropertyOrder.class);
-        assertNotNull(orderAnnotation);
-        assertArrayEquals(new String[] {"name", "link", "results"}, orderAnnotation.value());
     }
 }

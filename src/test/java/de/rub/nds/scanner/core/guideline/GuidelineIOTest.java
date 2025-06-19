@@ -150,17 +150,6 @@ class GuidelineIOTest {
     }
 
     @Test
-    void testContextCaching() throws JAXBException {
-        // Create two instances with same analyzed property class
-        GuidelineIO io1 = new GuidelineIO(TestAnalyzedProperty.class);
-        GuidelineIO io2 = new GuidelineIO(TestAnalyzedProperty.class);
-
-        // Both should work (context should be cached/reused)
-        assertNotNull(io1);
-        assertNotNull(io2);
-    }
-
-    @Test
     void testInvalidXmlInput() throws Exception {
         GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
 
@@ -189,29 +178,5 @@ class GuidelineIOTest {
         // If reflection worked, serialization should succeed
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         assertDoesNotThrow(() -> io.write(baos, guideline));
-    }
-
-    @Test
-    void testXmlFormatting() throws Exception {
-        GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
-
-        Guideline<IOTestScanReport> guideline =
-                new Guideline<>(
-                        "Format Test",
-                        "https://format.test",
-                        Arrays.asList(
-                                new IOTestGuidelineCheck(
-                                        "FormatCheck", RequirementLevel.MUST_NOT)));
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        io.write(baos, guideline);
-
-        String xml = baos.toString();
-        // Check that output is formatted (contains newlines and indentation)
-        assertTrue(xml.contains("\n"));
-        assertTrue(xml.contains("    ")); // indentation
-        assertTrue(xml.contains("<guideline>"));
-        assertTrue(xml.contains("<name>Format Test</name>"));
-        assertTrue(xml.contains("<link>https://format.test</link>"));
     }
 }

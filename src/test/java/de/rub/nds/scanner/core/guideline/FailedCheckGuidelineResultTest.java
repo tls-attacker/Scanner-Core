@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.lang.reflect.Constructor;
 import org.junit.jupiter.api.Test;
 
 class FailedCheckGuidelineResultTest {
@@ -46,7 +47,7 @@ class FailedCheckGuidelineResultTest {
     void testDefaultConstructorUsedInReflection() throws Exception {
         // Test that default constructor works via reflection (used by deserialization)
         Class<?> clazz = FailedCheckGuidelineResult.class;
-        java.lang.reflect.Constructor<?> constructor = clazz.getDeclaredConstructor();
+        Constructor<?> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         Object instance = constructor.newInstance();
 
