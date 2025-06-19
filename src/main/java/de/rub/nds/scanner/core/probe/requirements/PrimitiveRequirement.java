@@ -41,7 +41,8 @@ public abstract class PrimitiveRequirement<ReportT extends ScanReport, Parameter
     }
 
     /**
-     * Returns a string representation of this requirement in the format "ClassName[param1, param2, ...]".
+     * Returns a string representation of this requirement in the format "ClassName[param1, param2,
+     * ...]".
      *
      * @return string representation of the primitive requirement
      */

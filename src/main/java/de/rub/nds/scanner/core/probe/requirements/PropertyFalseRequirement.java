@@ -19,7 +19,8 @@ import java.util.List;
  */
 public class PropertyFalseRequirement<R extends ScanReport> extends PropertyValueRequirement<R> {
     /**
-     * Constructs a new PropertyFalseRequirement that checks if the specified properties evaluate to FALSE.
+     * Constructs a new PropertyFalseRequirement that checks if the specified properties evaluate to
+     * FALSE.
      *
      * @param properties the list of properties that must evaluate to FALSE
      */
@@ -28,7 +29,8 @@ public class PropertyFalseRequirement<R extends ScanReport> extends PropertyValu
     }
 
     /**
-     * Constructs a new PropertyFalseRequirement that checks if the specified properties evaluate to FALSE.
+     * Constructs a new PropertyFalseRequirement that checks if the specified properties evaluate to
+     * FALSE.
      *
      * @param properties varargs of properties that must evaluate to FALSE
      */

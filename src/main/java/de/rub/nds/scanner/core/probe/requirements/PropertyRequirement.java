@@ -22,7 +22,8 @@ public class PropertyRequirement<R extends ScanReport>
         extends PrimitiveRequirement<R, AnalyzedProperty> {
 
     /**
-     * Constructs a new PropertyRequirement that checks if the specified properties have been evaluated.
+     * Constructs a new PropertyRequirement that checks if the specified properties have been
+     * evaluated.
      *
      * @param properties the list of properties that must be evaluated (not UNASSIGNED_ERROR)
      */
@@ -31,7 +32,8 @@ public class PropertyRequirement<R extends ScanReport>
     }
 
     /**
-     * Constructs a new PropertyRequirement that checks if the specified properties have been evaluated.
+     * Constructs a new PropertyRequirement that checks if the specified properties have been
+     * evaluated.
      *
      * @param properties varargs of properties that must be evaluated (not UNASSIGNED_ERROR)
      */

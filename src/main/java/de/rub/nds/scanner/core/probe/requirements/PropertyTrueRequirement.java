@@ -19,7 +19,8 @@ import java.util.List;
  */
 public class PropertyTrueRequirement<R extends ScanReport> extends PropertyValueRequirement<R> {
     /**
-     * Constructs a new PropertyTrueRequirement that checks if the specified properties evaluate to TRUE.
+     * Constructs a new PropertyTrueRequirement that checks if the specified properties evaluate to
+     * TRUE.
      *
      * @param properties the list of properties that must evaluate to TRUE
      */
@@ -28,7 +29,8 @@ public class PropertyTrueRequirement<R extends ScanReport> extends PropertyValue
     }
 
     /**
-     * Constructs a new PropertyTrueRequirement that checks if the specified properties evaluate to TRUE.
+     * Constructs a new PropertyTrueRequirement that checks if the specified properties evaluate to
+     * TRUE.
      *
      * @param properties varargs of properties that must evaluate to TRUE
      */

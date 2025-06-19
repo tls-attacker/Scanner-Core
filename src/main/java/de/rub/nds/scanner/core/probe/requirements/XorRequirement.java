@@ -16,7 +16,8 @@ public final class XorRequirement<ReportT extends ScanReport> extends LogicalReq
     private final Requirement<ReportT> a, b;
 
     /**
-     * Constructs a new XorRequirement that evaluates to true when exactly one of the two requirements is satisfied.
+     * Constructs a new XorRequirement that evaluates to true when exactly one of the two
+     * requirements is satisfied.
      *
      * @param a the first requirement
      * @param b the second requirement

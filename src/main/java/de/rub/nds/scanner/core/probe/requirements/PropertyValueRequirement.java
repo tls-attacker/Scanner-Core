@@ -25,7 +25,8 @@ public class PropertyValueRequirement<R extends ScanReport>
     private final TestResult requiredTestResult;
 
     /**
-     * Constructs a new PropertyValueRequirement with the specified expected test result and properties to check.
+     * Constructs a new PropertyValueRequirement with the specified expected test result and
+     * properties to check.
      *
      * @param requiredTestResult the expected test result for all specified properties
      * @param properties the list of properties that must have the expected test result
@@ -37,7 +38,8 @@ public class PropertyValueRequirement<R extends ScanReport>
     }
 
     /**
-     * Constructs a new PropertyValueRequirement with the specified expected test result and properties to check.
+     * Constructs a new PropertyValueRequirement with the specified expected test result and
+     * properties to check.
      *
      * @param requiredTestResult the expected test result for all specified properties
      * @param properties varargs of properties that must have the expected test result
@@ -73,7 +75,8 @@ public class PropertyValueRequirement<R extends ScanReport>
     }
 
     /**
-     * Returns the expected test result that all properties must have for this requirement to be satisfied.
+     * Returns the expected test result that all properties must have for this requirement to be
+     * satisfied.
      *
      * @return the required test result
      */
@@ -82,9 +85,11 @@ public class PropertyValueRequirement<R extends ScanReport>
     }
 
     /**
-     * Returns a string representation of this requirement including the required test result and properties.
+     * Returns a string representation of this requirement including the required test result and
+     * properties.
      *
-     * @return string representation in the format "PropertyValueRequirement[TestResult: property1 property2 ...]"
+     * @return string representation in the format "PropertyValueRequirement[TestResult: property1
+     *     property2 ...]"
      */
     @Override
     public String toString() {

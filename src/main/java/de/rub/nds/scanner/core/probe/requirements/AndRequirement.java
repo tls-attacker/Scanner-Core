@@ -51,7 +51,8 @@ public final class AndRequirement<ReportT extends ScanReport> extends LogicalReq
     }
 
     /**
-     * Returns a string representation of this AND requirement in the format "(req1 and req2 and ...)".
+     * Returns a string representation of this AND requirement in the format "(req1 and req2 and
+     * ...)".
      *
      * @return string representation of the AND requirement
      */

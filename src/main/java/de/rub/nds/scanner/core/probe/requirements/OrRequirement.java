@@ -18,7 +18,8 @@ public final class OrRequirement<ReportT extends ScanReport> extends LogicalRequ
     private final List<Requirement<ReportT>> requirements;
 
     /**
-     * Constructs a new OrRequirement that evaluates to true when at least one of the requirements is satisfied.
+     * Constructs a new OrRequirement that evaluates to true when at least one of the requirements
+     * is satisfied.
      *
      * @param requirements the list of requirements (at least one must be satisfied)
      */
