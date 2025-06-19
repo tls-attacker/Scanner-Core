@@ -224,11 +224,6 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
         return this.getScoreCap().compareTo(t.getScoreCap());
     }
 
-    /**
-     * Returns a string representation of this PropertyResultRatingInfluencer.
-     *
-     * @return a string representation of the object
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
