@@ -214,9 +214,7 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
-    /**
-     * Sets all unassigned properties to CANNOT_BE_TESTED status.
-     */
+    /** Sets all unassigned properties to CANNOT_BE_TESTED status. */
     public final void setPropertiesToCannotBeTested() {
         for (AnalyzedProperty property : propertiesMap.keySet()) {
             if (propertiesMap.get(property) == TestResults.UNASSIGNED_ERROR) {

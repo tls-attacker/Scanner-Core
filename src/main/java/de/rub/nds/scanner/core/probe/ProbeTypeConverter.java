@@ -20,9 +20,7 @@ public class ProbeTypeConverter implements IStringConverter<ProbeType> {
 
     private Set<Class<? extends ProbeType>> probeTypeClasses;
 
-    /**
-     * Constructs a new ProbeTypeConverter that discovers ProbeType implementations.
-     */
+    /** Constructs a new ProbeTypeConverter that discovers ProbeType implementations. */
     public ProbeTypeConverter() {
         String packageName = "de.rub";
         Reflections reflections =
