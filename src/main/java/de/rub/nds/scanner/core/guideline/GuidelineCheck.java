@@ -58,6 +58,10 @@ public abstract class GuidelineCheck<ReportT extends ScanReport> {
             }
             return true;
         } else if (condition.getOr() != null) {
+            if (condition.getOr().isEmpty()) {
+                LOGGER.warn("Condition with empty 'or' list found, returning true.");
+                return true;
+            }
             for (GuidelineCheckCondition orCondition : condition.getOr()) {
                 if (this.passesCondition(report, orCondition)) {
                     return true;
