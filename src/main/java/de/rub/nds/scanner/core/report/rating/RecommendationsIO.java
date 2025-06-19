@@ -15,6 +15,13 @@ import java.util.Set;
 
 public class RecommendationsIO extends JaxbSerializer<Recommendations> {
 
+    /**
+     * Constructs a RecommendationsIO with support for the specified AnalyzedProperty class. Creates
+     * a JAXB serializer configured to handle Recommendations and related classes.
+     *
+     * @param analyzedPropertyClass the class of AnalyzedProperty to support in serialization
+     * @throws JAXBException if JAXB context creation fails
+     */
     public RecommendationsIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {
         super(

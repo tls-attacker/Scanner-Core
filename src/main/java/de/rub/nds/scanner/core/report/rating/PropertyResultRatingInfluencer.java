@@ -51,11 +51,24 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     @SuppressWarnings("unused")
     private PropertyResultRatingInfluencer() {}
 
+    /**
+     * Constructs a PropertyResultRatingInfluencer with the given test result and influence.
+     *
+     * @param result the test result associated with this rating influencer
+     * @param influence the influence value to apply to the rating
+     */
     public PropertyResultRatingInfluencer(TestResult result, Integer influence) {
         this.result = result;
         this.influence = influence;
     }
 
+    /**
+     * Constructs a PropertyResultRatingInfluencer with a referenced property.
+     *
+     * @param result the test result associated with this rating influencer
+     * @param referencedProperty the property being referenced
+     * @param referencedPropertyResult the test result of the referenced property
+     */
     public PropertyResultRatingInfluencer(
             TestResult result,
             AnalyzedProperty referencedProperty,
@@ -65,61 +78,138 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
         this.referencedPropertyResult = referencedPropertyResult;
     }
 
+    /**
+     * Constructs a PropertyResultRatingInfluencer with a score cap.
+     *
+     * @param result the test result associated with this rating influencer
+     * @param influence the influence value to apply to the rating
+     * @param scoreCap the maximum score that can be achieved
+     */
     public PropertyResultRatingInfluencer(TestResult result, Integer influence, Integer scoreCap) {
         this.result = result;
         this.influence = influence;
         this.scoreCap = scoreCap;
     }
 
+    /**
+     * Gets the test result associated with this rating influencer.
+     *
+     * @return the test result
+     */
     public TestResult getResult() {
         return result;
     }
 
+    /**
+     * Gets the influence value.
+     *
+     * @return the influence value
+     */
     public Integer getInfluence() {
         return influence;
     }
 
+    /**
+     * Gets the score cap value.
+     *
+     * @return the score cap value
+     */
     public Integer getScoreCap() {
         return scoreCap;
     }
 
+    /**
+     * Checks if this influencer has a non-zero score cap.
+     *
+     * @return true if the score cap exists and is non-zero, false otherwise
+     */
     public boolean hasScoreCap() {
         return scoreCap != null && scoreCap != 0;
     }
 
+    /**
+     * Sets the test result.
+     *
+     * @param result the test result to set
+     */
     public void setResult(TestResult result) {
         this.result = result;
     }
 
+    /**
+     * Sets the influence value.
+     *
+     * @param influence the influence value to set
+     */
     public void setInfluence(Integer influence) {
         this.influence = influence;
     }
 
+    /**
+     * Sets the score cap value.
+     *
+     * @param scoreCap the score cap value to set
+     */
     public void setScoreCap(Integer scoreCap) {
         this.scoreCap = scoreCap;
     }
 
+    /**
+     * Gets the referenced property.
+     *
+     * @return the referenced property
+     */
     public AnalyzedProperty getReferencedProperty() {
         return referencedProperty;
     }
 
+    /**
+     * Sets the referenced property.
+     *
+     * @param referencedProperty the referenced property to set
+     */
     public void setReferencedProperty(AnalyzedProperty referencedProperty) {
         this.referencedProperty = referencedProperty;
     }
 
+    /**
+     * Gets the test result of the referenced property.
+     *
+     * @return the referenced property test result
+     */
     public TestResult getReferencedPropertyResult() {
         return referencedPropertyResult;
     }
 
+    /**
+     * Sets the test result of the referenced property.
+     *
+     * @param referencedPropertyResult the referenced property test result to set
+     */
     public void setReferencedPropertyResult(TestResult referencedPropertyResult) {
         this.referencedPropertyResult = referencedPropertyResult;
     }
 
+    /**
+     * Checks if this is a bad influence (negative influence or has a score cap).
+     *
+     * @return true if this has a negative influence or a score cap, false otherwise
+     */
     @JsonIgnore
     public boolean isBadInfluence() {
         return influence != null && influence < 0 || scoreCap != null;
     }
 
+    /**
+     * Compares this PropertyResultRatingInfluencer with another based on score cap and influence.
+     * Objects with score caps are ordered before those without. When both have score caps, they are
+     * compared by score cap value. When score caps are equal or both absent, they are compared by
+     * influence value.
+     *
+     * @param t the PropertyResultRatingInfluencer to compare to
+     * @return a negative integer, zero, or a positive integer as this object is less than, equal
+     *     to, or greater than the specified object
+     */
     @Override
     public int compareTo(PropertyResultRatingInfluencer t) {
         if (Objects.equals(this.getScoreCap(), t.getScoreCap())) {

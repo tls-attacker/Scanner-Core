@@ -28,18 +28,41 @@ public class RatingInfluencers implements Serializable {
     @SuppressWarnings("unused")
     private RatingInfluencers() {}
 
+    /**
+     * Constructs a RatingInfluencers with the specified list of rating influencers.
+     *
+     * @param ratingInfluencers the list of rating influencers
+     */
     public RatingInfluencers(LinkedList<RatingInfluencer> ratingInfluencers) {
         this.ratingInfluencers = ratingInfluencers;
     }
 
+    /**
+     * Gets the list of rating influencers.
+     *
+     * @return the list of rating influencers
+     */
     public LinkedList<RatingInfluencer> getRatingInfluencers() {
         return ratingInfluencers;
     }
 
+    /**
+     * Sets the rating influencers list.
+     *
+     * @param ratingInfluencers the list of rating influencers to set
+     */
     public void setRatingInfluencers(LinkedList<RatingInfluencer> ratingInfluencers) {
         this.ratingInfluencers = ratingInfluencers;
     }
 
+    /**
+     * Gets the property rating influencer for a specific property and test result. If no matching
+     * influencer is found, returns a default influencer with 0 influence.
+     *
+     * @param property the analyzed property to find an influencer for
+     * @param result the test result to find an influencer for
+     * @return the matching property rating influencer or a default one with 0 influence
+     */
     public PropertyResultRatingInfluencer getPropertyRatingInfluencer(
             AnalyzedProperty property, TestResult result) {
         for (RatingInfluencer ri : ratingInfluencers) {

@@ -15,6 +15,13 @@ import java.util.Set;
 
 public class RatingInfluencersIO extends JaxbSerializer<RatingInfluencers> {
 
+    /**
+     * Constructs a RatingInfluencersIO with support for the specified AnalyzedProperty class.
+     * Creates a JAXB serializer configured to handle RatingInfluencers and related classes.
+     *
+     * @param analyzedPropertyClass the class of AnalyzedProperty to support in serialization
+     * @throws JAXBException if JAXB context creation fails
+     */
     public RatingInfluencersIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {
         super(
