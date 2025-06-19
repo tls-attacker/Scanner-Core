@@ -25,7 +25,8 @@ public class GuidelineChecker<ReportT extends ScanReport> {
     }
 
     /**
-     * Evaluates all checks in the guideline against the provided report and adds the results to the report.
+     * Evaluates all checks in the guideline against the provided report and adds the results to the
+     * report.
      *
      * @param report the scan report to evaluate and fill with guideline results
      */

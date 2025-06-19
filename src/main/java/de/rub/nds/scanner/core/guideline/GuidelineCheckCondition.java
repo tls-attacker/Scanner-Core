@@ -59,7 +59,8 @@ public class GuidelineCheckCondition {
     }
 
     /**
-     * Creates a new condition that requires at least one of the provided conditions to be satisfied.
+     * Creates a new condition that requires at least one of the provided conditions to be
+     * satisfied.
      *
      * @param conditions the list of conditions where at least one must be satisfied
      * @return a new OR condition
