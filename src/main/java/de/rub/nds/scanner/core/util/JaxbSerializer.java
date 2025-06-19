@@ -12,6 +12,7 @@ import de.rub.nds.protocol.util.SilentByteArrayOutputStream;
 import jakarta.xml.bind.*;
 import jakarta.xml.bind.util.JAXBSource;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -67,7 +68,7 @@ public abstract class JaxbSerializer<T> {
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.transform(new JAXBSource(context, obj), new StreamResult(tempStream));
             String xmlText = tempStream.toString().replaceAll("\r?\n", System.lineSeparator());
-            outputStream.write(xmlText.getBytes());
+            outputStream.write(xmlText.getBytes(StandardCharsets.UTF_8));
         } catch (TransformerException e) {
             LOGGER.warn(e);
         }
@@ -90,6 +91,10 @@ public abstract class JaxbSerializer<T> {
         xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
         xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         XMLStreamReader xsr = xif.createXMLStreamReader(inputStream);
-        return (T) unmarshaller.unmarshal(xsr);
+        try {
+            return (T) unmarshaller.unmarshal(xsr);
+        } finally {
+            xsr.close();
+        }
     }
 }

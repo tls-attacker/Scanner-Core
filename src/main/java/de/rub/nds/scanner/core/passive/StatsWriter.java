@@ -18,14 +18,25 @@ public class StatsWriter<StateT> {
 
     private int stateCounter = 0;
 
+    /** Creates a new StatsWriter with an empty list of extractors. */
     public StatsWriter() {
         extractorList = new LinkedList<>();
     }
 
+    /**
+     * Adds a StatExtractor to this writer.
+     *
+     * @param extractor The StatExtractor to add
+     */
     public void addExtractor(StatExtractor<StateT, ?> extractor) {
         extractorList.add(extractor);
     }
 
+    /**
+     * Extracts values from the given state using all registered extractors.
+     *
+     * @param state The state object to extract values from
+     */
     public void extract(StateT state) {
         for (StatExtractor<StateT, ?> extractor : extractorList) {
             extractor.extract(state);
@@ -33,10 +44,20 @@ public class StatsWriter<StateT> {
         stateCounter++;
     }
 
+    /**
+     * Returns a list of all containers from all registered extractors.
+     *
+     * @return List of ExtractedValueContainers from all extractors
+     */
     public List<ExtractedValueContainer<?>> getCumulatedExtractedValues() {
         return extractorList.stream().map(StatExtractor::getContainer).collect(Collectors.toList());
     }
 
+    /**
+     * Returns the number of states that have been processed.
+     *
+     * @return The count of processed states
+     */
     public int getStateCounter() {
         return stateCounter;
     }
