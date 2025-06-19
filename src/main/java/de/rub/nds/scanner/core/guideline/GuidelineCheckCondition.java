@@ -50,6 +50,7 @@ public class GuidelineCheckCondition {
 
     /**
      * Creates a new condition that requires all of the provided conditions to be satisfied.
+     * Returns true if the list is empty.
      *
      * @param conditions the list of conditions that must all be satisfied
      * @return a new AND condition
@@ -60,9 +61,9 @@ public class GuidelineCheckCondition {
 
     /**
      * Creates a new condition that requires at least one of the provided conditions to be
-     * satisfied.
+     * satisfied. Returns true if the list is empty.
      *
-     * @param conditions the list of conditions where at least one must be satisfied
+     * @param conditions the list of conditions where at least one must be satisfied, or true if the list is empty.
      * @return a new OR condition
      */
     public static GuidelineCheckCondition or(List<GuidelineCheckCondition> conditions) {
