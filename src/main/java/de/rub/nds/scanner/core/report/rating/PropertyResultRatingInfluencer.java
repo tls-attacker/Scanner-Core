@@ -202,13 +202,13 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
 
     /**
      * Compares this PropertyResultRatingInfluencer with another based on score cap and influence.
-     * Objects with score caps are ordered before those without. When both have score caps,
-     * they are compared by score cap value. When score caps are equal or both absent,
-     * they are compared by influence value.
+     * Objects with score caps are ordered before those without. When both have score caps, they are
+     * compared by score cap value. When score caps are equal or both absent, they are compared by
+     * influence value.
      *
      * @param t the PropertyResultRatingInfluencer to compare to
-     * @return a negative integer, zero, or a positive integer as this object is less than,
-     *         equal to, or greater than the specified object
+     * @return a negative integer, zero, or a positive integer as this object is less than, equal
+     *     to, or greater than the specified object
      */
     @Override
     public int compareTo(PropertyResultRatingInfluencer t) {

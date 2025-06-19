@@ -56,9 +56,9 @@ public class Recommendations implements Serializable {
     }
 
     /**
-     * Gets the property result recommendation for a specific property and test result.
-     * If no matching recommendation is found, returns a default recommendation
-     * with NO_RECOMMENDATION_FOUND messages.
+     * Gets the property result recommendation for a specific property and test result. If no
+     * matching recommendation is found, returns a default recommendation with
+     * NO_RECOMMENDATION_FOUND messages.
      *
      * @param property the analyzed property to find a recommendation for
      * @param result the test result to find a recommendation for
@@ -78,9 +78,9 @@ public class Recommendations implements Serializable {
     }
 
     /**
-     * Gets the recommendation for a specific analyzed property.
-     * If no matching recommendation is found, returns a default recommendation
-     * with the property's string representation as the short name.
+     * Gets the recommendation for a specific analyzed property. If no matching recommendation is
+     * found, returns a default recommendation with the property's string representation as the
+     * short name.
      *
      * @param property the analyzed property to find a recommendation for
      * @return the matching recommendation or a default one

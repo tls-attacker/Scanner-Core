@@ -24,9 +24,7 @@ public class RatingInfluencer {
 
     private List<PropertyResultRatingInfluencer> propertyRatingInfluencers;
 
-    /**
-     * Constructs an empty RatingInfluencer with an empty list of property rating influencers.
-     */
+    /** Constructs an empty RatingInfluencer with an empty list of property rating influencers. */
     public RatingInfluencer() {
         this.propertyRatingInfluencers = new LinkedList<>();
     }
@@ -104,8 +102,8 @@ public class RatingInfluencer {
     }
 
     /**
-     * Gets the property rating influencer for a specific test result.
-     * If no matching influencer is found, returns a default influencer with 0 influence.
+     * Gets the property rating influencer for a specific test result. If no matching influencer is
+     * found, returns a default influencer with 0 influence.
      *
      * @param result the test result to find an influencer for
      * @return the matching property rating influencer or a default one with 0 influence

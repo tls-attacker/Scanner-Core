@@ -36,12 +36,13 @@ public class SiteReportRater {
     }
 
     /**
-     * Calculates and returns a score report based on the provided test results.
-     * The score is computed by applying the rating influencers to the test results,
-     * taking into account both positive and negative influences as well as score caps.
+     * Calculates and returns a score report based on the provided test results. The score is
+     * computed by applying the rating influencers to the test results, taking into account both
+     * positive and negative influences as well as score caps.
      *
      * @param resultMap the map of analyzed properties to their test results
-     * @return a ScoreReport containing the calculated score and the influencers that contributed to it
+     * @return a ScoreReport containing the calculated score and the influencers that contributed to
+     *     it
      */
     public ScoreReport getScoreReport(Map<AnalyzedProperty, TestResult> resultMap) {
         LinkedHashMap<AnalyzedProperty, PropertyResultRatingInfluencer> ratingInfluencers =

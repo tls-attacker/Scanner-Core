@@ -56,8 +56,8 @@ public class RatingInfluencers implements Serializable {
     }
 
     /**
-     * Gets the property rating influencer for a specific property and test result.
-     * If no matching influencer is found, returns a default influencer with 0 influence.
+     * Gets the property rating influencer for a specific property and test result. If no matching
+     * influencer is found, returns a default influencer with 0 influence.
      *
      * @param property the analyzed property to find an influencer for
      * @param result the test result to find an influencer for

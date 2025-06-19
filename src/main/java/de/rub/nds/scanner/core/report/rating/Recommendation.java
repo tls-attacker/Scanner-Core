@@ -204,8 +204,8 @@ public class Recommendation {
     }
 
     /**
-     * Gets the short name of this recommendation.
-     * If no short name is set, returns the analyzed property's string representation.
+     * Gets the short name of this recommendation. If no short name is set, returns the analyzed
+     * property's string representation.
      *
      * @return the short name or property string if short name is null or empty
      */
@@ -300,9 +300,9 @@ public class Recommendation {
     }
 
     /**
-     * Gets the property result recommendation for a specific test result.
-     * If no matching recommendation is found, returns a default recommendation
-     * with NO_INFORMATION_FOUND and NO_RECOMMENDATION_FOUND messages.
+     * Gets the property result recommendation for a specific test result. If no matching
+     * recommendation is found, returns a default recommendation with NO_INFORMATION_FOUND and
+     * NO_RECOMMENDATION_FOUND messages.
      *
      * @param result the test result to find a recommendation for
      * @return the matching property result recommendation or a default one

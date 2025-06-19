@@ -28,7 +28,8 @@ public class ScoreReport {
      * Constructs a ScoreReport with the specified score and influencers.
      *
      * @param score the calculated score
-     * @param influencers the map of properties to their rating influencers that contributed to the score
+     * @param influencers the map of properties to their rating influencers that contributed to the
+     *     score
      */
     public ScoreReport(
             int score, Map<AnalyzedProperty, PropertyResultRatingInfluencer> influencers) {
