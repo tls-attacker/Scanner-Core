@@ -28,15 +28,14 @@ public class RatingInfluencer {
 
     private List<PropertyResultRatingInfluencer> propertyRatingInfluencers;
 
-    /**
-     * Constructs an empty RatingInfluencer with an empty list of property rating influencers.
-     */
+    /** Constructs an empty RatingInfluencer with an empty list of property rating influencers. */
     public RatingInfluencer() {
         this.propertyRatingInfluencers = new LinkedList<>();
     }
 
     /**
-     * Constructs a RatingInfluencer with the specified analyzed property and list of property rating influencers.
+     * Constructs a RatingInfluencer with the specified analyzed property and list of property
+     * rating influencers.
      *
      * @param influencerConstant the analyzed property that this influencer applies to
      * @param propertyRatingInfluencers the list of property result rating influencers
@@ -49,7 +48,8 @@ public class RatingInfluencer {
     }
 
     /**
-     * Constructs a RatingInfluencer with the specified analyzed property and array of property rating influencers.
+     * Constructs a RatingInfluencer with the specified analyzed property and array of property
+     * rating influencers.
      *
      * @param influencerConstant the analyzed property that this influencer applies to
      * @param propertyRatingInfluencers the array of property result rating influencers
@@ -108,11 +108,12 @@ public class RatingInfluencer {
     }
 
     /**
-     * Gets the property rating influencer for a specific test result. If no influencer is found
-     * for the given result, returns a new influencer with zero influence.
+     * Gets the property rating influencer for a specific test result. If no influencer is found for
+     * the given result, returns a new influencer with zero influence.
      *
      * @param result the test result to find an influencer for
-     * @return the matching property rating influencer, or a new one with zero influence if not found
+     * @return the matching property rating influencer, or a new one with zero influence if not
+     *     found
      */
     public PropertyResultRatingInfluencer getPropertyRatingInfluencer(TestResult result) {
         for (PropertyResultRatingInfluencer ri : propertyRatingInfluencers) {

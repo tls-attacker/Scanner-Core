@@ -84,7 +84,8 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     }
 
     /**
-     * Constructs a PropertyResultRatingInfluencer with the specified result, influence, and score cap.
+     * Constructs a PropertyResultRatingInfluencer with the specified result, influence, and score
+     * cap.
      *
      * @param result the test result that triggers this influence
      * @param influence the influence value (positive or negative) on the rating score
@@ -196,8 +197,8 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     }
 
     /**
-     * Determines whether this influencer has a negative impact on the rating.
-     * An influencer is considered bad if it has a negative influence value or if it sets a score cap.
+     * Determines whether this influencer has a negative impact on the rating. An influencer is
+     * considered bad if it has a negative influence value or if it sets a score cap.
      *
      * @return true if this is a bad influence, false otherwise
      */
@@ -212,8 +213,8 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
      * score cap status, they are ordered by their influence values.
      *
      * @param t the PropertyResultRatingInfluencer to compare to
-     * @return a negative integer, zero, or a positive integer as this object is less than, equal to,
-     *         or greater than the specified object
+     * @return a negative integer, zero, or a positive integer as this object is less than, equal
+     *     to, or greater than the specified object
      */
     @Override
     public int compareTo(PropertyResultRatingInfluencer t) {

@@ -12,8 +12,8 @@ import de.rub.nds.scanner.core.probe.result.TestResult;
 import java.util.HashMap;
 
 /**
- * Handles color encoding for test results in terminal output.
- * Maps test results to ANSI colors for visual differentiation.
+ * Handles color encoding for test results in terminal output. Maps test results to ANSI colors for
+ * visual differentiation.
  */
 public class ColorEncoding {
 
@@ -39,8 +39,8 @@ public class ColorEncoding {
     }
 
     /**
-     * Encodes the given text with the color associated with the test result.
-     * If a color mapping exists and is not DEFAULT_COLOR, wraps the text with appropriate ANSI codes.
+     * Encodes the given text with the color associated with the test result. If a color mapping
+     * exists and is not DEFAULT_COLOR, wraps the text with appropriate ANSI codes.
      *
      * @param result the test result determining the color
      * @param encodedText the text to be colored

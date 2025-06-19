@@ -18,8 +18,8 @@ import jakarta.xml.bind.annotation.XmlSeeAlso;
 
 /**
  * Represents a recommendation for a specific property test result. This class encapsulates
- * recommendations about how to handle specific test results, including short descriptions,
- * handling recommendations, and detailed explanations.
+ * recommendations about how to handle specific test results, including short descriptions, handling
+ * recommendations, and detailed explanations.
  */
 @XmlRootElement
 @XmlSeeAlso({TestResults.class})
@@ -54,7 +54,8 @@ public class PropertyResultRecommendation {
     }
 
     /**
-     * Constructs a PropertyResultRecommendation with the specified result, recommendations, and detailed description.
+     * Constructs a PropertyResultRecommendation with the specified result, recommendations, and
+     * detailed description.
      *
      * @param result the test result that this recommendation applies to
      * @param resultStatus a short description of the result status

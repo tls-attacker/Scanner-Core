@@ -12,8 +12,8 @@ import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.util.HashMap;
 
 /**
- * An encoder that converts AnalyzedProperty instances to their text representation.
- * Uses a provided mapping to translate properties to custom strings.
+ * An encoder that converts AnalyzedProperty instances to their text representation. Uses a provided
+ * mapping to translate properties to custom strings.
  */
 public class AnalyzedPropertyTextEncoder extends Encoder<AnalyzedProperty> {
 
@@ -29,8 +29,8 @@ public class AnalyzedPropertyTextEncoder extends Encoder<AnalyzedProperty> {
     }
 
     /**
-     * Encodes an AnalyzedProperty to its string representation.
-     * If a mapping exists, returns the mapped value; otherwise returns the property's name.
+     * Encodes an AnalyzedProperty to its string representation. If a mapping exists, returns the
+     * mapped value; otherwise returns the property's name.
      *
      * @param analyzedProperty the property to encode
      * @return the string representation of the property

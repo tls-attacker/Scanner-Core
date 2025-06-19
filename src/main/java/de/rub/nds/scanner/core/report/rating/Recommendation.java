@@ -20,8 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Represents a comprehensive recommendation for an analyzed property. This class contains
- * all information needed to provide guidance about a specific property, including descriptions,
+ * Represents a comprehensive recommendation for an analyzed property. This class contains all
+ * information needed to provide guidance about a specific property, including descriptions,
  * documentation, links, and specific recommendations for different test results.
  */
 @XmlRootElement
@@ -58,7 +58,8 @@ public class Recommendation {
     private List<PropertyResultRecommendation> propertyRecommendations;
 
     /**
-     * Constructs an empty Recommendation with initialized empty lists for property recommendations and links.
+     * Constructs an empty Recommendation with initialized empty lists for property recommendations
+     * and links.
      */
     public Recommendation() {
         propertyRecommendations = new LinkedList<>();
@@ -66,7 +67,8 @@ public class Recommendation {
     }
 
     /**
-     * Constructs a Recommendation with the specified analyzed property and list of property recommendations.
+     * Constructs a Recommendation with the specified analyzed property and list of property
+     * recommendations.
      *
      * @param analyzedProperty the property this recommendation applies to
      * @param propertyRecommendations the list of recommendations for different test results
@@ -209,8 +211,8 @@ public class Recommendation {
     }
 
     /**
-     * Gets the short name for the property. If no short name is set, returns the
-     * string representation of the analyzed property.
+     * Gets the short name for the property. If no short name is set, returns the string
+     * representation of the analyzed property.
      *
      * @return the short name or property string representation
      */
@@ -305,8 +307,8 @@ public class Recommendation {
     }
 
     /**
-     * Gets the recommendation for a specific test result. If no recommendation is found,
-     * returns a default recommendation with no information available message.
+     * Gets the recommendation for a specific test result. If no recommendation is found, returns a
+     * default recommendation with no information available message.
      *
      * @param result the test result to find a recommendation for
      * @return the matching recommendation or a default recommendation if not found

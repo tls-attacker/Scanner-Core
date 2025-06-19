@@ -12,8 +12,8 @@ import de.rub.nds.scanner.core.config.ScannerDetail;
 import de.rub.nds.scanner.core.report.AnsiColor;
 
 /**
- * Container for displaying simple text in scanner reports.
- * Supports colored text output with configurable detail levels.
+ * Container for displaying simple text in scanner reports. Supports colored text output with
+ * configurable detail levels.
  */
 public class TextContainer extends ReportContainer {
 
@@ -22,7 +22,7 @@ public class TextContainer extends ReportContainer {
 
     /**
      * Creates a new TextContainer with normal detail level.
-     * 
+     *
      * @param text The text to display
      * @param color The ANSI color for the text
      */
@@ -34,7 +34,7 @@ public class TextContainer extends ReportContainer {
 
     /**
      * Creates a new TextContainer with specified detail level.
-     * 
+     *
      * @param text The text to display
      * @param color The ANSI color for the text
      * @param detail The detail level for this container
@@ -47,7 +47,7 @@ public class TextContainer extends ReportContainer {
 
     /**
      * Prints the text to the provided StringBuilder with a trailing newline.
-     * 
+     *
      * @param builder The StringBuilder to append the output to
      * @param depth The indentation depth level
      * @param useColor Whether to use ANSI color codes in the output
@@ -60,7 +60,7 @@ public class TextContainer extends ReportContainer {
 
     /**
      * Prints the text to the provided StringBuilder without a trailing newline.
-     * 
+     *
      * @param builder The StringBuilder to append the output to
      * @param depth The indentation depth level
      * @param useColor Whether to use ANSI color codes in the output
@@ -72,7 +72,7 @@ public class TextContainer extends ReportContainer {
 
     /**
      * Gets the text content.
-     * 
+     *
      * @return The text to be displayed
      */
     public String getText() {

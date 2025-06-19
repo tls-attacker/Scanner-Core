@@ -12,8 +12,8 @@ import de.rub.nds.scanner.core.probe.result.TestResult;
 import java.util.HashMap;
 
 /**
- * Encoder that converts TestResult objects to text representations using a configurable mapping.
- * If no mapping is provided or no mapping exists for a result, falls back to the result's name.
+ * Encoder that converts TestResult objects to text representations using a configurable mapping. If
+ * no mapping is provided or no mapping exists for a result, falls back to the result's name.
  */
 public class TestResultTextEncoder extends Encoder<TestResult> {
 

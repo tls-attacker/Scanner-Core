@@ -17,9 +17,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Calculates rating scores for site reports based on property test results and configured
- * rating influencers. This class evaluates how different property results affect the overall
- * security rating of a site.
+ * Calculates rating scores for site reports based on property test results and configured rating
+ * influencers. This class evaluates how different property results affect the overall security
+ * rating of a site.
  */
 public class SiteReportRater {
 
@@ -41,9 +41,9 @@ public class SiteReportRater {
     }
 
     /**
-     * Generates a score report based on the provided property test results. This method
-     * evaluates each property result against the configured rating influencers and
-     * calculates the overall score.
+     * Generates a score report based on the provided property test results. This method evaluates
+     * each property result against the configured rating influencers and calculates the overall
+     * score.
      *
      * @param resultMap a map of analyzed properties to their test results
      * @return a ScoreReport containing the calculated score and applied influencers

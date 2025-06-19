@@ -13,8 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Container for managing a list of report containers.
- * Supports depth increase for nested indentation of child containers.
+ * Container for managing a list of report containers. Supports depth increase for nested
+ * indentation of child containers.
  */
 public class ListContainer extends ReportContainer {
 
@@ -22,9 +22,7 @@ public class ListContainer extends ReportContainer {
 
     private final int depthIncrease;
 
-    /**
-     * Creates a new empty ListContainer with no depth increase.
-     */
+    /** Creates a new empty ListContainer with no depth increase. */
     public ListContainer() {
         super(ScannerDetail.NORMAL);
         this.reportContainerList = new LinkedList<>();
@@ -33,7 +31,7 @@ public class ListContainer extends ReportContainer {
 
     /**
      * Creates a new empty ListContainer with specified depth increase.
-     * 
+     *
      * @param depthIncrease The amount to increase depth when printing child containers
      */
     public ListContainer(int depthIncrease) {
@@ -44,7 +42,7 @@ public class ListContainer extends ReportContainer {
 
     /**
      * Creates a new ListContainer with existing containers and specified depth increase.
-     * 
+     *
      * @param reportContainerList The initial list of report containers
      * @param depthIncrease The amount to increase depth when printing child containers
      */
@@ -56,7 +54,7 @@ public class ListContainer extends ReportContainer {
 
     /**
      * Creates a new ListContainer with existing containers and no depth increase.
-     * 
+     *
      * @param reportContainerList The initial list of report containers
      */
     public ListContainer(List<ReportContainer> reportContainerList) {
@@ -66,9 +64,9 @@ public class ListContainer extends ReportContainer {
     }
 
     /**
-     * Prints all contained report containers to the provided StringBuilder.
-     * Each container is printed with the specified depth plus any depth increase.
-     * 
+     * Prints all contained report containers to the provided StringBuilder. Each container is
+     * printed with the specified depth plus any depth increase.
+     *
      * @param builder The StringBuilder to append the output to
      * @param depth The indentation depth level
      * @param useColor Whether to use ANSI color codes in the output
@@ -81,7 +79,7 @@ public class ListContainer extends ReportContainer {
 
     /**
      * Adds a report container to this list.
-     * 
+     *
      * @param container The container to add
      * @return This ListContainer instance for method chaining
      */

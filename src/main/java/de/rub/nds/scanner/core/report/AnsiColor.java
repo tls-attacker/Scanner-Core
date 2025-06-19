@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Enum representing ANSI color codes for terminal output.
- * Provides foreground colors, background colors, and text formatting options.
+ * Enum representing ANSI color codes for terminal output. Provides foreground colors, background
+ * colors, and text formatting options.
  */
 public enum AnsiColor {
     RESET("\u001B[0m"),

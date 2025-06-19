@@ -31,9 +31,7 @@ public class PrintingScheme {
 
     private ColorEncoding defaultColorEncoding;
 
-    /**
-     * Constructs a new PrintingScheme with default settings.
-     */
+    /** Constructs a new PrintingScheme with default settings. */
     public PrintingScheme() {}
 
     /**

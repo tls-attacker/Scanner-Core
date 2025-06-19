@@ -12,8 +12,8 @@ import de.rub.nds.scanner.core.config.ScannerDetail;
 import de.rub.nds.scanner.core.report.AnsiColor;
 
 /**
- * Abstract base class for all report containers in the scanner framework.
- * Provides common functionality for printing formatted reports with indentation and color support.
+ * Abstract base class for all report containers in the scanner framework. Provides common
+ * functionality for printing formatted reports with indentation and color support.
  */
 public abstract class ReportContainer {
 
@@ -21,7 +21,7 @@ public abstract class ReportContainer {
 
     /**
      * Creates a new ReportContainer with the specified detail level.
-     * 
+     *
      * @param detail The detail level for this container
      */
     public ReportContainer(ScannerDetail detail) {
@@ -30,7 +30,7 @@ public abstract class ReportContainer {
 
     /**
      * Prints this container's content to the provided StringBuilder.
-     * 
+     *
      * @param builder The StringBuilder to append the output to
      * @param depth The indentation depth level
      * @param useColor Whether to use ANSI color codes in the output
@@ -38,9 +38,8 @@ public abstract class ReportContainer {
     public abstract void print(StringBuilder builder, int depth, boolean useColor);
 
     /**
-     * Adds indentation spaces based on the specified depth.
-     * Each depth level adds two spaces.
-     * 
+     * Adds indentation spaces based on the specified depth. Each depth level adds two spaces.
+     *
      * @param builder The StringBuilder to append to
      * @param depth The indentation depth level
      * @return The modified StringBuilder for method chaining
@@ -51,9 +50,9 @@ public abstract class ReportContainer {
     }
 
     /**
-     * Adds headline-specific indentation based on the specified depth.
-     * Uses dashes and pipes for visual hierarchy.
-     * 
+     * Adds headline-specific indentation based on the specified depth. Uses dashes and pipes for
+     * visual hierarchy.
+     *
      * @param builder The StringBuilder to append to
      * @param depth The indentation depth level
      * @return The modified StringBuilder for method chaining
@@ -68,7 +67,7 @@ public abstract class ReportContainer {
 
     /**
      * Adds colored text to the StringBuilder if color is enabled.
-     * 
+     *
      * @param builder The StringBuilder to append to
      * @param color The ANSI color to apply
      * @param text The text to colorize
@@ -87,7 +86,7 @@ public abstract class ReportContainer {
 
     /**
      * Gets the detail level for this container.
-     * 
+     *
      * @return The scanner detail level
      */
     public ScannerDetail getDetail() {

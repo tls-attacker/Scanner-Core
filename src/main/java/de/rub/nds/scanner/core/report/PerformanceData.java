@@ -11,8 +11,8 @@ package de.rub.nds.scanner.core.report;
 import de.rub.nds.scanner.core.probe.ProbeType;
 
 /**
- * Container for performance data of a single probe execution.
- * Tracks timing information for performance analysis.
+ * Container for performance data of a single probe execution. Tracks timing information for
+ * performance analysis.
  */
 public class PerformanceData {
 

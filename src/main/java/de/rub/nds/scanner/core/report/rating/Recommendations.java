@@ -18,9 +18,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Container class for a collection of recommendations. This class manages multiple
- * Recommendation instances and provides methods to retrieve specific recommendations
- * based on analyzed properties and test results.
+ * Container class for a collection of recommendations. This class manages multiple Recommendation
+ * instances and provides methods to retrieve specific recommendations based on analyzed properties
+ * and test results.
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,9 +61,9 @@ public class Recommendations implements Serializable {
     }
 
     /**
-     * Gets the property result recommendation for a specific analyzed property and test result.
-     * If no matching recommendation is found, returns a default recommendation with
-     * "No recommendation found" messages.
+     * Gets the property result recommendation for a specific analyzed property and test result. If
+     * no matching recommendation is found, returns a default recommendation with "No recommendation
+     * found" messages.
      *
      * @param property the analyzed property to search for
      * @param result the test result to match
@@ -83,9 +83,9 @@ public class Recommendations implements Serializable {
     }
 
     /**
-     * Gets the recommendation for a specific analyzed property. If no matching
-     * recommendation is found, returns a new recommendation with the property's
-     * string representation as the short name.
+     * Gets the recommendation for a specific analyzed property. If no matching recommendation is
+     * found, returns a new recommendation with the property's string representation as the short
+     * name.
      *
      * @param property the analyzed property to search for
      * @return the matching recommendation or a new basic recommendation if not found

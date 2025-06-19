@@ -12,8 +12,8 @@ import de.rub.nds.scanner.core.config.ScannerDetail;
 import de.rub.nds.scanner.core.report.AnsiColor;
 
 /**
- * Container for displaying headlines in scanner reports.
- * Supports different depth levels with corresponding visual formatting and colors.
+ * Container for displaying headlines in scanner reports. Supports different depth levels with
+ * corresponding visual formatting and colors.
  */
 public class HeadlineContainer extends ReportContainer {
 
@@ -23,7 +23,7 @@ public class HeadlineContainer extends ReportContainer {
 
     /**
      * Creates a new HeadlineContainer with normal detail level.
-     * 
+     *
      * @param headline The headline text to display
      */
     public HeadlineContainer(String headline) {
@@ -33,7 +33,7 @@ public class HeadlineContainer extends ReportContainer {
 
     /**
      * Creates a new HeadlineContainer with specified detail level.
-     * 
+     *
      * @param headline The headline text to display
      * @param detail The detail level for this container
      */
@@ -43,9 +43,9 @@ public class HeadlineContainer extends ReportContainer {
     }
 
     /**
-     * Prints the headline to the provided StringBuilder with appropriate formatting.
-     * Depth 0 headlines include a horizontal line separator.
-     * 
+     * Prints the headline to the provided StringBuilder with appropriate formatting. Depth 0
+     * headlines include a horizontal line separator.
+     *
      * @param builder The StringBuilder to append the output to
      * @param depth The indentation depth level
      * @param useColor Whether to use ANSI color codes in the output
@@ -85,7 +85,7 @@ public class HeadlineContainer extends ReportContainer {
 
     /**
      * Gets the headline text.
-     * 
+     *
      * @return The headline text
      */
     public String getHeadline() {

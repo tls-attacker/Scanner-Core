@@ -9,13 +9,14 @@
 package de.rub.nds.scanner.core.report;
 
 /**
- * Utility class containing ANSI escape sequences for terminal manipulation.
- * Provides constants for cursor movement and line manipulation.
+ * Utility class containing ANSI escape sequences for terminal manipulation. Provides constants for
+ * cursor movement and line manipulation.
  */
 public class AnsiEscapeSequence {
 
     /** ANSI escape sequence to move cursor up one line */
     public static final String ANSI_ONE_LINE_UP = "\033[1A";
+
     /** ANSI escape sequence to erase the current line */
     public static final String ANSI_ERASE_LINE = "\033[2K";
 }

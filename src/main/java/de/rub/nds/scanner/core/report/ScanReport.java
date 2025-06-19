@@ -71,9 +71,7 @@ public abstract class ScanReport {
     private Long scanStartTime;
     private Long scanEndTime;
 
-    /**
-     * Constructs a new ScanReport with empty collections.
-     */
+    /** Constructs a new ScanReport with empty collections. */
     protected ScanReport() {
         resultMap = new HashMap<>();
         extractedValueContainerMap = new HashMap<>();
