@@ -18,9 +18,7 @@ public class StatsWriter<StateT> {
 
     private int stateCounter = 0;
 
-    /**
-     * Creates a new StatsWriter with an empty list of extractors.
-     */
+    /** Creates a new StatsWriter with an empty list of extractors. */
     public StatsWriter() {
         extractorList = new LinkedList<>();
     }
