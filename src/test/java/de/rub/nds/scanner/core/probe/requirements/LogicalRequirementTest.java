@@ -58,9 +58,9 @@ public class LogicalRequirementTest {
         FulfilledRequirement<ScanReport> req1 = new FulfilledRequirement<>();
         UnfulfillableRequirement<ScanReport> req2 = new UnfulfillableRequirement<>();
         List<Requirement<ScanReport>> requirements = List.of(req1, req2);
-        
+
         TestLogicalRequirement logicalReq = new TestLogicalRequirement(requirements, true);
-        
+
         List<Requirement<ScanReport>> contained = logicalReq.getContainedRequirements();
         assertNotNull(contained);
         assertEquals(2, contained.size());
@@ -71,7 +71,7 @@ public class LogicalRequirementTest {
     @Test
     public void testEmptyContainedRequirements() {
         TestLogicalRequirement logicalReq = new TestLogicalRequirement(List.of(), true);
-        
+
         List<Requirement<ScanReport>> contained = logicalReq.getContainedRequirements();
         assertNotNull(contained);
         assertTrue(contained.isEmpty());
@@ -79,29 +79,29 @@ public class LogicalRequirementTest {
 
     @Test
     public void testInheritedMethods() {
-        TestLogicalRequirement logicalReq = 
-            new TestLogicalRequirement(List.of(new FulfilledRequirement<>()), true);
+        TestLogicalRequirement logicalReq =
+                new TestLogicalRequirement(List.of(new FulfilledRequirement<>()), true);
         TestScanReport report = new TestScanReport();
-        
+
         // Test evaluate
         assertTrue(logicalReq.evaluate(report));
-        
+
         // Test getUnfulfilledRequirements
         assertTrue(logicalReq.getUnfulfilledRequirements(report).isEmpty());
-        
+
         // Test logical operations
         Requirement<ScanReport> andReq = logicalReq.and(new FulfilledRequirement<>());
         assertNotNull(andReq);
         assertTrue(andReq instanceof AndRequirement);
-        
+
         Requirement<ScanReport> orReq = logicalReq.or(new UnfulfillableRequirement<>());
         assertNotNull(orReq);
         assertTrue(orReq instanceof OrRequirement);
-        
+
         Requirement<ScanReport> notReq = logicalReq.not();
         assertNotNull(notReq);
         assertTrue(notReq instanceof NotRequirement);
-        
+
         Requirement<ScanReport> xorReq = logicalReq.xor(new FulfilledRequirement<>());
         assertNotNull(xorReq);
         assertTrue(xorReq instanceof XorRequirement);

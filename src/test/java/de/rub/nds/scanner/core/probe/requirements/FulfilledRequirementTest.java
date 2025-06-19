@@ -31,7 +31,7 @@ public class FulfilledRequirementTest {
     public void testEvaluateAlwaysReturnsTrue() {
         FulfilledRequirement<ScanReport> requirement = new FulfilledRequirement<>();
         TestScanReport report = new TestScanReport();
-        
+
         assertTrue(requirement.evaluate(report));
         assertTrue(requirement.evaluate(null)); // Should work even with null
     }
@@ -40,11 +40,11 @@ public class FulfilledRequirementTest {
     public void testGetUnfulfilledRequirementsReturnsEmptyList() {
         FulfilledRequirement<ScanReport> requirement = new FulfilledRequirement<>();
         TestScanReport report = new TestScanReport();
-        
+
         List<Requirement<ScanReport>> unfulfilled = requirement.getUnfulfilledRequirements(report);
         assertNotNull(unfulfilled);
         assertTrue(unfulfilled.isEmpty());
-        
+
         // Should work even with null
         unfulfilled = requirement.getUnfulfilledRequirements(null);
         assertNotNull(unfulfilled);
@@ -62,18 +62,18 @@ public class FulfilledRequirementTest {
         FulfilledRequirement<ScanReport> fulfilled = new FulfilledRequirement<>();
         UnfulfillableRequirement<ScanReport> unfulfillable = new UnfulfillableRequirement<>();
         TestScanReport report = new TestScanReport();
-        
+
         // Test AND operations
         assertTrue(fulfilled.and(fulfilled).evaluate(report));
         assertFalse(fulfilled.and(unfulfillable).evaluate(report));
-        
+
         // Test OR operations
         assertTrue(fulfilled.or(fulfilled).evaluate(report));
         assertTrue(fulfilled.or(unfulfillable).evaluate(report));
-        
+
         // Test NOT operation
         assertFalse(fulfilled.not().evaluate(report));
-        
+
         // Test XOR operation
         assertFalse(fulfilled.xor(fulfilled).evaluate(report));
         assertTrue(fulfilled.xor(unfulfillable).evaluate(report));

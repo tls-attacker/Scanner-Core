@@ -31,7 +31,7 @@ public class UnfulfillableRequirementTest {
     public void testEvaluateAlwaysReturnsFalse() {
         UnfulfillableRequirement<ScanReport> requirement = new UnfulfillableRequirement<>();
         TestScanReport report = new TestScanReport();
-        
+
         assertFalse(requirement.evaluate(report));
         assertFalse(requirement.evaluate(null)); // Should work even with null
     }
@@ -40,12 +40,12 @@ public class UnfulfillableRequirementTest {
     public void testGetUnfulfilledRequirementsReturnsSelf() {
         UnfulfillableRequirement<ScanReport> requirement = new UnfulfillableRequirement<>();
         TestScanReport report = new TestScanReport();
-        
+
         List<Requirement<ScanReport>> unfulfilled = requirement.getUnfulfilledRequirements(report);
         assertNotNull(unfulfilled);
         assertEquals(1, unfulfilled.size());
         assertSame(requirement, unfulfilled.get(0));
-        
+
         // Should work even with null
         unfulfilled = requirement.getUnfulfilledRequirements(null);
         assertNotNull(unfulfilled);
@@ -64,18 +64,18 @@ public class UnfulfillableRequirementTest {
         UnfulfillableRequirement<ScanReport> unfulfillable = new UnfulfillableRequirement<>();
         FulfilledRequirement<ScanReport> fulfilled = new FulfilledRequirement<>();
         TestScanReport report = new TestScanReport();
-        
+
         // Test AND operations
         assertFalse(unfulfillable.and(unfulfillable).evaluate(report));
         assertFalse(unfulfillable.and(fulfilled).evaluate(report));
-        
+
         // Test OR operations
         assertFalse(unfulfillable.or(unfulfillable).evaluate(report));
         assertTrue(unfulfillable.or(fulfilled).evaluate(report));
-        
+
         // Test NOT operation
         assertTrue(unfulfillable.not().evaluate(report));
-        
+
         // Test XOR operation
         assertFalse(unfulfillable.xor(unfulfillable).evaluate(report));
         assertTrue(unfulfillable.xor(fulfilled).evaluate(report));
@@ -86,13 +86,13 @@ public class UnfulfillableRequirementTest {
         UnfulfillableRequirement<ScanReport> req1 = new UnfulfillableRequirement<>();
         UnfulfillableRequirement<ScanReport> req2 = new UnfulfillableRequirement<>();
         TestScanReport report = new TestScanReport();
-        
+
         // Both should behave identically
         assertFalse(req1.evaluate(report));
         assertFalse(req2.evaluate(report));
-        
+
         assertEquals(req1.toString(), req2.toString());
-        
+
         // But they are different instances
         assertNotSame(req1, req2);
     }
@@ -103,15 +103,15 @@ public class UnfulfillableRequirementTest {
         FulfilledRequirement<ScanReport> fulfilled1 = new FulfilledRequirement<>();
         FulfilledRequirement<ScanReport> fulfilled2 = new FulfilledRequirement<>();
         TestScanReport report = new TestScanReport();
-        
+
         // Complex requirement: (fulfilled1 AND fulfilled2) OR unfulfillable
         Requirement<ScanReport> complex = fulfilled1.and(fulfilled2).or(unfulfillable);
         assertTrue(complex.evaluate(report));
-        
+
         // Complex requirement: (fulfilled1 OR fulfilled2) AND unfulfillable
         complex = fulfilled1.or(fulfilled2).and(unfulfillable);
         assertFalse(complex.evaluate(report));
-        
+
         // Complex requirement: NOT(unfulfillable) AND fulfilled1
         complex = unfulfillable.not().and(fulfilled1);
         assertTrue(complex.evaluate(report));
