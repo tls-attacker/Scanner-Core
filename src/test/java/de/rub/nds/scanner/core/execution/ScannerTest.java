@@ -344,7 +344,8 @@ public class ScannerTest {
     public void testScanWithGuidelines() {
         TestScanner scanner = new TestScanner(executorConfig);
 
-        Guideline<TestReport> guideline = new Guideline<TestReport>("TestGuideline", "http://example.com", new ArrayList<>());
+        Guideline<TestReport> guideline =
+                new Guideline<TestReport>("TestGuideline", "http://example.com", new ArrayList<>());
 
         scanner.setGuidelines(List.of(guideline));
         TestReport report = scanner.scan();
