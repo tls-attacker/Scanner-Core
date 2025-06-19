@@ -24,10 +24,17 @@ public class RatingInfluencer {
 
     private List<PropertyResultRatingInfluencer> propertyRatingInfluencers;
 
+    /** Constructs an empty RatingInfluencer with an empty list of property rating influencers. */
     public RatingInfluencer() {
         this.propertyRatingInfluencers = new LinkedList<>();
     }
 
+    /**
+     * Constructs a RatingInfluencer with the specified property and influencers.
+     *
+     * @param influencerConstant the analyzed property this influencer applies to
+     * @param propertyRatingInfluencers the list of property rating influencers
+     */
     public RatingInfluencer(
             AnalyzedProperty influencerConstant,
             List<PropertyResultRatingInfluencer> propertyRatingInfluencers) {
@@ -35,6 +42,12 @@ public class RatingInfluencer {
         this.propertyRatingInfluencers = propertyRatingInfluencers;
     }
 
+    /**
+     * Constructs a RatingInfluencer with the specified property and influencers.
+     *
+     * @param influencerConstant the analyzed property this influencer applies to
+     * @param propertyRatingInfluencers the property rating influencers as varargs
+     */
     public RatingInfluencer(
             AnalyzedProperty influencerConstant,
             PropertyResultRatingInfluencer... propertyRatingInfluencers) {
@@ -42,27 +55,59 @@ public class RatingInfluencer {
         this.propertyRatingInfluencers = Arrays.asList(propertyRatingInfluencers);
     }
 
+    /**
+     * Gets the analyzed property this influencer applies to.
+     *
+     * @return the analyzed property
+     */
     public AnalyzedProperty getAnalyzedProperty() {
         return analyzedProperty;
     }
 
+    /**
+     * Sets the analyzed property.
+     *
+     * @param analyzedProperty the analyzed property to set
+     */
     public void setAnalyzedProperty(AnalyzedProperty analyzedProperty) {
         this.analyzedProperty = analyzedProperty;
     }
 
+    /**
+     * Gets the list of property rating influencers.
+     *
+     * @return the list of property rating influencers
+     */
     public List<PropertyResultRatingInfluencer> getPropertyRatingInfluencers() {
         return propertyRatingInfluencers;
     }
 
+    /**
+     * Sets the property rating influencers.
+     *
+     * @param propertyRatingInfluencers the list of property rating influencers to set
+     */
     public void setPropertyRatingInfluencers(
             List<PropertyResultRatingInfluencer> propertyRatingInfluencers) {
         this.propertyRatingInfluencers = propertyRatingInfluencers;
     }
 
+    /**
+     * Adds a property rating influencer to the list.
+     *
+     * @param ratingInfluence the property rating influencer to add
+     */
     public void addPropertyRatingInfluencer(PropertyResultRatingInfluencer ratingInfluence) {
         this.propertyRatingInfluencers.add(ratingInfluence);
     }
 
+    /**
+     * Gets the property rating influencer for a specific test result. If no matching influencer is
+     * found, returns a default influencer with 0 influence.
+     *
+     * @param result the test result to find an influencer for
+     * @return the matching property rating influencer or a default one with 0 influence
+     */
     public PropertyResultRatingInfluencer getPropertyRatingInfluencer(TestResult result) {
         for (PropertyResultRatingInfluencer ri : propertyRatingInfluencers) {
             if (ri.getResult().equalsExpectedResult(result)) {

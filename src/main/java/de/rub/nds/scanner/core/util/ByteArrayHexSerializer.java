@@ -33,6 +33,15 @@ public class ByteArrayHexSerializer extends StdSerializer<byte[]> {
         this.keySerializer = keySerializer;
     }
 
+    /**
+     * Serializes a byte array to a hexadecimal string representation.
+     *
+     * @param bytes the byte array to serialize
+     * @param jsonGenerator the JSON generator used for writing JSON content
+     * @param serializerProvider the provider that can be used to get serializers for serializing
+     *     Objects value contains
+     * @throws IOException if an I/O error occurs during serialization
+     */
     @Override
     public void serialize(
             byte[] bytes, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)

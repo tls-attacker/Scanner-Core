@@ -21,10 +21,22 @@ import java.util.stream.Collectors;
 public class PropertyRequirement<R extends ScanReport>
         extends PrimitiveRequirement<R, AnalyzedProperty> {
 
+    /**
+     * Constructs a new PropertyRequirement that checks if the specified properties have been
+     * evaluated.
+     *
+     * @param properties the list of properties that must be evaluated (not UNASSIGNED_ERROR)
+     */
     public PropertyRequirement(List<AnalyzedProperty> properties) {
         super(properties);
     }
 
+    /**
+     * Constructs a new PropertyRequirement that checks if the specified properties have been
+     * evaluated.
+     *
+     * @param properties varargs of properties that must be evaluated (not UNASSIGNED_ERROR)
+     */
     public PropertyRequirement(AnalyzedProperty... properties) {
         super(Arrays.asList(properties));
     }
@@ -44,6 +56,11 @@ public class PropertyRequirement<R extends ScanReport>
         return true;
     }
 
+    /**
+     * Returns a string representation of this requirement listing all required properties.
+     *
+     * @return string representation in the format "PropertyRequirement[property1 property2 ...]"
+     */
     @Override
     public String toString() {
         return String.format(

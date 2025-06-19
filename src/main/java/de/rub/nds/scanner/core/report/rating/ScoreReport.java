@@ -24,16 +24,33 @@ public class ScoreReport {
         this.influencers = Map.of();
     }
 
+    /**
+     * Constructs a ScoreReport with the specified score and influencers.
+     *
+     * @param score the calculated score
+     * @param influencers the map of properties to their rating influencers that contributed to the
+     *     score
+     */
     public ScoreReport(
             int score, Map<AnalyzedProperty, PropertyResultRatingInfluencer> influencers) {
         this.score = score;
         this.influencers = influencers;
     }
 
+    /**
+     * Gets the calculated score.
+     *
+     * @return the score value
+     */
     public int getScore() {
         return score;
     }
 
+    /**
+     * Gets the map of properties to their rating influencers.
+     *
+     * @return the map of analyzed properties to property result rating influencers
+     */
     public Map<AnalyzedProperty, PropertyResultRatingInfluencer> getInfluencers() {
         return influencers;
     }

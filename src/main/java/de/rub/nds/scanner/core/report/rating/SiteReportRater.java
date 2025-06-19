@@ -24,11 +24,26 @@ public class SiteReportRater {
 
     private final Recommendations recommendations;
 
+    /**
+     * Constructs a SiteReportRater with the specified influencers and recommendations.
+     *
+     * @param influencers the rating influencers to use for score calculation
+     * @param recommendations the recommendations to associate with this rater
+     */
     public SiteReportRater(RatingInfluencers influencers, Recommendations recommendations) {
         this.influencers = influencers;
         this.recommendations = recommendations;
     }
 
+    /**
+     * Calculates and returns a score report based on the provided test results. The score is
+     * computed by applying the rating influencers to the test results, taking into account both
+     * positive and negative influences as well as score caps.
+     *
+     * @param resultMap the map of analyzed properties to their test results
+     * @return a ScoreReport containing the calculated score and the influencers that contributed to
+     *     it
+     */
     public ScoreReport getScoreReport(Map<AnalyzedProperty, TestResult> resultMap) {
         LinkedHashMap<AnalyzedProperty, PropertyResultRatingInfluencer> ratingInfluencers =
                 new LinkedHashMap<>();
@@ -65,10 +80,20 @@ public class SiteReportRater {
         return score;
     }
 
+    /**
+     * Gets the recommendations associated with this rater.
+     *
+     * @return the recommendations
+     */
     public Recommendations getRecommendations() {
         return recommendations;
     }
 
+    /**
+     * Gets the rating influencers used by this rater.
+     *
+     * @return the rating influencers
+     */
     public RatingInfluencers getRatingInfluencers() {
         return influencers;
     }

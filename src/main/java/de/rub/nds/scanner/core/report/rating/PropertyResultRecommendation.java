@@ -34,6 +34,13 @@ public class PropertyResultRecommendation {
     @SuppressWarnings("unused")
     private PropertyResultRecommendation() {}
 
+    /**
+     * Constructs a PropertyResultRecommendation with basic information.
+     *
+     * @param result the test result for this recommendation
+     * @param resultStatus the short description of the result status
+     * @param handlingRecommendation the recommendation for handling this result
+     */
     public PropertyResultRecommendation(
             TestResult result, String resultStatus, String handlingRecommendation) {
         this.result = result;
@@ -41,6 +48,14 @@ public class PropertyResultRecommendation {
         this.handlingRecommendation = handlingRecommendation;
     }
 
+    /**
+     * Constructs a PropertyResultRecommendation with detailed information.
+     *
+     * @param result the test result for this recommendation
+     * @param resultStatus the short description of the result status
+     * @param handlingRecommendation the recommendation for handling this result
+     * @param detailedDescription the detailed description of the recommendation
+     */
     public PropertyResultRecommendation(
             TestResult result,
             String resultStatus,
@@ -50,34 +65,74 @@ public class PropertyResultRecommendation {
         this.detailedDescription = detailedDescription;
     }
 
+    /**
+     * Gets the test result associated with this recommendation.
+     *
+     * @return the test result
+     */
     public TestResult getResult() {
         return result;
     }
 
+    /**
+     * Sets the test result.
+     *
+     * @param result the test result to set
+     */
     public void setResult(TestResult result) {
         this.result = result;
     }
 
+    /**
+     * Gets the short description of the result status.
+     *
+     * @return the short description
+     */
     public String getShortDescription() {
         return shortDescription;
     }
 
+    /**
+     * Sets the short description.
+     *
+     * @param shortDescription the short description to set
+     */
     public void setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
     }
 
+    /**
+     * Gets the handling recommendation for this result.
+     *
+     * @return the handling recommendation
+     */
     public String getHandlingRecommendation() {
         return handlingRecommendation;
     }
 
+    /**
+     * Sets the handling recommendation.
+     *
+     * @param handlingRecommendation the handling recommendation to set
+     */
     public void setHandlingRecommendation(String handlingRecommendation) {
         this.handlingRecommendation = handlingRecommendation;
     }
 
+    /**
+     * Gets the detailed description of the recommendation.
+     *
+     * @return the detailed description
+     */
     public String getDetailedDescription() {
         return detailedDescription;
     }
 
+    /**
+     * Sets the detailed description.
+     *
+     * @param detailedDescription the detailed description to set
+     */
     public void setDetailedDescription(String detailedDescription) {
         this.detailedDescription = detailedDescription;
     }
