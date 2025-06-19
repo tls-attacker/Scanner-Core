@@ -52,12 +52,28 @@ public abstract class JaxbSerializer<T> {
         return context;
     }
 
+    /**
+     * Writes the specified object to a file using JAXB marshalling.
+     *
+     * @param file the file to write to
+     * @param obj the object to serialize
+     * @throws IOException if an I/O error occurs during writing
+     * @throws JAXBException if an error occurs during JAXB marshalling
+     */
     public void write(File file, T obj) throws IOException, JAXBException {
         try (FileOutputStream fos = new FileOutputStream(file)) {
             write(fos, obj);
         }
     }
 
+    /**
+     * Writes the specified object to an output stream using JAXB marshalling.
+     *
+     * @param outputStream the output stream to write to
+     * @param obj the object to serialize
+     * @throws JAXBException if an error occurs during JAXB marshalling
+     * @throws IOException if an I/O error occurs during writing
+     */
     public void write(OutputStream outputStream, T obj) throws JAXBException, IOException {
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -74,12 +90,29 @@ public abstract class JaxbSerializer<T> {
         }
     }
 
+    /**
+     * Reads an object from a file using JAXB unmarshalling.
+     *
+     * @param file the file to read from
+     * @return the deserialized object
+     * @throws IOException if an I/O error occurs during reading
+     * @throws JAXBException if an error occurs during JAXB unmarshalling
+     * @throws XMLStreamException if an error occurs during XML stream processing
+     */
     public T read(File file) throws IOException, JAXBException, XMLStreamException {
         try (FileInputStream fis = new FileInputStream(file)) {
             return read(fis);
         }
     }
 
+    /**
+     * Reads an object from an input stream using JAXB unmarshalling.
+     *
+     * @param inputStream the input stream to read from
+     * @return the deserialized object
+     * @throws JAXBException if an error occurs during JAXB unmarshalling
+     * @throws XMLStreamException if an error occurs during XML stream processing
+     */
     public T read(InputStream inputStream) throws JAXBException, XMLStreamException {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         unmarshaller.setEventHandler(
