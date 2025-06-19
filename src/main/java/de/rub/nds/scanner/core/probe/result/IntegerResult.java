@@ -18,6 +18,12 @@ public class IntegerResult extends ObjectResult<Integer> {
         super(null, null);
     }
 
+    /**
+     * Constructs an IntegerResult with the specified property and value.
+     *
+     * @param property the analyzed property associated with this result
+     * @param value the Integer value of this result
+     */
     public IntegerResult(AnalyzedProperty property, Integer value) {
         super(property, value);
     }
