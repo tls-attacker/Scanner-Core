@@ -90,6 +90,10 @@ public abstract class JaxbSerializer<T> {
         xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
         xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         XMLStreamReader xsr = xif.createXMLStreamReader(inputStream);
-        return (T) unmarshaller.unmarshal(xsr);
+        try {
+            return (T) unmarshaller.unmarshal(xsr);
+        } finally {
+            xsr.close();
+        }
     }
 }
