@@ -36,26 +36,56 @@ public class Guideline<ReportT extends ScanReport> implements Serializable {
         this.checks = new ArrayList<>(checks);
     }
 
+    /**
+     * Gets the name of this guideline.
+     *
+     * @return the guideline name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name of this guideline.
+     *
+     * @param name the guideline name to set
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets the link (URL) to the guideline documentation.
+     *
+     * @return the guideline documentation link
+     */
     public String getLink() {
         return link;
     }
 
+    /**
+     * Sets the link (URL) to the guideline documentation.
+     *
+     * @param link the guideline documentation link to set
+     */
     public void setLink(String link) {
         this.link = link;
     }
 
+    /**
+     * Gets an unmodifiable list of all checks associated with this guideline.
+     *
+     * @return an unmodifiable list of guideline checks
+     */
     public List<GuidelineCheck<ReportT>> getChecks() {
         return checks != null ? Collections.unmodifiableList(checks) : Collections.emptyList();
     }
 
+    /**
+     * Adds a new check to this guideline.
+     *
+     * @param check the guideline check to add
+     */
     public void addCheck(GuidelineCheck<ReportT> check) {
         if (checks == null) {
             checks = new ArrayList<>();
