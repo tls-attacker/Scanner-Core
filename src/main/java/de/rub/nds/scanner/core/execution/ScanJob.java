@@ -15,8 +15,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Represents a collection of probes and after-probes to be executed during a scan.
- * A scan job encapsulates the work to be performed as part of a scanning operation.
+ * Represents a collection of probes and after-probes to be executed during a scan. A scan job
+ * encapsulates the work to be performed as part of a scanning operation.
  *
  * @param <ReportT> the type of scan report
  * @param <ProbeT> the type of scanner probe

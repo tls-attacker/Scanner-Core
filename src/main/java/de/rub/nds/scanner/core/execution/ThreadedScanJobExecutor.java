@@ -28,8 +28,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * A threaded implementation of ScanJobExecutor that executes scan probes concurrently.
- * This executor manages probe dependencies, schedules executable probes, and collects results.
+ * A threaded implementation of ScanJobExecutor that executes scan probes concurrently. This
+ * executor manages probe dependencies, schedules executable probes, and collects results.
  *
  * @param <ReportT> the type of scan report
  * @param <ProbeT> the type of scanner probe
@@ -215,8 +215,8 @@ public class ThreadedScanJobExecutor<
     }
 
     /**
-     * Closes this executor by shutting down the underlying thread pool.
-     * This method is called automatically when used in a try-with-resources statement.
+     * Closes this executor by shutting down the underlying thread pool. This method is called
+     * automatically when used in a try-with-resources statement.
      */
     @Override
     public void close() {
@@ -224,8 +224,8 @@ public class ThreadedScanJobExecutor<
     }
 
     /**
-     * Shuts down the underlying thread pool executor.
-     * No new tasks will be accepted after this method is called.
+     * Shuts down the underlying thread pool executor. No new tasks will be accepted after this
+     * method is called.
      */
     @Override
     public void shutdown() {
@@ -233,8 +233,8 @@ public class ThreadedScanJobExecutor<
     }
 
     /**
-     * Handles property change events from the scan report.
-     * When probe support status changes, this method re-evaluates which probes can be executed.
+     * Handles property change events from the scan report. When probe support status changes, this
+     * method re-evaluates which probes can be executed.
      *
      * @param event the property change event
      */
@@ -252,8 +252,9 @@ public class ThreadedScanJobExecutor<
     }
 
     /**
-     * Checks which probes can be executed based on their requirements and schedules them for execution.
-     * This method is called whenever the report state changes to re-evaluate probe eligibility.
+     * Checks which probes can be executed based on their requirements and schedules them for
+     * execution. This method is called whenever the report state changes to re-evaluate probe
+     * eligibility.
      *
      * @param report the current scan report
      */

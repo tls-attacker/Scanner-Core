@@ -11,9 +11,8 @@ package de.rub.nds.scanner.core.execution;
 import de.rub.nds.scanner.core.report.ScanReport;
 
 /**
- * Abstract base class for executing scan jobs.
- * Implementations of this class define specific strategies for executing scan jobs
- * and managing their lifecycle.
+ * Abstract base class for executing scan jobs. Implementations of this class define specific
+ * strategies for executing scan jobs and managing their lifecycle.
  *
  * @param <ReportT> the type of scan report this executor works with
  */
@@ -28,8 +27,8 @@ public abstract class ScanJobExecutor<ReportT extends ScanReport> {
     public abstract void execute(ReportT report) throws InterruptedException;
 
     /**
-     * Shuts down the executor and releases any resources.
-     * This method should be called when the executor is no longer needed.
+     * Shuts down the executor and releases any resources. This method should be called when the
+     * executor is no longer needed.
      */
     public abstract void shutdown();
 }
