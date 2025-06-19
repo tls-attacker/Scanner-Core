@@ -83,7 +83,7 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
      *
      * @param result the test result associated with this rating influencer
      * @param influence the influence value to apply to the rating
-     * @param scoreCap the maximum score that can be influenced
+     * @param scoreCap the maximum score that can be achieved
      */
     public PropertyResultRatingInfluencer(TestResult result, Integer influence, Integer scoreCap) {
         this.result = result;
