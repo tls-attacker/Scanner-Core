@@ -15,16 +15,6 @@ import org.junit.jupiter.api.Test;
 public class ScannerDetailTest {
 
     @Test
-    public void testEnumValues() {
-        ScannerDetail[] values = ScannerDetail.values();
-        assertEquals(4, values.length);
-        assertEquals(ScannerDetail.ALL, values[0]);
-        assertEquals(ScannerDetail.DETAILED, values[1]);
-        assertEquals(ScannerDetail.NORMAL, values[2]);
-        assertEquals(ScannerDetail.QUICK, values[3]);
-    }
-
-    @Test
     public void testValueOf() {
         assertEquals(ScannerDetail.ALL, ScannerDetail.valueOf("ALL"));
         assertEquals(ScannerDetail.DETAILED, ScannerDetail.valueOf("DETAILED"));

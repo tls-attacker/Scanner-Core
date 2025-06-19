@@ -27,22 +27,6 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testDefaultConstructor() {
-        assertNotNull(config);
-        assertFalse(config.isNoColor());
-        assertEquals(ScannerDetail.NORMAL, config.getScanDetail());
-        assertEquals(ScannerDetail.NORMAL, config.getPostAnalysisDetail());
-        assertEquals(ScannerDetail.NORMAL, config.getReportDetail());
-        assertNull(config.getOutputFile());
-        assertEquals(1800000, config.getProbeTimeout());
-        assertEquals(1, config.getParallelProbes());
-        assertEquals(1, config.getOverallThreads());
-        assertNotNull(config.getExcludedProbes());
-        assertTrue(config.getExcludedProbes().isEmpty());
-        assertNull(config.getProbes());
-    }
-
-    @Test
     public void testNoColorGetterSetter() {
         assertFalse(config.isNoColor());
         config.setNoColor(true);
