@@ -12,16 +12,32 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * A thread factory that creates threads with custom names. This factory is useful for identifying
+ * threads in thread dumps and monitoring tools.
+ */
 public class NamedThreadFactory implements ThreadFactory {
 
     private AtomicInteger number = new AtomicInteger(1);
 
     private final String prefix;
 
+    /**
+     * Creates a new NamedThreadFactory with the specified name prefix.
+     *
+     * @param prefix the prefix to use for thread names. Threads will be named as "prefix-number"
+     */
     public NamedThreadFactory(String prefix) {
         this.prefix = prefix;
     }
 
+    /**
+     * Creates a new thread with a custom name. The thread name will be in the format
+     * "prefix-number" where number increments for each new thread.
+     *
+     * @param r the runnable to be executed by the new thread
+     * @return a newly created thread with a custom name
+     */
     @Override
     public Thread newThread(Runnable r) {
         Thread newThread = Executors.defaultThreadFactory().newThread(r);
