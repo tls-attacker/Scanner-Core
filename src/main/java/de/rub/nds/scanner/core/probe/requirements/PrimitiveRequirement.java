@@ -22,14 +22,30 @@ public abstract class PrimitiveRequirement<ReportT extends ScanReport, Parameter
         extends Requirement<ReportT> {
     protected final List<ParameterT> parameters;
 
+    /**
+     * Constructs a new PrimitiveRequirement with the specified parameters.
+     *
+     * @param parameters the list of parameters for this requirement (made unmodifiable)
+     */
     protected PrimitiveRequirement(List<ParameterT> parameters) {
         this.parameters = Collections.unmodifiableList(parameters);
     }
 
+    /**
+     * Returns an unmodifiable list of parameters for this requirement.
+     *
+     * @return the list of parameters
+     */
     public List<ParameterT> getParameters() {
         return parameters;
     }
 
+    /**
+     * Returns a string representation of this requirement in the format "ClassName[param1, param2,
+     * ...]".
+     *
+     * @return string representation of the primitive requirement
+     */
     @Override
     public String toString() {
         return String.format(
