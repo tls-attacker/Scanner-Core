@@ -53,6 +53,10 @@ public class ThreadedScanJobExecutor<
     private int probeCount;
     private int finishedProbes = 0;
 
+    // Connection failure tracking
+    private int consecutiveConnectionFailures = 0;
+    private static final int MAX_CONSECUTIVE_CONNECTION_FAILURES = 3;
+
     public ThreadedScanJobExecutor(
             ExecutorConfig config,
             ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob,
@@ -117,13 +121,61 @@ public class ThreadedScanJobExecutor<
                                 finishedProbes,
                                 probeCount,
                                 probeResult.getType().getName());
+                        // Reset consecutive connection failures on successful execution
+                        consecutiveConnectionFailures = 0;
                     } catch (ExecutionException e) {
-                        LOGGER.error("Some probe execution failed", e);
-                        throw new RuntimeException(e);
+                        // Check if this is a connection failure
+                        Throwable cause = e.getCause();
+                        boolean isConnectionFailure = false;
+
+                        // Check the exception chain for connection-related issues
+                        while (cause != null) {
+                            String className = cause.getClass().getName();
+                            if (className.contains("TransportHandlerConnectException")
+                                    || className.contains("IOException")
+                                    || className.contains("SocketException")
+                                    || className.contains("ConnectException")) {
+                                isConnectionFailure = true;
+                                break;
+                            }
+                            cause = cause.getCause();
+                        }
+
+                        if (isConnectionFailure) {
+                            consecutiveConnectionFailures++;
+                            LOGGER.warn(
+                                    "Connection failure during probe execution ({}/{}): {}",
+                                    consecutiveConnectionFailures,
+                                    MAX_CONSECUTIVE_CONNECTION_FAILURES,
+                                    e.getCause().getMessage());
+
+                            if (consecutiveConnectionFailures
+                                    >= MAX_CONSECUTIVE_CONNECTION_FAILURES) {
+                                LOGGER.error(
+                                        "Maximum consecutive connection failures reached. "
+                                                + "Target appears to be unreachable. Aborting scan.");
+                                // Mark all remaining probes as not executable
+                                for (ProbeT probe : notScheduledTasks) {
+                                    probe.merge(report);
+                                    report.markProbeAsUnexecuted(probe);
+                                }
+                                notScheduledTasks.clear();
+                                return;
+                            }
+                        } else {
+                            LOGGER.error("Probe execution failed with non-connection error", e);
+                        }
+
+                        // Mark the failed probe as finished so it's removed from futureResults
+                        finishedFutures.add(result);
+                        // Continue execution without throwing RuntimeException
+                        continue;
                     }
                     finishedFutures.add(result);
-                    probeResult.merge(report);
-                    report.markProbeAsExecuted(probeResult);
+                    if (probeResult != null) {
+                        probeResult.merge(report);
+                        report.markProbeAsExecuted(probeResult);
+                    }
                 }
             }
             futureResults.removeAll(finishedFutures);
