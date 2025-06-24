@@ -19,17 +19,17 @@ import de.rub.nds.scanner.core.report.ScanReport;
 import java.io.OutputStream;
 import org.junit.jupiter.api.Test;
 
-public class PropertyFalseRequirementTest {
+class PropertyFalseRequirementTest {
 
     @Test
-    public void testPropertyNotRequirement() {
+    void testPropertyNotRequirement() {
         ScanReport report =
                 new ScanReport() {
                     @Override
-                    public void serializeToJson(OutputStream stream) {}
+                    void serializeToJson(OutputStream stream) {}
 
                     @Override
-                    public String getRemoteName() {
+                    String getRemoteName() {
                         return "";
                     }
                 };

@@ -17,17 +17,17 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ExecutorConfigTest {
+class ExecutorConfigTest {
 
     private ExecutorConfig config;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         config = new ExecutorConfig();
     }
 
     @Test
-    public void testNoColorGetterSetter() {
+    void testNoColorGetterSetter() {
         assertFalse(config.isNoColor());
         config.setNoColor(true);
         assertTrue(config.isNoColor());
@@ -36,7 +36,7 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testScanDetailGetterSetter() {
+    void testScanDetailGetterSetter() {
         assertEquals(ScannerDetail.NORMAL, config.getScanDetail());
         config.setScanDetail(ScannerDetail.ALL);
         assertEquals(ScannerDetail.ALL, config.getScanDetail());
@@ -45,21 +45,21 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testPostAnalysisDetailGetterSetter() {
+    void testPostAnalysisDetailGetterSetter() {
         assertEquals(ScannerDetail.NORMAL, config.getPostAnalysisDetail());
         config.setPostAnalysisDetail(ScannerDetail.DETAILED);
         assertEquals(ScannerDetail.DETAILED, config.getPostAnalysisDetail());
     }
 
     @Test
-    public void testReportDetailGetterSetter() {
+    void testReportDetailGetterSetter() {
         assertEquals(ScannerDetail.NORMAL, config.getReportDetail());
         config.setReportDetail(ScannerDetail.ALL);
         assertEquals(ScannerDetail.ALL, config.getReportDetail());
     }
 
     @Test
-    public void testOutputFileGetterSetter() {
+    void testOutputFileGetterSetter() {
         assertNull(config.getOutputFile());
         assertFalse(config.isWriteReportToFile());
 
@@ -73,28 +73,28 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testProbeTimeoutGetterSetter() {
+    void testProbeTimeoutGetterSetter() {
         assertEquals(1800000, config.getProbeTimeout());
         config.setProbeTimeout(3600000);
         assertEquals(3600000, config.getProbeTimeout());
     }
 
     @Test
-    public void testParallelProbesGetterSetter() {
+    void testParallelProbesGetterSetter() {
         assertEquals(1, config.getParallelProbes());
         config.setParallelProbes(4);
         assertEquals(4, config.getParallelProbes());
     }
 
     @Test
-    public void testOverallThreadsGetterSetter() {
+    void testOverallThreadsGetterSetter() {
         assertEquals(1, config.getOverallThreads());
         config.setOverallThreads(8);
         assertEquals(8, config.getOverallThreads());
     }
 
     @Test
-    public void testIsMultithreadedWithParallelProbes() {
+    void testIsMultithreadedWithParallelProbes() {
         assertFalse(config.isMultithreaded());
 
         config.setParallelProbes(2);
@@ -105,7 +105,7 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testIsMultithreadedWithOverallThreads() {
+    void testIsMultithreadedWithOverallThreads() {
         assertFalse(config.isMultithreaded());
 
         config.setOverallThreads(2);
@@ -116,14 +116,14 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testIsMultithreadedWithBoth() {
+    void testIsMultithreadedWithBoth() {
         config.setParallelProbes(2);
         config.setOverallThreads(2);
         assertTrue(config.isMultithreaded());
     }
 
     @Test
-    public void testExcludedProbesGetterSetter() {
+    void testExcludedProbesGetterSetter() {
         assertTrue(config.getExcludedProbes().isEmpty());
 
         List<ProbeType> excludedProbes = new LinkedList<>();
@@ -139,7 +139,7 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testProbesGetterSetterWithList() {
+    void testProbesGetterSetterWithList() {
         assertNull(config.getProbes());
 
         List<ProbeType> probes = new LinkedList<>();
@@ -156,13 +156,13 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testProbesSetterWithNull() {
+    void testProbesSetterWithNull() {
         config.setProbes((List<ProbeType>) null);
         assertNull(config.getProbes());
     }
 
     @Test
-    public void testProbesSetterWithVarargs() {
+    void testProbesSetterWithVarargs() {
         ProbeType probe1 = new TestProbeType("probe1");
         ProbeType probe2 = new TestProbeType("probe2");
 
@@ -172,7 +172,7 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testAddProbesWithList() {
+    void testAddProbesWithList() {
         assertNull(config.getProbes());
 
         List<ProbeType> probes1 =
@@ -187,7 +187,7 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testAddProbesWithVarargs() {
+    void testAddProbesWithVarargs() {
         assertNull(config.getProbes());
 
         ProbeType probe1 = new TestProbeType("probe1");
@@ -201,7 +201,7 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testAddProbesInitializesListIfNull() {
+    void testAddProbesInitializesListIfNull() {
         assertNull(config.getProbes());
         config.addProbes(new TestProbeType("probe1"));
         assertNotNull(config.getProbes());
@@ -212,12 +212,12 @@ public class ExecutorConfigTest {
     private static class TestProbeType implements ProbeType {
         private final String name;
 
-        public TestProbeType(String name) {
+        TestProbeType(String name) {
             this.name = name;
         }
 
         @Override
-        public String getName() {
+        String getName() {
             return name;
         }
     }

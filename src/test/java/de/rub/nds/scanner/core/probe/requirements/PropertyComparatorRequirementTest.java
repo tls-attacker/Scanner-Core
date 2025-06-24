@@ -18,38 +18,38 @@ import java.io.OutputStream;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class PropertyComparatorRequirementTest {
+class PropertyComparatorRequirementTest {
 
     @Test
-    public void testPropertyComparatorRequirement() {
+    void testPropertyComparatorRequirement() {
         TestAnalyzedProperty property = TestAnalyzedProperty.TEST_ANALYZED_PROPERTY;
         ScanReport report0 =
                 new ScanReport() {
                     @Override
-                    public void serializeToJson(OutputStream stream) {}
+                    void serializeToJson(OutputStream stream) {}
 
                     @Override
-                    public String getRemoteName() {
+                    String getRemoteName() {
                         return "";
                     }
                 };
         ScanReport report1 =
                 new ScanReport() {
                     @Override
-                    public void serializeToJson(OutputStream stream) {}
+                    void serializeToJson(OutputStream stream) {}
 
                     @Override
-                    public String getRemoteName() {
+                    String getRemoteName() {
                         return "";
                     }
                 };
         ScanReport report2 =
                 new ScanReport() {
                     @Override
-                    public void serializeToJson(OutputStream stream) {}
+                    void serializeToJson(OutputStream stream) {}
 
                     @Override
-                    public String getRemoteName() {
+                    String getRemoteName() {
                         return "";
                     }
                 };

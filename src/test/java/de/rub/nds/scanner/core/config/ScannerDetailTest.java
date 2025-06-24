@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-public class ScannerDetailTest {
+class ScannerDetailTest {
 
     @Test
-    public void testValueOf() {
+    void testValueOf() {
         assertEquals(ScannerDetail.ALL, ScannerDetail.valueOf("ALL"));
         assertEquals(ScannerDetail.DETAILED, ScannerDetail.valueOf("DETAILED"));
         assertEquals(ScannerDetail.NORMAL, ScannerDetail.valueOf("NORMAL"));
@@ -23,7 +23,7 @@ public class ScannerDetailTest {
     }
 
     @Test
-    public void testGetLevelValue() {
+    void testGetLevelValue() {
         assertEquals(100, ScannerDetail.ALL.getLevelValue());
         assertEquals(75, ScannerDetail.DETAILED.getLevelValue());
         assertEquals(50, ScannerDetail.NORMAL.getLevelValue());
@@ -31,7 +31,7 @@ public class ScannerDetailTest {
     }
 
     @Test
-    public void testIsGreaterEqualToSameLevel() {
+    void testIsGreaterEqualToSameLevel() {
         assertTrue(ScannerDetail.ALL.isGreaterEqualTo(ScannerDetail.ALL));
         assertTrue(ScannerDetail.DETAILED.isGreaterEqualTo(ScannerDetail.DETAILED));
         assertTrue(ScannerDetail.NORMAL.isGreaterEqualTo(ScannerDetail.NORMAL));
@@ -39,7 +39,7 @@ public class ScannerDetailTest {
     }
 
     @Test
-    public void testIsGreaterEqualToGreaterLevel() {
+    void testIsGreaterEqualToGreaterLevel() {
         assertTrue(ScannerDetail.ALL.isGreaterEqualTo(ScannerDetail.DETAILED));
         assertTrue(ScannerDetail.ALL.isGreaterEqualTo(ScannerDetail.NORMAL));
         assertTrue(ScannerDetail.ALL.isGreaterEqualTo(ScannerDetail.QUICK));
@@ -51,7 +51,7 @@ public class ScannerDetailTest {
     }
 
     @Test
-    public void testIsGreaterEqualToLowerLevel() {
+    void testIsGreaterEqualToLowerLevel() {
         assertFalse(ScannerDetail.QUICK.isGreaterEqualTo(ScannerDetail.NORMAL));
         assertFalse(ScannerDetail.QUICK.isGreaterEqualTo(ScannerDetail.DETAILED));
         assertFalse(ScannerDetail.QUICK.isGreaterEqualTo(ScannerDetail.ALL));

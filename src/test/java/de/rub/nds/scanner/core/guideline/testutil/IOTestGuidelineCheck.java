@@ -18,18 +18,18 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "ioTestGuidelineCheck")
 @XmlType(name = "ioTestGuidelineCheckType")
-public class IOTestGuidelineCheck extends GuidelineCheck<IOTestScanReport> {
+class IOTestGuidelineCheck extends GuidelineCheck<IOTestScanReport> {
     // Public constructor for JAXB
-    public IOTestGuidelineCheck() {
+    IOTestGuidelineCheck() {
         super("TestCheck", RequirementLevel.MUST);
     }
 
-    public IOTestGuidelineCheck(String name, RequirementLevel level) {
+    IOTestGuidelineCheck(String name, RequirementLevel level) {
         super(name, level);
     }
 
     @Override
-    public GuidelineCheckResult evaluate(IOTestScanReport report) {
+    GuidelineCheckResult evaluate(IOTestScanReport report) {
         return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
     }
 }

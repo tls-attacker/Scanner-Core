@@ -10,6 +10,6 @@ package de.rub.nds.scanner.core.guideline;
 
 import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
 
-public class TestPropertyCategory implements AnalyzedPropertyCategory {
+class TestPropertyCategory implements AnalyzedPropertyCategory {
     // Simple test implementation
 }

@@ -19,17 +19,17 @@ import de.rub.nds.scanner.core.report.ScanReport;
 import java.io.OutputStream;
 import org.junit.jupiter.api.Test;
 
-public class ProbeRequirementTest {
+class ProbeRequirementTest {
 
     @Test
-    public void testProbeRequirement() {
+    void testProbeRequirement() {
         ScanReport report =
                 new ScanReport() {
                     @Override
-                    public void serializeToJson(OutputStream stream) {}
+                    void serializeToJson(OutputStream stream) {}
 
                     @Override
-                    public String getRemoteName() {
+                    String getRemoteName() {
                         return "";
                     }
                 };
@@ -53,17 +53,17 @@ public class ProbeRequirementTest {
 
     private static class TestProbe extends ScannerProbe<ScanReport, Object> {
 
-        public TestProbe() {
+        TestProbe() {
             super(TestProbeType.TEST_PROBE_TYPE);
         }
 
         @Override
-        public Requirement<ScanReport> getRequirements() {
+        Requirement<ScanReport> getRequirements() {
             return null;
         }
 
         @Override
-        public void adjustConfig(ScanReport report) {}
+        void adjustConfig(ScanReport report) {}
 
         @Override
         protected void executeTest() {}

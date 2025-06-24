@@ -23,23 +23,23 @@ class GuidelineTest {
     // Mock implementation for testing
     private static class TestScanReport extends ScanReport {
         @Override
-        public void serializeToJson(java.io.OutputStream outputStream) {
+        void serializeToJson(java.io.OutputStream outputStream) {
             // Test implementation - do nothing
         }
 
         @Override
-        public String getRemoteName() {
+        String getRemoteName() {
             return "TestRemote";
         }
     }
 
     private static class TestGuidelineCheck extends GuidelineCheck<TestScanReport> {
-        public TestGuidelineCheck(String name) {
+        TestGuidelineCheck(String name) {
             super(name, RequirementLevel.MUST);
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
+        GuidelineCheckResult evaluate(TestScanReport report) {
             return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
         }
     }

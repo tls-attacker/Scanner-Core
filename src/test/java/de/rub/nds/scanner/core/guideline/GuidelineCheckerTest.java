@@ -29,17 +29,17 @@ class GuidelineCheckerTest {
     private static class TestAnalyzedProperty implements AnalyzedProperty {
         private final String name;
 
-        public TestAnalyzedProperty(String name) {
+        TestAnalyzedProperty(String name) {
             this.name = name;
         }
 
         @Override
-        public String getName() {
+        String getName() {
             return name;
         }
 
         @Override
-        public AnalyzedPropertyCategory getCategory() {
+        AnalyzedPropertyCategory getCategory() {
             return new TestPropertyCategory();
         }
     }
@@ -48,64 +48,64 @@ class GuidelineCheckerTest {
         private final Map<AnalyzedProperty, TestResult> results = new HashMap<>();
         private GuidelineReport addedReport;
 
-        public void putResult(AnalyzedProperty property, TestResult result) {
+        void putResult(AnalyzedProperty property, TestResult result) {
             results.put(property, result);
         }
 
         @Override
-        public TestResult getResult(AnalyzedProperty property) {
+        TestResult getResult(AnalyzedProperty property) {
             return results.get(property);
         }
 
         @Override
-        public void addGuidelineReport(GuidelineReport report) {
+        void addGuidelineReport(GuidelineReport report) {
             this.addedReport = report;
         }
 
-        public GuidelineReport getAddedReport() {
+        GuidelineReport getAddedReport() {
             return addedReport;
         }
 
         @Override
-        public void serializeToJson(java.io.OutputStream outputStream) {
+        void serializeToJson(java.io.OutputStream outputStream) {
             // Test implementation - do nothing
         }
 
         @Override
-        public String getRemoteName() {
+        String getRemoteName() {
             return "TestRemote";
         }
     }
 
     private static class PassingCheck extends GuidelineCheck<TestScanReport> {
-        public PassingCheck(String name) {
+        PassingCheck(String name) {
             super(name, RequirementLevel.MUST);
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
+        GuidelineCheckResult evaluate(TestScanReport report) {
             return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
         }
     }
 
     private static class FailingCheck extends GuidelineCheck<TestScanReport> {
-        public FailingCheck(String name) {
+        FailingCheck(String name) {
             super(name, RequirementLevel.MUST);
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
+        GuidelineCheckResult evaluate(TestScanReport report) {
             return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.VIOLATED);
         }
     }
 
     private static class ConditionalCheck extends GuidelineCheck<TestScanReport> {
-        public ConditionalCheck(String name, GuidelineCheckCondition condition) {
+        ConditionalCheck(String name, GuidelineCheckCondition condition) {
             super(name, RequirementLevel.SHOULD, condition);
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
+        GuidelineCheckResult evaluate(TestScanReport report) {
             return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
         }
     }
@@ -113,13 +113,13 @@ class GuidelineCheckerTest {
     private static class ExceptionThrowingCheck extends GuidelineCheck<TestScanReport> {
         private final RuntimeException exception;
 
-        public ExceptionThrowingCheck(String name, RuntimeException exception) {
+        ExceptionThrowingCheck(String name, RuntimeException exception) {
             super(name, RequirementLevel.MUST);
             this.exception = exception;
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
+        GuidelineCheckResult evaluate(TestScanReport report) {
             throw exception;
         }
     }

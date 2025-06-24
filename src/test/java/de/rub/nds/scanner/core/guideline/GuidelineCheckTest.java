@@ -26,17 +26,17 @@ class GuidelineCheckTest {
     private static class TestAnalyzedProperty implements AnalyzedProperty {
         private final String name;
 
-        public TestAnalyzedProperty(String name) {
+        TestAnalyzedProperty(String name) {
             this.name = name;
         }
 
         @Override
-        public String getName() {
+        String getName() {
             return name;
         }
 
         @Override
-        public AnalyzedPropertyCategory getCategory() {
+        AnalyzedPropertyCategory getCategory() {
             return new TestPropertyCategory();
         }
     }
@@ -44,22 +44,22 @@ class GuidelineCheckTest {
     private static class TestScanReport extends ScanReport {
         private final Map<AnalyzedProperty, TestResult> results = new HashMap<>();
 
-        public void putResult(AnalyzedProperty property, TestResult result) {
+        void putResult(AnalyzedProperty property, TestResult result) {
             results.put(property, result);
         }
 
         @Override
-        public TestResult getResult(AnalyzedProperty property) {
+        TestResult getResult(AnalyzedProperty property) {
             return results.get(property);
         }
 
         @Override
-        public void serializeToJson(java.io.OutputStream outputStream) {
+        void serializeToJson(java.io.OutputStream outputStream) {
             // Test implementation - do nothing
         }
 
         @Override
-        public String getRemoteName() {
+        String getRemoteName() {
             return "TestRemote";
         }
     }
@@ -67,25 +67,25 @@ class GuidelineCheckTest {
     private static class ConcreteGuidelineCheck extends GuidelineCheck<TestScanReport> {
         private final GuidelineAdherence fixedResult;
 
-        public ConcreteGuidelineCheck(String name, RequirementLevel level) {
+        ConcreteGuidelineCheck(String name, RequirementLevel level) {
             super(name, level);
             this.fixedResult = GuidelineAdherence.ADHERED;
         }
 
-        public ConcreteGuidelineCheck(
+        ConcreteGuidelineCheck(
                 String name, RequirementLevel level, GuidelineCheckCondition condition) {
             super(name, level, condition);
             this.fixedResult = GuidelineAdherence.ADHERED;
         }
 
-        public ConcreteGuidelineCheck(
+        ConcreteGuidelineCheck(
                 String name, RequirementLevel level, GuidelineAdherence fixedResult) {
             super(name, level);
             this.fixedResult = fixedResult;
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
+        GuidelineCheckResult evaluate(TestScanReport report) {
             return new FailedCheckGuidelineResult(getName(), fixedResult);
         }
     }

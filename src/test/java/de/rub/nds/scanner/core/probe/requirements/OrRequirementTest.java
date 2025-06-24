@@ -15,17 +15,17 @@ import java.io.OutputStream;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class OrRequirementTest {
+class OrRequirementTest {
 
     @Test
-    public void testOrRequirement() {
+    void testOrRequirement() {
         ScanReport report =
                 new ScanReport() {
                     @Override
-                    public void serializeToJson(OutputStream stream) {}
+                    void serializeToJson(OutputStream stream) {}
 
                     @Override
-                    public String getRemoteName() {
+                    String getRemoteName() {
                         return "";
                     }
                 };

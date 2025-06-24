@@ -10,14 +10,14 @@ package de.rub.nds.scanner.core.guideline.testutil;
 
 import de.rub.nds.scanner.core.report.ScanReport;
 
-public class IOTestScanReport extends ScanReport {
+class IOTestScanReport extends ScanReport {
     @Override
-    public void serializeToJson(java.io.OutputStream outputStream) {
+    void serializeToJson(java.io.OutputStream outputStream) {
         // Test implementation - do nothing
     }
 
     @Override
-    public String getRemoteName() {
+    String getRemoteName() {
         return "TestRemote";
     }
 }
