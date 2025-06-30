@@ -42,7 +42,7 @@ public class KeyValueContainer extends ReportContainer {
         builder.append("\n");
     }
 
-    private String pad(String text, int size) {
+    private static String pad(String text, int size) {
         if (text == null) {
             text = "";
         }

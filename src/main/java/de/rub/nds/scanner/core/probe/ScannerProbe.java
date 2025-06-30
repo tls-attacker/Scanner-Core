@@ -109,7 +109,7 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
-    private TestResult convertToResult(AnalyzedProperty property, Object result) {
+    private static TestResult convertToResult(AnalyzedProperty property, Object result) {
         return switch (result) {
             case null -> new ObjectResult<>(property, null);
             case TestResult testResult -> testResult;

@@ -45,7 +45,7 @@ public class HeadlineContainer extends ReportContainer {
         builder.append("\n");
     }
 
-    private AnsiColor getColorByDepth(int depth) {
+    private static AnsiColor getColorByDepth(int depth) {
         switch (depth) {
             case 0:
                 return AnsiColor.PURPLE;
@@ -64,7 +64,7 @@ public class HeadlineContainer extends ReportContainer {
         return headline;
     }
 
-    private void addHLine(StringBuilder builder) {
+    private static void addHLine(StringBuilder builder) {
         builder.append("-".repeat(Math.max(0, NUMBER_OF_DASHES_IN_H_LINE)));
         builder.append("\n");
     }
