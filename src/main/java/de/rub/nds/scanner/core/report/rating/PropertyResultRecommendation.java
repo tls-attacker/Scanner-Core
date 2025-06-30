@@ -15,11 +15,12 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
+import java.io.Serializable;
 
 @XmlRootElement
 @XmlSeeAlso({TestResults.class})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PropertyResultRecommendation {
+public class PropertyResultRecommendation implements Serializable {
 
     @XmlAnyElement(lax = true)
     private TestResult result;
