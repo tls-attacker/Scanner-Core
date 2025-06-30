@@ -31,6 +31,7 @@ public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
         this.context = getJAXBContext();
     }
 
+    @SuppressWarnings("unchecked")
     private JAXBContext getJAXBContext() throws JAXBException {
         if (context == null) {
             // TODO we could do this scanning during building and then just collect the
@@ -44,13 +45,14 @@ public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
                                     .setUrls(ClasspathHelper.forPackage(packageName))
                                     .filterInputsBy(
                                             new FilterBuilder().includePackage(packageName)));
+            @SuppressWarnings("rawtypes")
             Set<Class<? extends GuidelineCheck>> guidelineCheckClasses =
                     reflections.getSubTypesOf(GuidelineCheck.class);
             Set<Class<?>> classes = new HashSet<>();
             classes.add(Guideline.class);
             classes.addAll(guidelineCheckClasses);
             LOGGER.debug("Registering GuidelineClasses in JAXBContext:");
-            for (Class tempClass : classes) {
+            for (Class<?> tempClass : classes) {
                 LOGGER.debug(tempClass.getName());
             }
             context = JAXBContext.newInstance(classes.toArray(new Class[classes.size()]));
