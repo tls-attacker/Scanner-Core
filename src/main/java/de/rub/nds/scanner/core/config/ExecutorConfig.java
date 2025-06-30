@@ -168,43 +168,43 @@ public final class ExecutorConfig {
     /**
      * Sets the list of probe types to be executed.
      *
-     * @param probes the list of probe types to execute, or null to clear
+     * @param probeList the list of probe types to execute, or null to clear
      */
-    public void setProbes(List<ProbeType> probes) {
-        this.probes = probes == null ? null : new LinkedList<>(probes);
+    public void setProbes(List<ProbeType> probeList) {
+        this.probes = probeList == null ? null : new LinkedList<>(probeList);
     }
 
     /**
      * Sets the probe types to be executed using a varargs parameter.
      *
-     * @param probes the probe types to execute
+     * @param probeTypes the probe types to execute
      */
-    public void setProbes(ProbeType... probes) {
-        this.probes = Arrays.asList(probes);
+    public void setProbes(ProbeType... probeTypes) {
+        this.probes = Arrays.asList(probeTypes);
     }
 
     /**
      * Adds additional probe types to the existing list of probes to be executed.
      *
-     * @param probes the list of probe types to add
+     * @param probeList the list of probe types to add
      */
-    public void addProbes(List<ProbeType> probes) {
+    public void addProbes(List<ProbeType> probeList) {
         if (this.probes == null) {
             this.probes = new LinkedList<>();
         }
-        this.probes.addAll(probes);
+        this.probes.addAll(probeList);
     }
 
     /**
      * Adds additional probe types to the existing list using a varargs parameter.
      *
-     * @param probes the probe types to add
+     * @param probeTypes the probe types to add
      */
-    public void addProbes(ProbeType... probes) {
+    public void addProbes(ProbeType... probeTypes) {
         if (this.probes == null) {
             this.probes = new LinkedList<>();
         }
-        this.probes.addAll(Arrays.asList(probes));
+        this.probes.addAll(Arrays.asList(probeTypes));
     }
 
     /**

@@ -27,11 +27,11 @@ public class SiteReportRater {
     /**
      * Constructs a SiteReportRater with the specified influencers and recommendations.
      *
-     * @param influencers the rating influencers to use for score calculation
+     * @param ratingInfluencers the rating influencers to use for score calculation
      * @param recommendations the recommendations to associate with this rater
      */
-    public SiteReportRater(RatingInfluencers influencers, Recommendations recommendations) {
-        this.influencers = influencers;
+    public SiteReportRater(RatingInfluencers ratingInfluencers, Recommendations recommendations) {
+        this.influencers = ratingInfluencers;
         this.recommendations = recommendations;
     }
 

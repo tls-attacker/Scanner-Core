@@ -306,8 +306,8 @@ public abstract class ScanReport {
     }
 
     public synchronized void putAllExtractedValueContainers(
-            Map<TrackableValue, ExtractedValueContainer<?>> extractedValueContainerMap) {
-        this.extractedValueContainerMap.putAll(extractedValueContainerMap);
+            Map<TrackableValue, ExtractedValueContainer<?>> containerMap) {
+        this.extractedValueContainerMap.putAll(containerMap);
     }
 
     public synchronized List<GuidelineReport> getGuidelineReports() {

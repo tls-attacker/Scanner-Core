@@ -34,10 +34,12 @@ public abstract class GuidelineCheck<ReportT extends ScanReport> {
     }
 
     public GuidelineCheck(
-            String name, RequirementLevel requirementLevel, GuidelineCheckCondition condition) {
+            String name,
+            RequirementLevel requirementLevel,
+            GuidelineCheckCondition checkCondition) {
         this.name = name;
         this.requirementLevel = requirementLevel;
-        this.condition = condition;
+        this.condition = checkCondition;
     }
 
     /**

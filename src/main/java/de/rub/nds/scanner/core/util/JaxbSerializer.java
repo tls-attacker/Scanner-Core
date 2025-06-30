@@ -47,9 +47,9 @@ public abstract class JaxbSerializer<T> {
         if (contextMap.containsKey(classesHash)) {
             return contextMap.get(classesHash);
         }
-        JAXBContext context = JAXBContext.newInstance(classesToBeBound.toArray(new Class[0]));
-        contextMap.put(classesHash, context);
-        return context;
+        JAXBContext jaxbContext = JAXBContext.newInstance(classesToBeBound.toArray(new Class[0]));
+        contextMap.put(classesHash, jaxbContext);
+        return jaxbContext;
     }
 
     /**
