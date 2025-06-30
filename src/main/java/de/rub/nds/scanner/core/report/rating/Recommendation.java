@@ -33,9 +33,9 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Recommendation {
 
-    static final String NO_INFORMATION_FOUND = "No detailed information available";
+    static final String NO_INFORMATION_FOUND = "No detailed information available"; // $NON-NLS-1$
 
-    static final String NO_RECOMMENDATION_FOUND = "No recommendation available";
+    static final String NO_RECOMMENDATION_FOUND = "No recommendation available"; // $NON-NLS-1$
 
     @XmlAnyElement(lax = true)
     private AnalyzedProperty analyzedProperty;

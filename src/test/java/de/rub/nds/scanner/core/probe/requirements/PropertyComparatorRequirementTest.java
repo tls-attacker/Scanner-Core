@@ -30,7 +30,7 @@ public class PropertyComparatorRequirementTest {
 
                     @Override
                     public String getRemoteName() {
-                        return "";
+                        return ""; //$NON-NLS-1$
                     }
                 };
         ScanReport report1 =
@@ -40,7 +40,7 @@ public class PropertyComparatorRequirementTest {
 
                     @Override
                     public String getRemoteName() {
-                        return "";
+                        return ""; //$NON-NLS-1$
                     }
                 };
         ScanReport report2 =
@@ -50,7 +50,7 @@ public class PropertyComparatorRequirementTest {
 
                     @Override
                     public String getRemoteName() {
-                        return "";
+                        return ""; //$NON-NLS-1$
                     }
                 };
         ListResult<Integer> listResult1 = new ListResult<>(property, List.of(0));

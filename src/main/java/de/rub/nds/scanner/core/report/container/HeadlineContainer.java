@@ -41,8 +41,8 @@ public class HeadlineContainer extends ReportContainer {
         if (useColor) {
             builder.append(AnsiColor.RESET.getCode());
         }
-        builder.append("\n");
-        builder.append("\n");
+        builder.append("\n"); // $NON-NLS-1$
+        builder.append("\n"); // $NON-NLS-1$
     }
 
     private AnsiColor getColorByDepth(int depth) {
@@ -65,7 +65,7 @@ public class HeadlineContainer extends ReportContainer {
     }
 
     private void addHLine(StringBuilder builder) {
-        builder.append("-".repeat(Math.max(0, NUMBER_OF_DASHES_IN_H_LINE)));
-        builder.append("\n");
+        builder.append("-".repeat(Math.max(0, NUMBER_OF_DASHES_IN_H_LINE))); // $NON-NLS-1$
+        builder.append("\n"); // $NON-NLS-1$
     }
 }

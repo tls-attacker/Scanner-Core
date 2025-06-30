@@ -37,7 +37,7 @@ public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
             // results
             // TODO it would also be good if we didn't have to hardcode the package name
             // here, but I could not get it work without it. Hours wasted: 3
-            String packageName = "de.rub";
+            String packageName = "de.rub"; // $NON-NLS-1$
             Reflections reflections =
                     new Reflections(
                             new ConfigurationBuilder()
@@ -49,7 +49,7 @@ public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
             Set<Class<?>> classes = new HashSet<>();
             classes.add(Guideline.class);
             classes.addAll(guidelineCheckClasses);
-            LOGGER.debug("Registering GuidelineClasses in JAXBContext:");
+            LOGGER.debug("Registering GuidelineClasses in JAXBContext:"); // $NON-NLS-1$
             for (Class tempClass : classes) {
                 LOGGER.debug(tempClass.getName());
             }

@@ -31,7 +31,7 @@ public class TextContainer extends ReportContainer {
     @Override
     public void print(StringBuilder builder, int depth, boolean useColor) {
         println(builder, depth, useColor);
-        builder.append("\n");
+        builder.append("\n"); // $NON-NLS-1$
     }
 
     public void println(StringBuilder builder, int depth, boolean useColor) {

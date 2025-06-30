@@ -348,12 +348,14 @@ public abstract class ScanReport {
 
     public synchronized void markProbeAsExecuted(ScannerProbe<?, ?> probe) {
         executedProbes.add(probe);
-        propertyChangeSupport.firePropertyChange("supportedProbe", null, probe.getProbeName());
+        propertyChangeSupport.firePropertyChange(
+                "supportedProbe", null, probe.getProbeName()); // $NON-NLS-1$
     }
 
     public synchronized void markProbeAsUnexecuted(ScannerProbe<?, ?> probe) {
         unexecutedProbes.add(probe);
-        propertyChangeSupport.firePropertyChange("unsupportedProbe", null, probe.getProbeName());
+        propertyChangeSupport.firePropertyChange(
+                "unsupportedProbe", null, probe.getProbeName()); // $NON-NLS-1$
     }
 
     public synchronized Set<ScannerProbe<?, ?>> getExecutedProbes() {

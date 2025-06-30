@@ -172,7 +172,7 @@ public class ThreadedScanJobExecutor<
 
     private void reportAboutNotExecutedProbes() {
         LOGGER.info("{} scheduled probes were not executed", notScheduledTasks.size());
-        LOGGER.debug("Did not execute the following probes:");
+        LOGGER.debug("Did not execute the following probes:"); // $NON-NLS-1$
         for (ProbeT probe : notScheduledTasks) {
             LOGGER.debug(probe.getProbeName());
         }
@@ -211,7 +211,7 @@ public class ThreadedScanJobExecutor<
         for (AfterProbe<ReportT> afterProbe : scanJob.getAfterList()) {
             afterProbe.analyze(report);
         }
-        LOGGER.debug("Finished analysis");
+        LOGGER.debug("Finished analysis"); // $NON-NLS-1$
     }
 
     /**

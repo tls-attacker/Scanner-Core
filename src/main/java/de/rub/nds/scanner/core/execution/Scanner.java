@@ -142,7 +142,7 @@ public abstract class Scanner<
      */
     public ReportT scan() {
         // Scan Preparation
-        LOGGER.debug("Calling onScanStart() event hook");
+        LOGGER.debug("Calling onScanStart() event hook"); // $NON-NLS-1$
         onScanStart();
         ReportT report = getEmptyReport();
         if (fillProbeListsAtScanStart) {
@@ -176,7 +176,7 @@ public abstract class Scanner<
         LOGGER.debug("Scan execution complete");
 
         // Rating
-        LOGGER.debug("Retrieving site report rater for score evaluation");
+        LOGGER.debug("Retrieving site report rater for score evaluation"); // $NON-NLS-1$
         SiteReportRater rater = getSiteReportRater();
         if (rater != null) {
             LOGGER.debug("Site report rater set, computing score");
@@ -188,7 +188,7 @@ public abstract class Scanner<
         // Guideline Evaluation
         LOGGER.debug("Retrieving guidelines for evaluation");
         List<Guideline<ReportT>> guidelines = getGuidelines();
-        LOGGER.debug("Got a total of {} guidelines to evaluate", guidelines.size());
+        LOGGER.debug("Got a total of {} guidelines to evaluate", guidelines.size()); // $NON-NLS-1$
         for (Guideline<ReportT> guideline : guidelines) {
             LOGGER.debug("Executing evaluation of guideline '{}'", guideline.getName());
             GuidelineChecker<ReportT> checker = new GuidelineChecker<>(guideline);

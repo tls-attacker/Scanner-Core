@@ -26,6 +26,7 @@ public class NamedThreadFactory implements ThreadFactory {
      * Creates a new NamedThreadFactory with the specified name prefix.
      *
      * @param prefix the prefix to use for thread names. Threads will be named as "prefix-number"
+     *     //$NON-NLS-1$
      */
     public NamedThreadFactory(String prefix) {
         this.prefix = prefix;

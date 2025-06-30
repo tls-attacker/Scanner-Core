@@ -26,7 +26,7 @@ public class OrRequirementTest {
 
                     @Override
                     public String getRemoteName() {
-                        return "";
+                        return ""; //$NON-NLS-1$
                     }
                 };
         Requirement<ScanReport>

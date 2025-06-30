@@ -48,7 +48,7 @@ public class TableContainer extends ReportContainer {
     @Override
     public void print(StringBuilder builder, int depth, boolean useColor) {
         println(builder, depth, useColor);
-        builder.append("\n");
+        builder.append("\n"); // $NON-NLS-1$
     }
 
     public void println(StringBuilder builder, int depth, boolean useColor) {
@@ -79,7 +79,7 @@ public class TableContainer extends ReportContainer {
     }
 
     private void pad(StringBuilder builder, int n) {
-        builder.append(" ".repeat(Math.max(0, n)));
+        builder.append(" ".repeat(Math.max(0, n))); // $NON-NLS-1$
     }
 
     private void printTableLine(
@@ -94,18 +94,18 @@ public class TableContainer extends ReportContainer {
             int paddingSpaces = paddings.get(i) - container.getText().length();
             pad(builder, paddingSpaces);
             container.println(builder, 0, useColor);
-            builder.append(" | ");
+            builder.append(" | "); // $NON-NLS-1$
         }
-        builder.append("\n");
+        builder.append("\n"); // $NON-NLS-1$
     }
 
     private void printStripline(List<Integer> paddings, StringBuilder builder, int depth) {
         addDepth(builder, depth);
         for (Integer padding : paddings) {
-            builder.append("-".repeat(padding));
-            builder.append(" | ");
+            builder.append("-".repeat(padding)); // $NON-NLS-1$
+            builder.append(" | "); // $NON-NLS-1$
         }
-        builder.append("\n");
+        builder.append("\n"); // $NON-NLS-1$
     }
 
     public void addLineToTable(List<TextContainer> line) {

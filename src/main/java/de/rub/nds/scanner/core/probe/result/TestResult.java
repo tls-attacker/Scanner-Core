@@ -56,8 +56,8 @@ public interface TestResult extends Serializable {
         if (!getClass().equals(expectedResult.getClass())) {
             throw new IllegalArgumentException(
                     String.format(
-                            "Cannot Compare actual result with expected result (type mismatch: found %s but expected %s)"
-                                    + " - Consider overwriting equalsExpectedResult if the type mismatch is intended.",
+                            "Cannot Compare actual result with expected result (type mismatch: found %s but expected %s)" //$NON-NLS-1$
+                                    + " - Consider overwriting equalsExpectedResult if the type mismatch is intended.", //$NON-NLS-1$
                             this.getClass(), expectedResult.getClass()));
         }
         return this.equals(expectedResult);

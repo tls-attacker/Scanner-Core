@@ -38,7 +38,7 @@ public class ReportCreator<ReportT extends ScanReport> {
 
     protected ReportContainer createDefaultKeyHexValueContainer(String key, String value) {
         return new KeyValueContainer(
-                key, AnsiColor.DEFAULT_COLOR, "0x" + value, AnsiColor.DEFAULT_COLOR);
+                key, AnsiColor.DEFAULT_COLOR, "0x" + value, AnsiColor.DEFAULT_COLOR); // $NON-NLS-1$
     }
 
     protected TextContainer createDefaultTextContainer(String text) {

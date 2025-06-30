@@ -37,17 +37,17 @@ public class KeyValueContainer extends ReportContainer {
     public void print(StringBuilder builder, int depth, boolean useColor) {
         addDepth(builder, depth);
         addColor(builder, keyColor, pad(key, PADDED_KEY_LENGTH), useColor);
-        builder.append(":    ");
+        builder.append(":    "); // $NON-NLS-1$
         addColor(builder, valueColor, value, useColor);
-        builder.append("\n");
+        builder.append("\n"); // $NON-NLS-1$
     }
 
     private String pad(String text, int size) {
         if (text == null) {
-            text = "";
+            text = ""; // $NON-NLS-1$
         }
         if (text.length() < size) {
-            return text + " ".repeat(size - text.length());
+            return text + " ".repeat(size - text.length()); // $NON-NLS-1$
         } else if (text.length() > size) {
             LOGGER.warn(
                     "KeyValue 'Key' size is bigger than PADDED_KEY_LENGTH:{} - which breaks the layout. Consider choosing a shorter name or raising PADDED_KEY_LEGNTH",

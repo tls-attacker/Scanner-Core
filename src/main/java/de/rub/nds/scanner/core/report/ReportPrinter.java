@@ -35,29 +35,30 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
     public abstract String getFullReport();
 
     protected String getBlackString(String value, String format) {
-        return String.format(format, value == null ? "Unknown" : value);
+        return String.format(format, value == null ? "Unknown" : value); // $NON-NLS-1$
     }
 
     protected String getGreenString(String value, String format) {
         return (printColorful ? AnsiColor.GREEN.getCode() : AnsiColor.RESET.getCode())
-                + String.format(format, value == null ? "Unknown" : value)
+                + String.format(format, value == null ? "Unknown" : value) // $NON-NLS-1$
                 + AnsiColor.RESET.getCode();
     }
 
     protected String getYellowString(String value, String format) {
         return (printColorful ? AnsiColor.YELLOW.getCode() : AnsiColor.RESET.getCode())
-                + String.format(format, value == null ? "Unknown" : value)
+                + String.format(format, value == null ? "Unknown" : value) // $NON-NLS-1$
                 + AnsiColor.RESET.getCode();
     }
 
     protected String getRedString(String value, String format) {
         return (printColorful ? AnsiColor.RED.getCode() : AnsiColor.RESET.getCode())
-                + String.format(format, value == null ? "Unknown" : value)
+                + String.format(format, value == null ? "Unknown" : value) // $NON-NLS-1$
                 + AnsiColor.RESET.getCode();
     }
 
     protected StringBuilder prettyAppend(StringBuilder builder, String value) {
-        return builder.append(value == null ? "Unknown" : value).append("\n");
+        return builder.append(value == null ? "Unknown" : value)
+                .append("\n"); // $NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected StringBuilder prettyAppend(StringBuilder builder, String value, AnsiColor color) {
@@ -68,44 +69,44 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
         if (printColorful) {
             builder.append(AnsiColor.RESET.getCode());
         }
-        builder.append("\n");
+        builder.append("\n"); // $NON-NLS-1$
         return builder;
     }
 
     protected StringBuilder prettyAppendHexString(
             StringBuilder builder, String name, String value) {
         return builder.append(addIndentations(name))
-                .append(": ")
-                .append(value == null ? "Unknown" : "0x" + value)
-                .append("\n");
+                .append(": ") // $NON-NLS-1$
+                .append(value == null ? "Unknown" : "0x" + value) // $NON-NLS-1$ //$NON-NLS-2$
+                .append("\n"); // $NON-NLS-1$
     }
 
     protected StringBuilder prettyAppend(StringBuilder builder, String name, String value) {
         return builder.append(addIndentations(name))
-                .append(": ")
-                .append(value == null ? "Unknown" : value)
-                .append("\n");
+                .append(": ") // $NON-NLS-1$
+                .append(value == null ? "Unknown" : value) // $NON-NLS-1$
+                .append("\n"); // $NON-NLS-1$
     }
 
     protected StringBuilder prettyAppend(StringBuilder builder, String name, Long value) {
         return builder.append(addIndentations(name))
-                .append(": ")
-                .append(value == null ? "Unknown" : value)
-                .append("\n");
+                .append(": ") // $NON-NLS-1$
+                .append(value == null ? "Unknown" : value) // $NON-NLS-1$
+                .append("\n"); // $NON-NLS-1$
     }
 
     protected StringBuilder prettyAppend(StringBuilder builder, String name, Boolean value) {
         return builder.append(addIndentations(name))
-                .append(": ")
-                .append(value == null ? "Unknown" : value)
-                .append("\n");
+                .append(": ") // $NON-NLS-1$
+                .append(value == null ? "Unknown" : value) // $NON-NLS-1$
+                .append("\n"); // $NON-NLS-1$
     }
 
     protected StringBuilder prettyAppend(
             StringBuilder builder, String name, AnalyzedProperty property) {
-        builder.append(addIndentations(name)).append(": ");
+        builder.append(addIndentations(name)).append(": "); // $NON-NLS-1$
         builder.append(scheme.getEncodedString(report, property, printColorful));
-        builder.append("\n");
+        builder.append("\n"); // $NON-NLS-1$
         return builder;
     }
 
@@ -116,7 +117,7 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
 
     protected StringBuilder prettyAppend(
             StringBuilder builder, String name, String value, AnsiColor color) {
-        builder.append(addIndentations(name)).append(": ");
+        builder.append(addIndentations(name)).append(": "); // $NON-NLS-1$
         if (printColorful) {
             builder.append(color.getCode());
         }
@@ -124,7 +125,7 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
         if (printColorful) {
             builder.append(AnsiColor.RESET.getCode());
         }
-        builder.append("\n");
+        builder.append("\n"); // $NON-NLS-1$
         return builder;
     }
 
@@ -135,108 +136,109 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
                         printColorful
                                 ? AnsiColor.BOLD.getCode() + AnsiColor.BLUE.getCode()
                                 : AnsiColor.RESET.getCode())
-                .append("\n------------------------------------------------------------\n")
+                .append(
+                        "\n------------------------------------------------------------\n") //$NON-NLS-1$
                 .append(value)
-                .append("\n\n")
+                .append("\n\n") // $NON-NLS-1$
                 .append(AnsiColor.RESET.getCode());
     }
 
     protected StringBuilder prettyAppendUnderlined(
             StringBuilder builder, String name, String value) {
         return builder.append(addIndentations(name))
-                .append(": ")
+                .append(": ") // $NON-NLS-1$
                 .append(
                         printColorful
                                 ? AnsiColor.UNDERLINE.getCode() + value + AnsiColor.RESET.getCode()
                                 : value)
-                .append("\n");
+                .append("\n"); // $NON-NLS-1$
     }
 
     protected StringBuilder prettyAppendUnderlined(
             StringBuilder builder, String name, boolean value) {
         return builder.append(addIndentations(name))
-                .append(": ")
+                .append(": ") // $NON-NLS-1$
                 .append(
                         printColorful
                                 ? AnsiColor.UNDERLINE.getCode() + value + AnsiColor.RESET.getCode()
                                 : value)
-                .append("\n");
+                .append("\n"); // $NON-NLS-1$
     }
 
     protected StringBuilder prettyAppendUnderlined(StringBuilder builder, String name, long value) {
         return builder.append(addIndentations(name))
-                .append(": ")
+                .append(": ") // $NON-NLS-1$
                 .append(
                         !printColorful
                                 ? AnsiColor.UNDERLINE.getCode() + value + AnsiColor.RESET.getCode()
                                 : value)
-                .append("\n");
+                .append("\n"); // $NON-NLS-1$
     }
 
     protected StringBuilder prettyAppendSubheading(StringBuilder builder, String name) {
         depth = 1;
-        return builder.append("--|")
+        return builder.append("--|") // $NON-NLS-1$
                 .append(
                         printColorful
                                 ? AnsiColor.BOLD.getCode()
                                         + AnsiColor.PURPLE.getCode()
                                         + AnsiColor.UNDERLINE.getCode()
                                         + name
-                                        + "\n\n"
+                                        + "\n\n" //$NON-NLS-1$
                                         + AnsiColor.RESET.getCode()
-                                : name + "\n\n");
+                                : name + "\n\n"); // $NON-NLS-1$
     }
 
     protected StringBuilder prettyAppendSubSubheading(StringBuilder builder, String name) {
         depth = 2;
-        return builder.append("----|")
+        return builder.append("----|") // $NON-NLS-1$
                 .append(
                         printColorful
                                 ? AnsiColor.BOLD.getCode()
                                         + AnsiColor.PURPLE.getCode()
                                         + AnsiColor.UNDERLINE.getCode()
                                         + name
-                                        + "\n\n"
+                                        + "\n\n" //$NON-NLS-1$
                                         + AnsiColor.RESET.getCode()
-                                : name + "\n\n");
+                                : name + "\n\n"); // $NON-NLS-1$
     }
 
     protected StringBuilder prettyAppendSubSubSubheading(StringBuilder builder, String name) {
         depth = 3;
-        return builder.append("------|")
+        return builder.append("------|") // $NON-NLS-1$
                 .append(
                         printColorful
                                 ? AnsiColor.BOLD.getCode()
                                         + AnsiColor.PURPLE.getCode()
                                         + AnsiColor.UNDERLINE.getCode()
                                         + name
-                                        + "\n\n"
+                                        + "\n\n" //$NON-NLS-1$
                                         + AnsiColor.RESET.getCode()
-                                : name + "\n\n");
+                                : name + "\n\n"); // $NON-NLS-1$
     }
 
     protected String padToLength(String value, int length) {
         StringBuilder builder = new StringBuilder(value);
         while (builder.length() < length) {
-            builder.append(" ");
+            builder.append(" "); // $NON-NLS-1$
         }
         return builder.toString();
     }
 
     protected String addIndentations(String value) {
         StringBuilder builder = new StringBuilder();
-        builder.append(" ".repeat(Math.max(0, depth)));
+        builder.append(" ".repeat(Math.max(0, depth))); // $NON-NLS-1$
         builder.append(value);
         if (value.length() + depth < 8) {
-            builder.append("\t\t\t\t ");
+            builder.append("\t\t\t\t "); // $NON-NLS-1$
         } else if (value.length() + depth < 16) {
-            builder.append("\t\t\t ");
+            builder.append("\t\t\t "); // $NON-NLS-1$
         } else if (value.length() + depth < 24) {
-            builder.append("\t\t ");
+            builder.append("\t\t "); // $NON-NLS-1$
         } else if (value.length() + depth < 32) {
-            builder.append("\t ");
+            builder.append("\t "); // $NON-NLS-1$
         } else {
-            builder.append(" ");
+            builder.append(" "); // $NON-NLS-1$
         }
         return builder.toString();
     }

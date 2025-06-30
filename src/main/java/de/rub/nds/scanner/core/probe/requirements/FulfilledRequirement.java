@@ -31,6 +31,6 @@ public final class FulfilledRequirement<ReportT extends ScanReport> extends Requ
 
     @Override
     public String toString() {
-        return "FulfilledRequirement";
+        return "FulfilledRequirement"; //$NON-NLS-1$
     }
 }

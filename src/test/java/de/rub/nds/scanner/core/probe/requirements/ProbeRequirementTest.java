@@ -30,7 +30,7 @@ public class ProbeRequirementTest {
 
                     @Override
                     public String getRemoteName() {
-                        return "";
+                        return ""; //$NON-NLS-1$
                     }
                 };
         TestProbe probe = new TestProbe();

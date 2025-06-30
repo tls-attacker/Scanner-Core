@@ -22,14 +22,14 @@ public abstract class ReportContainer {
     public abstract void print(StringBuilder builder, int depth, boolean useColor);
 
     protected StringBuilder addDepth(StringBuilder builder, int depth) {
-        builder.append("  ".repeat(Math.max(0, depth)));
+        builder.append("  ".repeat(Math.max(0, depth))); // $NON-NLS-1$
         return builder;
     }
 
     protected StringBuilder addHeadlineDepth(StringBuilder builder, int depth) {
-        builder.append("--".repeat(Math.max(0, depth)));
+        builder.append("--".repeat(Math.max(0, depth))); // $NON-NLS-1$
         if (depth > 0) {
-            builder.append("|");
+            builder.append("|"); // $NON-NLS-1$
         }
         return builder;
     }

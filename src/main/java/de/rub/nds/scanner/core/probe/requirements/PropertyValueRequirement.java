@@ -67,7 +67,9 @@ public class PropertyValueRequirement<R extends ScanReport>
                 }
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException(
-                        String.format("Cannot evaluate Requirement for Property \"%s\"", property),
+                        String.format(
+                                "Cannot evaluate Requirement for Property \"%s\"",
+                                property), //$NON-NLS-1$ //$NON-NLS-2$
                         e);
             }
         }

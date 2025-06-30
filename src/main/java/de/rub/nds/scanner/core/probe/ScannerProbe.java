@@ -40,12 +40,15 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
 
     @Override
     public ScannerProbe<ReportT, StateT> call() {
-        LOGGER.debug("Executing: {}", getProbeName());
+        LOGGER.debug("Executing: {}", getProbeName()); // $NON-NLS-1$
         this.startTime = System.currentTimeMillis();
         executeTest();
         this.stopTime = System.currentTimeMillis();
 
-        LOGGER.debug("Finished {} -  Took {}s", getProbeName(), (stopTime - startTime) / 1000);
+        LOGGER.debug(
+                "Finished {} -  Took {}s",
+                getProbeName(),
+                (stopTime - startTime) / 1000); // $NON-NLS-1$
         return this;
     }
 
@@ -54,7 +57,8 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
             return getRequirements().evaluate(report);
         } catch (IllegalArgumentException e) {
             LOGGER.warn(
-                    "Cannot evaluate Requirements for Probe \"{}\" ({})",
+                    "Cannot evaluate Requirements for Probe \"{}\" ({})", //$NON-NLS-1$
+                    // //$NON-NLS-2$
                     getProbeName(),
                     getClass().getCanonicalName(),
                     e);
@@ -131,7 +135,7 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
             propertiesMap.replace(property, internalResult);
         } else {
             LOGGER.error(
-                    "{} was set in {} but had not been registered!",
+                    "{} was set in {} but had not been registered!", //$NON-NLS-1$
                     property,
                     getClass().getSimpleName());
             propertiesMap.put(property, internalResult);
@@ -140,7 +144,10 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
 
     protected final <T> void addToList(AnalyzedProperty property, List<T> result) {
         if (property == null) {
-            LOGGER.error("Property to add (addToList) to in " + getClass() + " is null!");
+            LOGGER.error(
+                    "Property to add (addToList) to in "
+                            + getClass()
+                            + " is null!"); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
         if (propertiesMap.containsKey(property)) {
@@ -156,9 +163,9 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         } else {
             LOGGER.error(
                     property.getName()
-                            + " was set in "
+                            + " was set in " //$NON-NLS-1$
                             + getClass()
-                            + " but had not been registered!");
+                            + " but had not been registered!"); //$NON-NLS-1$
             propertiesMap.put(property, new ListResult<>(property, result));
         }
     }
@@ -183,7 +190,7 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
             if (result == TestResults.UNASSIGNED_ERROR || result == null) {
                 if (wasExecuted) {
                     LOGGER.error(
-                            "{} in {} had not been assigned (or was set to null)!",
+                            "{} in {} had not been assigned (or was set to null)!", //$NON-NLS-1$
                             property,
                             getClass().getSimpleName());
                 } else {

@@ -32,6 +32,6 @@ public final class UnfulfillableRequirement<ReportT extends ScanReport>
 
     @Override
     public String toString() {
-        return "UnfulfillableRequirement";
+        return "UnfulfillableRequirement"; //$NON-NLS-1$
     }
 }

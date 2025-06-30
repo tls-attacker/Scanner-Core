@@ -21,7 +21,7 @@ public class ProbeTypeConverter implements IStringConverter<ProbeType> {
     private Set<Class<? extends ProbeType>> probeTypeClasses;
 
     public ProbeTypeConverter() {
-        String packageName = "de.rub";
+        String packageName = "de.rub"; // $NON-NLS-1$
         Reflections reflections =
                 new Reflections(
                         new ConfigurationBuilder()
@@ -41,7 +41,7 @@ public class ProbeTypeConverter implements IStringConverter<ProbeType> {
                 ProbeType convertedType =
                         (ProbeType)
                                 probeTypeClass
-                                        .getMethod("valueOf", String.class)
+                                        .getMethod("valueOf", String.class) // $NON-NLS-1$
                                         .invoke(null, value);
                 if (convertedType != null) {
                     return convertedType;

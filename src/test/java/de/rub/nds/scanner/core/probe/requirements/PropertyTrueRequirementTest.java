@@ -30,7 +30,7 @@ public class PropertyTrueRequirementTest {
 
                     @Override
                     public String getRemoteName() {
-                        return "";
+                        return ""; //$NON-NLS-1$
                     }
                 };
         AnalyzedProperty[] property =
