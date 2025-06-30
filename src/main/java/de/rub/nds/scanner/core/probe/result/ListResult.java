@@ -18,11 +18,14 @@ import java.util.List;
  */
 public class ListResult<T> extends CollectionResult<T> {
 
+    private final List<T> list;
+
     @SuppressWarnings("unused")
     // Default constructor for deserialization
     private ListResult() {
         // Default constructor for deserialization
         super(null, null);
+        this.list = null;
     }
 
     /**
@@ -33,12 +36,13 @@ public class ListResult<T> extends CollectionResult<T> {
      */
     public ListResult(AnalyzedProperty property, List<T> list) {
         super(property, list);
+        this.list = list;
     }
 
     /**
      * @return the list of the listResult object.
      */
     public List<T> getList() {
-        return (List<T>) collection;
+        return list;
     }
 }
