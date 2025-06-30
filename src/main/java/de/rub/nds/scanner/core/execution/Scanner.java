@@ -259,4 +259,10 @@ public abstract class Scanner<
     protected void registerProbeForExecution(AfterProbeT afterProbe) {
         afterList.add(afterProbe);
     }
+
+    @Override
+    public void close() throws Exception {
+        // No resources to close in base Scanner class
+        // Subclasses can override this method if they have resources to clean up
+    }
 }
