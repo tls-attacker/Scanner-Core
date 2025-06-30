@@ -62,7 +62,7 @@ public class SiteReportRater {
         return new ScoreReport(score, ratingInfluencers);
     }
 
-    private int computeScore(
+    private static int computeScore(
             HashMap<AnalyzedProperty, PropertyResultRatingInfluencer> influencers) {
         int score = 0;
         for (PropertyResultRatingInfluencer influencer : influencers.values()) {
