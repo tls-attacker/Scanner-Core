@@ -15,7 +15,6 @@ import de.rub.nds.scanner.core.guideline.testutil.IOTestScanReport;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
 import de.rub.nds.scanner.core.probe.result.TestResults;
-import jakarta.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -46,7 +45,7 @@ class GuidelineIOTest {
     }
 
     @Test
-    void testConstructorWithAnalyzedPropertyClass() throws JAXBException {
+    void testConstructorWithAnalyzedPropertyClass() {
         GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
         assertNotNull(io);
     }

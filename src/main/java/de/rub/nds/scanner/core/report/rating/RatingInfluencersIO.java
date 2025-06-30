@@ -10,7 +10,6 @@ package de.rub.nds.scanner.core.report.rating;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.util.JaxbSerializer;
-import jakarta.xml.bind.JAXBException;
 import java.util.Set;
 
 public class RatingInfluencersIO extends JaxbSerializer<RatingInfluencers> {
@@ -20,10 +19,8 @@ public class RatingInfluencersIO extends JaxbSerializer<RatingInfluencers> {
      * Creates a JAXB serializer configured to handle RatingInfluencers and related classes.
      *
      * @param analyzedPropertyClass the class of AnalyzedProperty to support in serialization
-     * @throws JAXBException if JAXB context creation fails
      */
-    public RatingInfluencersIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
-            throws JAXBException {
+    public RatingInfluencersIO(Class<? extends AnalyzedProperty> analyzedPropertyClass) {
         super(
                 Set.of(
                         RatingInfluencers.class,

@@ -25,10 +25,13 @@ public final class GuidelineIO extends JaxbSerializer<Guideline<?>> {
 
     private Logger LOGGER = LogManager.getLogger();
 
-    public GuidelineIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
-            throws JAXBException {
+    public GuidelineIO(Class<? extends AnalyzedProperty> analyzedPropertyClass) {
         // analyzedPropertyClass parameter kept for API compatibility
-        this.context = getJAXBContext();
+        try {
+            this.context = getJAXBContext();
+        } catch (JAXBException e) {
+            throw new IllegalStateException("Failed to create JAXB context", e);
+        }
     }
 
     private JAXBContext getJAXBContext() throws JAXBException {
