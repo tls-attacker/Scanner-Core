@@ -60,6 +60,7 @@ public class ScannerThreadPoolExecutor extends ScheduledThreadPoolExecutor {
      */
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
+        super.afterExecute(r, t);
         semaphore.release();
     }
 

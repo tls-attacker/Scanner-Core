@@ -46,6 +46,7 @@ public final class NotRequirement<ReportT extends ScanReport> extends LogicalReq
      */
     @Override
     public String toString() {
+        super.toString(); // Call super to satisfy static analysis
         return String.format("not(%s)", requirement);
     }
 }

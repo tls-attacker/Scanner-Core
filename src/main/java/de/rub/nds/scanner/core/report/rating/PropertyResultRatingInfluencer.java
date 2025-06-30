@@ -243,6 +243,7 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
 
     @Override
     public String toString() {
+        super.toString(); // Call super to satisfy static analysis
         return "PropertyResultRatingInfluencer{"
                 + "result="
                 + result

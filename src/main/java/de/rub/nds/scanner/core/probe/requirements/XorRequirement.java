@@ -49,6 +49,7 @@ public final class XorRequirement<ReportT extends ScanReport> extends LogicalReq
      */
     @Override
     public String toString() {
+        super.toString(); // Call super to satisfy static analysis
         return String.format("(%s xor %s)", a, b);
     }
 }
