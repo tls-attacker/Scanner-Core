@@ -13,11 +13,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-public interface AnalyzedProperty {
+public interface AnalyzedProperty extends Serializable {
 
     AnalyzedPropertyCategory getCategory();
 

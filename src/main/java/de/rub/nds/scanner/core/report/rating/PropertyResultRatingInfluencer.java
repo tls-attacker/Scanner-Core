@@ -18,6 +18,7 @@ import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.io.Serializable;
 import java.util.Objects;
 
 @XmlRootElement
@@ -30,7 +31,8 @@ import java.util.Objects;
             "referencedProperty",
             "referencedPropertyResult"
         })
-public class PropertyResultRatingInfluencer implements Comparable<PropertyResultRatingInfluencer> {
+public class PropertyResultRatingInfluencer
+        implements Comparable<PropertyResultRatingInfluencer>, Serializable {
 
     @XmlElement(type = TestResults.class, name = "result")
     @JsonIgnore
