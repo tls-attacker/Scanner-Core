@@ -178,6 +178,7 @@ public class ThreadedScanJobExecutor<
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void collectStatistics(ReportT report) {
         LOGGER.debug("Evaluating executed handshakes...");
         List<ProbeT> allProbes = scanJob.getProbeList();
@@ -189,7 +190,6 @@ public class ThreadedScanJobExecutor<
             for (ExtractedValueContainer<?> tempContainer : tempContainerList) {
                 if (containerMap.containsKey(tempContainer.getType())) {
                     // This cast should not fail because we only combine containers of the same type
-                    //noinspection unchecked
                     ((List<Object>)
                                     containerMap
                                             .get(tempContainer.getType())
@@ -239,6 +239,7 @@ public class ThreadedScanJobExecutor<
      * @param event the property change event
      */
     @Override
+    @SuppressWarnings("unchecked")
     public synchronized void propertyChange(PropertyChangeEvent event) {
         if (!event.getPropertyName().equals("supportedProbe")
                 || !event.getPropertyName().equals("unsupportedProbe")) {

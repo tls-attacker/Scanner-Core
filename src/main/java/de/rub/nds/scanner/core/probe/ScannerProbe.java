@@ -138,6 +138,7 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected final <T> void addToList(AnalyzedProperty property, List<T> result) {
         if (property == null) {
             LOGGER.error("Property to add (addToList) to in " + getClass() + " is null!");
@@ -146,7 +147,6 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         if (propertiesMap.containsKey(property)) {
             if (result != null) {
                 if (propertiesMap.get(property) instanceof ListResult) {
-                    //noinspection unchecked
                     result.addAll(((ListResult<T>) propertiesMap.get(property)).getList());
                     put(property, new ListResult<>(property, result));
                 } else {

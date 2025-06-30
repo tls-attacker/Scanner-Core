@@ -294,9 +294,9 @@ public abstract class ScanReport {
         return extractedValueContainerMap.get(trackableValue);
     }
 
+    @SuppressWarnings("unchecked")
     public synchronized <T> ExtractedValueContainer<T> getExtractedValueContainer(
             TrackableValue trackableValue, Class<T> valueClass) {
-        //noinspection unchecked
         return (ExtractedValueContainer<T>) extractedValueContainerMap.get(trackableValue);
     }
 

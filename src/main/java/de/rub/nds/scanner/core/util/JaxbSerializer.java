@@ -113,6 +113,7 @@ public abstract class JaxbSerializer<T> {
      * @throws JAXBException if an error occurs during JAXB unmarshalling
      * @throws XMLStreamException if an error occurs during XML stream processing
      */
+    @SuppressWarnings("unchecked")
     public T read(InputStream inputStream) throws JAXBException, XMLStreamException {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         unmarshaller.setEventHandler(
