@@ -17,10 +17,20 @@ import java.util.stream.Collectors;
 public class ProbeRequirement<ReportT extends ScanReport>
         extends PrimitiveRequirement<ReportT, ProbeType> {
 
+    /**
+     * Constructs a new ProbeRequirement that checks if specified probes have been executed.
+     *
+     * @param probes the list of probe types that must have been executed
+     */
     public ProbeRequirement(List<ProbeType> probes) {
         super(probes);
     }
 
+    /**
+     * Constructs a new ProbeRequirement that checks if specified probes have been executed.
+     *
+     * @param probes varargs of probe types that must have been executed
+     */
     public ProbeRequirement(ProbeType... probes) {
         super(List.of(probes));
     }
@@ -38,6 +48,11 @@ public class ProbeRequirement<ReportT extends ScanReport>
         return true;
     }
 
+    /**
+     * Returns a string representation of this requirement listing all required probe types.
+     *
+     * @return string representation in the format "ProbeRequirement[probe1, probe2, ...]"
+     */
     @Override
     public String toString() {
         return String.format(

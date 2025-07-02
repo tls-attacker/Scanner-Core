@@ -114,7 +114,7 @@ public class TableContainer extends ReportContainer {
         return paddings;
     }
 
-    private void pad(StringBuilder builder, int n) {
+    private static void pad(StringBuilder builder, int n) {
         builder.append(" ".repeat(Math.max(0, n)));
     }
 

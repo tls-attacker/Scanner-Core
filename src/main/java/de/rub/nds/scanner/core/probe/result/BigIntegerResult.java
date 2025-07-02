@@ -19,6 +19,12 @@ public class BigIntegerResult extends ObjectResult<BigInteger> {
         super(null, null);
     }
 
+    /**
+     * Constructs a BigIntegerResult with the specified property and value.
+     *
+     * @param property the analyzed property associated with this result
+     * @param value the BigInteger value of this result
+     */
     public BigIntegerResult(AnalyzedProperty property, BigInteger value) {
         super(property, value);
     }
