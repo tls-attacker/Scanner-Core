@@ -37,26 +37,56 @@ public abstract class GuidelineCheckResult {
         this.hint = hint;
     }
 
+    /**
+     * Gets the name of the guideline check that produced this result.
+     *
+     * @return the check name
+     */
     public String getCheckName() {
         return checkName;
     }
 
+    /**
+     * Sets the name of the guideline check that produced this result.
+     *
+     * @param checkName the check name to set
+     */
     public void setCheckName(String checkName) {
         this.checkName = checkName;
     }
 
+    /**
+     * Gets the adherence status indicating whether the guideline check passed or failed.
+     *
+     * @return the adherence status
+     */
     public GuidelineAdherence getAdherence() {
         return adherence;
     }
 
+    /**
+     * Sets the adherence status indicating whether the guideline check passed or failed.
+     *
+     * @param adherence the adherence status to set
+     */
     public void setAdherence(GuidelineAdherence adherence) {
         this.adherence = adherence;
     }
 
+    /**
+     * Gets an optional hint providing additional information about the check result.
+     *
+     * @return the hint, or null if no hint is provided
+     */
     public String getHint() {
         return hint;
     }
 
+    /**
+     * Sets an optional hint providing additional information about the check result.
+     *
+     * @param hint the hint to set
+     */
     public void setHint(String hint) {
         this.hint = hint;
     }

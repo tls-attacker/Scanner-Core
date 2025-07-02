@@ -40,8 +40,20 @@ public abstract class GuidelineCheck<ReportT extends ScanReport> {
         this.condition = condition;
     }
 
+    /**
+     * Evaluates this guideline check against the provided report.
+     *
+     * @param report the scan report to evaluate
+     * @return the result of the guideline check evaluation
+     */
     public abstract GuidelineCheckResult evaluate(ReportT report);
 
+    /**
+     * Checks if the report satisfies the condition required for this guideline check.
+     *
+     * @param report the scan report to check against the condition
+     * @return true if the condition is satisfied or no condition is set, false otherwise
+     */
     public boolean passesCondition(ReportT report) {
         return this.passesCondition(report, this.condition);
     }
@@ -58,6 +70,10 @@ public abstract class GuidelineCheck<ReportT extends ScanReport> {
             }
             return true;
         } else if (condition.getOr() != null) {
+            if (condition.getOr().isEmpty()) {
+                LOGGER.warn("Condition with empty 'or' list found, returning true.");
+                return true;
+            }
             for (GuidelineCheckCondition orCondition : condition.getOr()) {
                 if (this.passesCondition(report, orCondition)) {
                     return true;
@@ -71,14 +87,29 @@ public abstract class GuidelineCheck<ReportT extends ScanReport> {
         return false;
     }
 
+    /**
+     * Gets the name of this guideline check.
+     *
+     * @return the check name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Gets the requirement level (e.g., MUST, SHOULD) for this guideline check.
+     *
+     * @return the requirement level
+     */
     public RequirementLevel getRequirementLevel() {
         return requirementLevel;
     }
 
+    /**
+     * Gets the condition that must be satisfied for this check to be applicable.
+     *
+     * @return the condition, or null if no condition is set
+     */
     public GuidelineCheckCondition getCondition() {
         return condition;
     }
