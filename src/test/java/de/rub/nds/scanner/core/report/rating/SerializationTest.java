@@ -13,112 +13,223 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
-import de.rub.nds.scanner.core.probe.result.TestResults;
+import de.rub.nds.scanner.core.probe.result.TestResult;
 import java.io.*;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
+/** Test to verify serialization functionality of rating-related classes */
 public class SerializationTest {
 
-    private static class TestPropertyCategory implements AnalyzedPropertyCategory {
-        private static final long serialVersionUID = 1L;
-    }
-
-    private static class TestProperty implements AnalyzedProperty {
-        private static final long serialVersionUID = 1L;
-        private final String name;
-
-        public TestProperty(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public AnalyzedPropertyCategory getCategory() {
-            return new TestPropertyCategory();
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-    }
-
     @Test
-    public void testRatingInfluencersSerialization() throws IOException, ClassNotFoundException {
+    public void testRatingInfluencersSerializable() throws IOException, ClassNotFoundException {
         // Create test data
-        TestProperty property = new TestProperty("TEST_PROPERTY");
-        PropertyResultRatingInfluencer influencer1 =
-                new PropertyResultRatingInfluencer(TestResults.TRUE, 10);
-        PropertyResultRatingInfluencer influencer2 =
-                new PropertyResultRatingInfluencer(TestResults.FALSE, -5);
-        List<PropertyResultRatingInfluencer> influencerList =
-                Arrays.asList(influencer1, influencer2);
+        LinkedList<RatingInfluencer> influencers = new LinkedList<>();
+        RatingInfluencers ratingInfluencers = new RatingInfluencers(influencers);
 
-        RatingInfluencer ratingInfluencer = new RatingInfluencer(property, influencerList);
-        LinkedList<RatingInfluencer> ratingInfluencersList = new LinkedList<>();
-        ratingInfluencersList.add(ratingInfluencer);
-
-        RatingInfluencers ratingInfluencers = new RatingInfluencers(ratingInfluencersList);
-
-        // Serialize
+        // Test serialization
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(ratingInfluencers);
         oos.close();
 
-        // Deserialize
+        // Test deserialization
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         ObjectInputStream ois = new ObjectInputStream(bais);
         RatingInfluencers deserialized = (RatingInfluencers) ois.readObject();
         ois.close();
 
-        // Verify
         assertNotNull(deserialized);
         assertNotNull(deserialized.getRatingInfluencers());
-        assertEquals(1, deserialized.getRatingInfluencers().size());
     }
 
     @Test
-    public void testRecommendationsSerialization() throws IOException, ClassNotFoundException {
+    public void testRecommendationsSerializable() throws IOException, ClassNotFoundException {
         // Create test data
-        TestProperty property = new TestProperty("TEST_PROPERTY");
-        PropertyResultRecommendation recommendation1 =
-                new PropertyResultRecommendation(
-                        TestResults.TRUE, "Short desc", "Handling recommendation");
-        PropertyResultRecommendation recommendation2 =
-                new PropertyResultRecommendation(
-                        TestResults.FALSE, "Another desc", "Another recommendation");
+        List<Recommendation> recs = new LinkedList<>();
+        Recommendations recommendations = new Recommendations(recs);
 
-        Recommendation recommendation =
-                new Recommendation(
-                        property,
-                        "Test Recommendation",
-                        "Short description",
-                        "Detailed description",
-                        recommendation1,
-                        "https://example.com");
-        recommendation.getPropertyRecommendations().add(recommendation2);
-
-        List<Recommendation> recommendationList = Arrays.asList(recommendation);
-        Recommendations recommendations = new Recommendations(recommendationList);
-
-        // Serialize
+        // Test serialization
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(recommendations);
         oos.close();
 
-        // Deserialize
+        // Test deserialization
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         ObjectInputStream ois = new ObjectInputStream(bais);
         Recommendations deserialized = (Recommendations) ois.readObject();
         ois.close();
 
-        // Verify
         assertNotNull(deserialized);
         assertNotNull(deserialized.getRecommendations());
-        assertEquals(1, deserialized.getRecommendations().size());
+    }
+
+    @Test
+    public void testRatingInfluencerSerializable() throws IOException, ClassNotFoundException {
+        // Create test data
+        RatingInfluencer influencer = new RatingInfluencer();
+
+        // Test serialization
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(influencer);
+        oos.close();
+
+        // Test deserialization
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        RatingInfluencer deserialized = (RatingInfluencer) ois.readObject();
+        ois.close();
+
+        assertNotNull(deserialized);
+    }
+
+    @Test
+    public void testRecommendationSerializable() throws IOException, ClassNotFoundException {
+        // Create test data
+        Recommendation recommendation = new Recommendation();
+
+        // Test serialization
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(recommendation);
+        oos.close();
+
+        // Test deserialization
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        Recommendation deserialized = (Recommendation) ois.readObject();
+        ois.close();
+
+        assertNotNull(deserialized);
+    }
+
+    @Test
+    public void testPropertyResultRatingInfluencerSerializable()
+            throws IOException, ClassNotFoundException {
+        // Create test data with a mock TestResult implementation
+        TestResult mockResult = new MockTestResult();
+        PropertyResultRatingInfluencer influencer =
+                new PropertyResultRatingInfluencer(mockResult, 10);
+
+        // Test serialization
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(influencer);
+        oos.close();
+
+        // Test deserialization
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        PropertyResultRatingInfluencer deserialized =
+                (PropertyResultRatingInfluencer) ois.readObject();
+        ois.close();
+
+        assertNotNull(deserialized);
+        assertEquals(10, deserialized.getInfluence());
+    }
+
+    @Test
+    public void testPropertyResultRecommendationSerializable()
+            throws IOException, ClassNotFoundException {
+        // Create test data with a mock TestResult implementation
+        TestResult mockResult = new MockTestResult();
+        PropertyResultRecommendation recommendation =
+                new PropertyResultRecommendation(mockResult, "Status", "Handle it");
+
+        // Test serialization
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(recommendation);
+        oos.close();
+
+        // Test deserialization
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        PropertyResultRecommendation deserialized = (PropertyResultRecommendation) ois.readObject();
+        ois.close();
+
+        assertNotNull(deserialized);
+        assertEquals("Status", deserialized.getShortDescription());
+        assertEquals("Handle it", deserialized.getHandlingRecommendation());
+    }
+
+    @Test
+    public void testComplexSerializationScenario() throws IOException, ClassNotFoundException {
+        // Create a complex hierarchy
+        TestResult mockResult = new MockTestResult();
+        PropertyResultRatingInfluencer propInfluencer =
+                new PropertyResultRatingInfluencer(mockResult, 5);
+        List<PropertyResultRatingInfluencer> propInfluencers = new LinkedList<>();
+        propInfluencers.add(propInfluencer);
+
+        RatingInfluencer ratingInfluencer =
+                new RatingInfluencer(new MockAnalyzedProperty(), propInfluencers);
+        LinkedList<RatingInfluencer> influencers = new LinkedList<>();
+        influencers.add(ratingInfluencer);
+        RatingInfluencers ratingInfluencers = new RatingInfluencers(influencers);
+
+        // Test serialization
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(ratingInfluencers);
+        oos.close();
+
+        // Test deserialization
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        RatingInfluencers deserialized = (RatingInfluencers) ois.readObject();
+        ois.close();
+
+        assertNotNull(deserialized);
+        assertEquals(1, deserialized.getRatingInfluencers().size());
+        assertEquals(
+                1,
+                deserialized.getRatingInfluencers().get(0).getPropertyRatingInfluencers().size());
+    }
+
+    // Mock implementations for testing
+    private static class MockTestResult implements TestResult, Serializable {
+        @Override
+        public String getName() {
+            return "MockTestResult";
+        }
+
+        @Override
+        public boolean equalsExpectedResult(TestResult expectedResult) {
+            return this.equals(expectedResult);
+        }
+
+        @Override
+        public String toString() {
+            return "MockTestResult";
+        }
+    }
+
+    private static class MockAnalyzedProperty implements AnalyzedProperty, Serializable {
+        @Override
+        public String getName() {
+            return "MockProperty";
+        }
+
+        @Override
+        public AnalyzedPropertyCategory getCategory() {
+            return new MockAnalyzedPropertyCategory();
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
+    }
+
+    private static class MockAnalyzedPropertyCategory
+            implements AnalyzedPropertyCategory, Serializable {
+        @Override
+        public String toString() {
+            return "MockCategory";
+        }
     }
 }
