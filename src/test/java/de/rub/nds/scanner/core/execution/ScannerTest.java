@@ -16,12 +16,19 @@ import de.rub.nds.scanner.core.guideline.Guideline;
 import de.rub.nds.scanner.core.passive.StatsWriter;
 import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
+import de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement;
+import de.rub.nds.scanner.core.probe.requirements.Requirement;
+import de.rub.nds.scanner.core.probe.requirements.UnfulfillableRequirement;
 import de.rub.nds.scanner.core.report.ScanReport;
+import de.rub.nds.scanner.core.report.rating.RatingInfluencers;
+import de.rub.nds.scanner.core.report.rating.Recommendations;
 import de.rub.nds.scanner.core.report.rating.SiteReportRater;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,20 +57,19 @@ public class ScannerTest {
     static class TestState {}
 
     static class TestReport extends ScanReport {
-        private String remoteName = "TestHost";
         private boolean prerequisitesFulfilled = true;
 
         @Override
         public String getRemoteName() {
-            return remoteName;
+            return "TestHost";
         }
 
         @Override
-        public void serializeToJson(java.io.OutputStream outputStream) {
+        public void serializeToJson(OutputStream outputStream) {
             // Simple implementation for testing
             try {
                 outputStream.write("{\"remoteName\":\"TestHost\"}".getBytes());
-            } catch (java.io.IOException e) {
+            } catch (IOException e) {
                 // Ignore for testing
             }
         }
@@ -91,12 +97,11 @@ public class ScannerTest {
         }
 
         @Override
-        public de.rub.nds.scanner.core.probe.requirements.Requirement<TestReport>
-                getRequirements() {
+        public Requirement<TestReport> getRequirements() {
             if (canExecute) {
-                return new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
+                return new FulfilledRequirement<>();
             } else {
-                return new de.rub.nds.scanner.core.probe.requirements.UnfulfillableRequirement<>();
+                return new UnfulfillableRequirement<>();
             }
         }
 
@@ -237,13 +242,14 @@ public class ScannerTest {
 
     @Test
     public void testScanWithDefaultConstructor() {
-        TestScanner scanner = new TestScanner(executorConfig);
-        TestReport report = scanner.scan();
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            TestReport report = scanner.scan();
 
-        assertNotNull(report);
-        assertTrue(scanner.isFillProbesCalled());
-        assertTrue(scanner.isOnScanStartCalled());
-        assertTrue(scanner.isOnScanEndCalled());
+            assertNotNull(report);
+            assertTrue(scanner.isFillProbesCalled());
+            assertTrue(scanner.isOnScanStartCalled());
+            assertTrue(scanner.isOnScanEndCalled());
+        }
     }
 
     @Test
@@ -254,101 +260,109 @@ public class ScannerTest {
         List<TestAfterProbe> afterList = new ArrayList<>();
         afterList.add(new TestAfterProbe());
 
-        TestScanner scanner = new TestScanner(executorConfig, probeList, afterList);
-        TestReport report = scanner.scan();
+        try (TestScanner scanner = new TestScanner(executorConfig, probeList, afterList)) {
+            TestReport report = scanner.scan();
 
-        assertNotNull(report);
-        assertFalse(scanner.isFillProbesCalled()); // Should not be called when probes are provided
+            assertNotNull(report);
+            assertFalse(
+                    scanner.isFillProbesCalled()); // Should not be called when probes are provided
+        }
     }
 
     @Test
     public void testScanPrerequisitesNotFulfilled() {
-        TestScanner scanner = new TestScanner(executorConfig);
-        TestReport report = new TestReport();
-        report.setPrerequisitesFulfilled(false);
-        scanner.setReportToReturn(report);
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            TestReport report = new TestReport();
+            report.setPrerequisitesFulfilled(false);
+            scanner.setReportToReturn(report);
 
-        TestReport result = scanner.scan();
+            TestReport result = scanner.scan();
 
-        assertSame(report, result);
-        assertTrue(scanner.isOnScanStartCalled());
-        assertFalse(scanner.isOnScanEndCalled()); // Should not reach end if prerequisites fail
+            assertSame(report, result);
+            assertTrue(scanner.isOnScanStartCalled());
+            assertFalse(scanner.isOnScanEndCalled()); // Should not reach end if prerequisites fail
+        }
     }
 
     @Test
     public void testRegisterProbeForExecution() {
-        TestScanner scanner = new TestScanner(executorConfig);
-        TestProbe probe = new TestProbe(new TestProbeType("test"));
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            TestProbe probe = new TestProbe(new TestProbeType("test"));
 
-        scanner.registerProbeForExecution(probe);
+            scanner.registerProbeForExecution(probe);
+        }
         // Since this adds to internal probe list, we can't directly verify
         // But the test ensures no exceptions are thrown
     }
 
     @Test
     public void testRegisterProbeWithExecuteByDefault() {
-        TestScanner scanner = new TestScanner(executorConfig);
-        TestProbe probe = new TestProbe(new TestProbeType("test"));
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            TestProbe probe = new TestProbe(new TestProbeType("test"));
 
-        scanner.registerProbeForExecution(probe, false);
+            scanner.registerProbeForExecution(probe, false);
+        }
         // Test with executeByDefault = false
     }
 
     @Test
     public void testRegisterProbeWithSpecificProbesConfig() {
         executorConfig.setProbes(List.of(new TestProbeType("allowed")));
-        TestScanner scanner = new TestScanner(executorConfig);
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
 
-        TestProbe allowedProbe = new TestProbe(new TestProbeType("allowed"));
-        TestProbe notAllowedProbe = new TestProbe(new TestProbeType("notallowed"));
+            TestProbe allowedProbe = new TestProbe(new TestProbeType("allowed"));
+            TestProbe notAllowedProbe = new TestProbe(new TestProbeType("notallowed"));
 
-        scanner.registerProbeForExecution(allowedProbe);
-        scanner.registerProbeForExecution(notAllowedProbe);
+            scanner.registerProbeForExecution(allowedProbe);
+            scanner.registerProbeForExecution(notAllowedProbe);
+        }
     }
 
     @Test
     public void testRegisterProbeWithExcludedProbes() {
         executorConfig.setExcludedProbes(List.of(new TestProbeType("excluded")));
-        TestScanner scanner = new TestScanner(executorConfig);
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
 
-        TestProbe excludedProbe = new TestProbe(new TestProbeType("excluded"));
-        scanner.registerProbeForExecution(excludedProbe);
+            TestProbe excludedProbe = new TestProbe(new TestProbeType("excluded"));
+            scanner.registerProbeForExecution(excludedProbe);
+        }
     }
 
     @Test
     public void testRegisterAfterProbe() {
-        TestScanner scanner = new TestScanner(executorConfig);
-        TestAfterProbe afterProbe = new TestAfterProbe();
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            TestAfterProbe afterProbe = new TestAfterProbe();
 
-        scanner.registerProbeForExecution(afterProbe);
+            scanner.registerProbeForExecution(afterProbe);
+        }
     }
 
     @Test
     public void testScanWithSiteReportRater() {
-        TestScanner scanner = new TestScanner(executorConfig);
-        de.rub.nds.scanner.core.report.rating.RatingInfluencers influencers =
-                new de.rub.nds.scanner.core.report.rating.RatingInfluencers(
-                        new java.util.LinkedList<>());
-        de.rub.nds.scanner.core.report.rating.Recommendations recommendations =
-                new de.rub.nds.scanner.core.report.rating.Recommendations(
-                        new java.util.LinkedList<>());
-        SiteReportRater rater = new SiteReportRater(influencers, recommendations);
-        scanner.setSiteReportRater(rater);
+        TestReport report;
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            RatingInfluencers influencers = new RatingInfluencers(new LinkedList<>());
+            Recommendations recommendations = new Recommendations(new LinkedList<>());
+            SiteReportRater rater = new SiteReportRater(influencers, recommendations);
+            scanner.setSiteReportRater(rater);
 
-        TestReport report = scanner.scan();
+            report = scanner.scan();
+        }
 
         assertNotNull(report.getScoreReport());
     }
 
     @Test
     public void testScanWithGuidelines() {
-        TestScanner scanner = new TestScanner(executorConfig);
+        TestReport report;
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
 
-        Guideline<TestReport> guideline =
-                new Guideline<TestReport>("TestGuideline", "http://example.com", new ArrayList<>());
+            Guideline<TestReport> guideline =
+                    new Guideline<>("TestGuideline", "http://example.com", new ArrayList<>());
 
-        scanner.setGuidelines(List.of(guideline));
-        TestReport report = scanner.scan();
+            scanner.setGuidelines(List.of(guideline));
+            report = scanner.scan();
+        }
 
         assertNotNull(report);
     }
@@ -358,8 +372,9 @@ public class ScannerTest {
         File outputFile = new File(tempDir, "test-report.json");
         executorConfig.setOutputFile(outputFile.getAbsolutePath());
 
-        TestScanner scanner = new TestScanner(executorConfig);
-        TestReport report = scanner.scan();
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            TestReport report = scanner.scan();
+        }
 
         assertTrue(outputFile.exists());
         String content = Files.readString(outputFile.toPath());
@@ -371,9 +386,9 @@ public class ScannerTest {
         File invalidFile = new File("/invalid/path/that/does/not/exist/report.json");
         executorConfig.setOutputFile(invalidFile.getAbsolutePath());
 
-        TestScanner scanner = new TestScanner(executorConfig);
-
-        assertThrows(RuntimeException.class, scanner::scan);
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            assertThrows(RuntimeException.class, scanner::scan);
+        }
     }
 
     @Test
@@ -381,7 +396,7 @@ public class ScannerTest {
         TestScanner scanner = new TestScanner(executorConfig);
 
         // Test that Scanner implements AutoCloseable
-        assertTrue(scanner instanceof AutoCloseable);
+        assertInstanceOf(AutoCloseable.class, scanner);
 
         // Test close method
         scanner.close();
@@ -389,8 +404,10 @@ public class ScannerTest {
 
     @Test
     public void testScanTimingMeasurement() {
-        TestScanner scanner = new TestScanner(executorConfig);
-        TestReport report = scanner.scan();
+        TestReport report;
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            report = scanner.scan();
+        }
 
         assertTrue(report.getScanStartTime() > 0);
         assertTrue(report.getScanEndTime() > 0);
@@ -399,14 +416,15 @@ public class ScannerTest {
 
     @Test
     public void testInterruptedScan() throws InterruptedException {
-        TestScanner scanner = new TestScanner(executorConfig);
-
-        Thread testThread =
-                new Thread(
-                        () -> {
-                            Thread.currentThread().interrupt();
-                            scanner.scan();
-                        });
+        Thread testThread;
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            testThread =
+                    new Thread(
+                            () -> {
+                                Thread.currentThread().interrupt();
+                                scanner.scan();
+                            });
+        }
 
         testThread.start();
         testThread.join();

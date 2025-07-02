@@ -17,9 +17,12 @@ import de.rub.nds.scanner.core.passive.StatsWriter;
 import de.rub.nds.scanner.core.passive.TrackableValue;
 import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
+import de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement;
 import de.rub.nds.scanner.core.probe.requirements.Requirement;
+import de.rub.nds.scanner.core.probe.requirements.UnfulfillableRequirement;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.beans.PropertyChangeEvent;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -77,7 +80,7 @@ public class ThreadedScanJobExecutorTest {
         }
 
         @Override
-        public void serializeToJson(java.io.OutputStream outputStream) {
+        public void serializeToJson(OutputStream outputStream) {
             // Simple implementation for testing
         }
 
@@ -113,11 +116,9 @@ public class ThreadedScanJobExecutorTest {
     }
 
     static class TestProbe extends ScannerProbe<TestReport, TestState> {
-        private boolean canExecute = true;
         private boolean wasExecuted = false;
         private boolean shouldThrowException = false;
-        private Requirement<TestReport> requirement =
-                new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
+        private Requirement<TestReport> requirement = new FulfilledRequirement<>();
 
         TestProbe(ProbeType type) {
             super(type);
@@ -151,13 +152,10 @@ public class ThreadedScanJobExecutorTest {
         protected void mergeData(TestReport report) {}
 
         public void setCanExecute(boolean canExecute) {
-            this.canExecute = canExecute;
             if (canExecute) {
-                this.requirement =
-                        new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
+                this.requirement = new FulfilledRequirement<>();
             } else {
-                this.requirement =
-                        new de.rub.nds.scanner.core.probe.requirements.UnfulfillableRequirement<>();
+                this.requirement = new UnfulfillableRequirement<>();
             }
         }
 
@@ -235,7 +233,7 @@ public class ThreadedScanJobExecutorTest {
                 Arrays.asList(
                         new TestProbe(new TestProbeType("probe1")),
                         new TestProbe(new TestProbeType("probe2")));
-        List<TestAfterProbe> afterList = Arrays.asList(new TestAfterProbe());
+        List<TestAfterProbe> afterList = List.of(new TestAfterProbe());
 
         ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
                 new ScanJob<>(probeList, afterList);
@@ -247,9 +245,9 @@ public class ThreadedScanJobExecutorTest {
             executor.execute(report);
 
             assertEquals(2, report.getExecutedProbeTypes().size());
-            assertTrue(probeList.get(0).wasExecuted());
+            assertTrue(probeList.getFirst().wasExecuted());
             assertTrue(probeList.get(1).wasExecuted());
-            assertTrue(afterList.get(0).isAnalyzed());
+            assertTrue(afterList.getFirst().isAnalyzed());
         }
     }
 
@@ -279,7 +277,7 @@ public class ThreadedScanJobExecutorTest {
     }
 
     @Test
-    public void testProbeExecutionException() throws InterruptedException {
+    public void testProbeExecutionException() {
         TestProbe normalProbe = new TestProbe(new TestProbeType("normal"));
         TestProbe failingProbe = new TestProbe(new TestProbeType("failing"));
         failingProbe.setShouldThrowException(true);
@@ -307,7 +305,7 @@ public class ThreadedScanJobExecutorTest {
 
         // Add requirement that probe1 must be executed first
         probe2.addRequirement(
-                new de.rub.nds.scanner.core.probe.requirements.Requirement<TestReport>() {
+                new Requirement<>() {
                     @Override
                     public boolean evaluate(TestReport report) {
                         return report.getExecutedProbeTypes().contains(new TestProbeType("probe1"));
@@ -371,25 +369,25 @@ public class ThreadedScanJobExecutorTest {
 
     @Test
     public void testShutdown() throws InterruptedException {
-        List<TestProbe> probeList = Arrays.asList(new TestProbe(new TestProbeType("probe1")));
+        List<TestProbe> probeList = List.of(new TestProbe(new TestProbeType("probe1")));
         List<TestAfterProbe> afterList = new ArrayList<>();
 
         ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
                 new ScanJob<>(probeList, afterList);
 
-        ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
-                new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test");
+        try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test")) {
+            TestReport report = new TestReport();
+            executor.execute(report);
 
-        TestReport report = new TestReport();
-        executor.execute(report);
-
-        executor.shutdown();
+            executor.shutdown();
+        }
         // Should not throw exception
     }
 
     @Test
     public void testAutoCloseable() throws Exception {
-        List<TestProbe> probeList = Arrays.asList(new TestProbe(new TestProbeType("probe1")));
+        List<TestProbe> probeList = List.of(new TestProbe(new TestProbeType("probe1")));
         List<TestAfterProbe> afterList = new ArrayList<>();
 
         ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
@@ -406,18 +404,18 @@ public class ThreadedScanJobExecutorTest {
 
     @Test
     public void testConstructorWithCustomExecutor() throws InterruptedException {
-        List<TestProbe> probeList = Arrays.asList(new TestProbe(new TestProbeType("probe1")));
+        List<TestProbe> probeList = List.of(new TestProbe(new TestProbeType("probe1")));
         List<TestAfterProbe> afterList = new ArrayList<>();
 
         ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
                 new ScanJob<>(probeList, afterList);
 
+        Semaphore semaphore = new Semaphore(0);
         ThreadPoolExecutor customExecutor =
-                new ScannerThreadPoolExecutor(
-                        1, new NamedThreadFactory("Custom"), new Semaphore(0), 5000);
+                new ScannerThreadPoolExecutor(1, new NamedThreadFactory("Custom"), semaphore, 5000);
 
         ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
-                new ThreadedScanJobExecutor<>(executorConfig, scanJob, customExecutor);
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, customExecutor, semaphore);
 
         TestReport report = new TestReport();
         executor.execute(report);
@@ -451,7 +449,7 @@ public class ThreadedScanJobExecutorTest {
     @Test
     public void testEmptyProbeList() throws InterruptedException {
         List<TestProbe> probeList = new ArrayList<>();
-        List<TestAfterProbe> afterList = Arrays.asList(new TestAfterProbe());
+        List<TestAfterProbe> afterList = List.of(new TestAfterProbe());
 
         ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
                 new ScanJob<>(probeList, afterList);

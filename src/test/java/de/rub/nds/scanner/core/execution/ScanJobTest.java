@@ -11,8 +11,12 @@ package de.rub.nds.scanner.core.execution;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.rub.nds.scanner.core.afterprobe.AfterProbe;
+import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
+import de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement;
+import de.rub.nds.scanner.core.probe.requirements.Requirement;
 import de.rub.nds.scanner.core.report.ScanReport;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -27,7 +31,7 @@ public class ScanJobTest {
         }
 
         @Override
-        public void serializeToJson(java.io.OutputStream outputStream) {
+        public void serializeToJson(OutputStream outputStream) {
             // Simple implementation for testing
         }
     }
@@ -35,20 +39,17 @@ public class ScanJobTest {
     static class TestState {}
 
     static class TestProbe extends ScannerProbe<TestReport, TestState> {
-        private final String name;
 
         TestProbe(String name) {
             super(new TestProbeType(name));
-            this.name = name;
         }
 
         @Override
         public void executeTest() {}
 
         @Override
-        public de.rub.nds.scanner.core.probe.requirements.Requirement<TestReport>
-                getRequirements() {
-            return new de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement<>();
+        public Requirement<TestReport> getRequirements() {
+            return new FulfilledRequirement<>();
         }
 
         @Override
@@ -73,7 +74,7 @@ public class ScanJobTest {
         }
     }
 
-    static class TestProbeType implements de.rub.nds.scanner.core.probe.ProbeType {
+    static class TestProbeType implements ProbeType {
         private final String name;
 
         TestProbeType(String name) {

@@ -8,9 +8,7 @@
  */
 package de.rub.nds.scanner.core.execution;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
@@ -49,7 +47,7 @@ public class NamedThreadFactoryTest {
         Thread thread = factory.newThread(() -> {});
 
         // Default thread factory creates non-daemon threads
-        assertTrue(!thread.isDaemon());
+        assertFalse(thread.isDaemon());
     }
 
     @Test
@@ -69,10 +67,7 @@ public class NamedThreadFactoryTest {
         NamedThreadFactory factory = new NamedThreadFactory("Executor");
         AtomicInteger counter = new AtomicInteger(0);
 
-        Runnable runnable =
-                () -> {
-                    counter.incrementAndGet();
-                };
+        Runnable runnable = counter::incrementAndGet;
 
         Thread thread = factory.newThread(runnable);
         thread.start();

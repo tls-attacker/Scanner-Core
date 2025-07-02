@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.execution;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.rub.nds.scanner.core.report.ScanReport;
+import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.Test;
 
 public class ScanJobExecutorTest {
@@ -44,7 +45,7 @@ public class ScanJobExecutorTest {
         private int executeCallCount = 0;
 
         @Override
-        public void execute(TestReport report) throws InterruptedException {
+        public void execute(TestReport report) {
             executeCallCount++;
             report.setExecuted(true);
         }
@@ -75,7 +76,7 @@ public class ScanJobExecutorTest {
     }
 
     @Test
-    public void testExecuteMethod() throws InterruptedException {
+    public void testExecuteMethod() {
         TestScanJobExecutor executor = new TestScanJobExecutor();
         TestReport report = new TestReport();
 
@@ -96,7 +97,7 @@ public class ScanJobExecutorTest {
     }
 
     @Test
-    public void testMultipleExecuteCalls() throws InterruptedException {
+    public void testMultipleExecuteCalls() {
         TestScanJobExecutor executor = new TestScanJobExecutor();
         TestReport report1 = new TestReport();
         TestReport report2 = new TestReport();
@@ -123,14 +124,14 @@ public class ScanJobExecutorTest {
     @Test
     public void testAbstractClass() {
         // Verify that ScanJobExecutor is abstract and cannot be instantiated directly
-        assertTrue(java.lang.reflect.Modifier.isAbstract(ScanJobExecutor.class.getModifiers()));
+        assertTrue(Modifier.isAbstract(ScanJobExecutor.class.getModifiers()));
     }
 
     @Test
     public void testExecuteMethodSignature() throws NoSuchMethodException {
         // Verify the execute method signature
         var method = ScanJobExecutor.class.getDeclaredMethod("execute", ScanReport.class);
-        assertTrue(java.lang.reflect.Modifier.isAbstract(method.getModifiers()));
+        assertTrue(Modifier.isAbstract(method.getModifiers()));
         assertEquals(void.class, method.getReturnType());
 
         // Check that it declares InterruptedException
@@ -143,7 +144,7 @@ public class ScanJobExecutorTest {
     public void testShutdownMethodSignature() throws NoSuchMethodException {
         // Verify the shutdown method signature
         var method = ScanJobExecutor.class.getDeclaredMethod("shutdown");
-        assertTrue(java.lang.reflect.Modifier.isAbstract(method.getModifiers()));
+        assertTrue(Modifier.isAbstract(method.getModifiers()));
         assertEquals(void.class, method.getReturnType());
         assertEquals(0, method.getExceptionTypes().length);
     }
