@@ -16,6 +16,11 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Calculates rating scores for site reports based on property test results and configured rating
+ * influencers. This class evaluates how different property results affect the overall security
+ * rating of a site.
+ */
 public class SiteReportRater {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -25,10 +30,10 @@ public class SiteReportRater {
     private final Recommendations recommendations;
 
     /**
-     * Constructs a SiteReportRater with the specified influencers and recommendations.
+     * Constructs a SiteReportRater with the specified rating influencers and recommendations.
      *
-     * @param influencers the rating influencers to use for score calculation
-     * @param recommendations the recommendations to associate with this rater
+     * @param influencers the rating influencers configuration
+     * @param recommendations the recommendations configuration
      */
     public SiteReportRater(RatingInfluencers influencers, Recommendations recommendations) {
         this.influencers = influencers;
@@ -36,13 +41,12 @@ public class SiteReportRater {
     }
 
     /**
-     * Calculates and returns a score report based on the provided test results. The score is
-     * computed by applying the rating influencers to the test results, taking into account both
-     * positive and negative influences as well as score caps.
+     * Generates a score report based on the provided property test results. This method evaluates
+     * each property result against the configured rating influencers and calculates the overall
+     * score.
      *
-     * @param resultMap the map of analyzed properties to their test results
-     * @return a ScoreReport containing the calculated score and the influencers that contributed to
-     *     it
+     * @param resultMap a map of analyzed properties to their test results
+     * @return a ScoreReport containing the calculated score and applied influencers
      */
     public ScoreReport getScoreReport(Map<AnalyzedProperty, TestResult> resultMap) {
         LinkedHashMap<AnalyzedProperty, PropertyResultRatingInfluencer> ratingInfluencers =
@@ -81,18 +85,18 @@ public class SiteReportRater {
     }
 
     /**
-     * Gets the recommendations associated with this rater.
+     * Gets the recommendations configuration used by this rater.
      *
-     * @return the recommendations
+     * @return the recommendations configuration
      */
     public Recommendations getRecommendations() {
         return recommendations;
     }
 
     /**
-     * Gets the rating influencers used by this rater.
+     * Gets the rating influencers configuration used by this rater.
      *
-     * @return the rating influencers
+     * @return the rating influencers configuration
      */
     public RatingInfluencers getRatingInfluencers() {
         return influencers;

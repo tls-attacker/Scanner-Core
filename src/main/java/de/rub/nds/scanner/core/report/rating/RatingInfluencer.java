@@ -15,6 +15,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Represents a rating influencer for a specific analyzed property. This class manages how different
+ * test results for a property affect the overall rating score.
+ */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RatingInfluencer {
@@ -30,10 +34,11 @@ public class RatingInfluencer {
     }
 
     /**
-     * Constructs a RatingInfluencer with the specified property and influencers.
+     * Constructs a RatingInfluencer with the specified analyzed property and list of property
+     * rating influencers.
      *
-     * @param influencerConstant the analyzed property this influencer applies to
-     * @param propertyRatingInfluencers the list of property rating influencers
+     * @param influencerConstant the analyzed property that this influencer applies to
+     * @param propertyRatingInfluencers the list of property result rating influencers
      */
     public RatingInfluencer(
             AnalyzedProperty influencerConstant,
@@ -43,10 +48,11 @@ public class RatingInfluencer {
     }
 
     /**
-     * Constructs a RatingInfluencer with the specified property and influencers.
+     * Constructs a RatingInfluencer with the specified analyzed property and array of property
+     * rating influencers.
      *
-     * @param influencerConstant the analyzed property this influencer applies to
-     * @param propertyRatingInfluencers the property rating influencers as varargs
+     * @param influencerConstant the analyzed property that this influencer applies to
+     * @param propertyRatingInfluencers the array of property result rating influencers
      */
     public RatingInfluencer(
             AnalyzedProperty influencerConstant,
@@ -56,7 +62,7 @@ public class RatingInfluencer {
     }
 
     /**
-     * Gets the analyzed property this influencer applies to.
+     * Gets the analyzed property that this rating influencer applies to.
      *
      * @return the analyzed property
      */
@@ -65,7 +71,7 @@ public class RatingInfluencer {
     }
 
     /**
-     * Sets the analyzed property.
+     * Sets the analyzed property that this rating influencer applies to.
      *
      * @param analyzedProperty the analyzed property to set
      */
@@ -74,7 +80,7 @@ public class RatingInfluencer {
     }
 
     /**
-     * Gets the list of property rating influencers.
+     * Gets the list of property result rating influencers.
      *
      * @return the list of property rating influencers
      */
@@ -83,7 +89,7 @@ public class RatingInfluencer {
     }
 
     /**
-     * Sets the property rating influencers.
+     * Sets the list of property result rating influencers.
      *
      * @param propertyRatingInfluencers the list of property rating influencers to set
      */
@@ -93,7 +99,7 @@ public class RatingInfluencer {
     }
 
     /**
-     * Adds a property rating influencer to the list.
+     * Adds a property result rating influencer to the list.
      *
      * @param ratingInfluence the property rating influencer to add
      */
@@ -102,11 +108,12 @@ public class RatingInfluencer {
     }
 
     /**
-     * Gets the property rating influencer for a specific test result. If no matching influencer is
-     * found, returns a default influencer with 0 influence.
+     * Gets the property rating influencer for a specific test result. If no influencer is found for
+     * the given result, returns a new influencer with zero influence.
      *
      * @param result the test result to find an influencer for
-     * @return the matching property rating influencer or a default one with 0 influence
+     * @return the matching property rating influencer, or a new one with zero influence if not
+     *     found
      */
     public PropertyResultRatingInfluencer getPropertyRatingInfluencer(TestResult result) {
         for (PropertyResultRatingInfluencer ri : propertyRatingInfluencers) {
