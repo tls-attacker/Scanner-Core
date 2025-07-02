@@ -11,7 +11,8 @@ package de.rub.nds.scanner.core.probe;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import java.io.Serializable;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-public interface AnalyzedPropertyCategory {}
+public interface AnalyzedPropertyCategory extends Serializable {}
