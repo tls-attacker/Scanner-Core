@@ -36,7 +36,7 @@ public class XorRequirementTest {
 
         List<Requirement<ScanReport>> contained = xor.getContainedRequirements();
         assertEquals(2, contained.size());
-        assertSame(req1, contained.get(0));
+        assertSame(req1, contained.getFirst());
         assertSame(req2, contained.get(1));
     }
 
@@ -115,7 +115,7 @@ public class XorRequirementTest {
         List<Requirement<ScanReport>> unfulfilledFalse =
                 xorFalse.getUnfulfilledRequirements(report);
         assertEquals(1, unfulfilledFalse.size());
-        assertSame(xorFalse, unfulfilledFalse.get(0));
+        assertSame(xorFalse, unfulfilledFalse.getFirst());
     }
 
     @Test
@@ -166,19 +166,19 @@ public class XorRequirementTest {
 
         // Test logical operations on XorRequirement
         Requirement<ScanReport> andReq = xor.and(new FulfilledRequirement<>());
-        assertTrue(andReq instanceof AndRequirement);
+        assertInstanceOf(AndRequirement.class, andReq);
         assertTrue(andReq.evaluate(report)); // true AND true = true
 
         Requirement<ScanReport> orReq = xor.or(new UnfulfillableRequirement<>());
-        assertTrue(orReq instanceof OrRequirement);
+        assertInstanceOf(OrRequirement.class, orReq);
         assertTrue(orReq.evaluate(report)); // true OR false = true
 
         Requirement<ScanReport> notReq = xor.not();
-        assertTrue(notReq instanceof NotRequirement);
+        assertInstanceOf(NotRequirement.class, notReq);
         assertFalse(notReq.evaluate(report)); // NOT(true) = false
 
         Requirement<ScanReport> xorReq = xor.xor(new FulfilledRequirement<>());
-        assertTrue(xorReq instanceof XorRequirement);
+        assertInstanceOf(XorRequirement.class, xorReq);
         assertFalse(xorReq.evaluate(report)); // true XOR true = false
     }
 }

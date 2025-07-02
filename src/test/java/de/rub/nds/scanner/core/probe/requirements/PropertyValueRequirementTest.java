@@ -24,11 +24,11 @@ import org.junit.jupiter.api.Test;
 
 public class PropertyValueRequirementTest {
 
-    private static enum TestPropertyCategory implements AnalyzedPropertyCategory {
+    private enum TestPropertyCategory implements AnalyzedPropertyCategory {
         TEST_CATEGORY
     }
 
-    private static enum TestProperty implements AnalyzedProperty {
+    private enum TestProperty implements AnalyzedProperty {
         PROPERTY_1,
         PROPERTY_2,
         PROPERTY_3;

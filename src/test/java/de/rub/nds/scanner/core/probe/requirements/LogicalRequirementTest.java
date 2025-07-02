@@ -92,18 +92,18 @@ public class LogicalRequirementTest {
         // Test logical operations
         Requirement<ScanReport> andReq = logicalReq.and(new FulfilledRequirement<>());
         assertNotNull(andReq);
-        assertTrue(andReq instanceof AndRequirement);
+        assertInstanceOf(AndRequirement.class, andReq);
 
         Requirement<ScanReport> orReq = logicalReq.or(new UnfulfillableRequirement<>());
         assertNotNull(orReq);
-        assertTrue(orReq instanceof OrRequirement);
+        assertInstanceOf(OrRequirement.class, orReq);
 
         Requirement<ScanReport> notReq = logicalReq.not();
         assertNotNull(notReq);
-        assertTrue(notReq instanceof NotRequirement);
+        assertInstanceOf(NotRequirement.class, notReq);
 
         Requirement<ScanReport> xorReq = logicalReq.xor(new FulfilledRequirement<>());
         assertNotNull(xorReq);
-        assertTrue(xorReq instanceof XorRequirement);
+        assertInstanceOf(XorRequirement.class, xorReq);
     }
 }

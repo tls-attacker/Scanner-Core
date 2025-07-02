@@ -24,11 +24,11 @@ import org.junit.jupiter.api.Test;
 
 public class PropertyRequirementTest {
 
-    private static enum TestPropertyCategory implements AnalyzedPropertyCategory {
+    private enum TestPropertyCategory implements AnalyzedPropertyCategory {
         TEST_CATEGORY
     }
 
-    private static enum TestProperty implements AnalyzedProperty {
+    private enum TestProperty implements AnalyzedProperty {
         PROPERTY_1,
         PROPERTY_2,
         PROPERTY_3;
@@ -167,6 +167,6 @@ public class PropertyRequirementTest {
         List<Requirement<ScanReport>> unfulfilled =
                 unfulfilledReq.getUnfulfilledRequirements(report);
         assertEquals(1, unfulfilled.size());
-        assertSame(unfulfilledReq, unfulfilled.get(0));
+        assertSame(unfulfilledReq, unfulfilled.getFirst());
     }
 }

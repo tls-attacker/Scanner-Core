@@ -66,9 +66,10 @@ public class PrimitiveRequirementTest {
         TestPrimitiveRequirement req = new TestPrimitiveRequirement(params, true);
 
         List<String> retrievedParams = req.getParameters();
+        //noinspection DataFlowIssue
         assertThrows(UnsupportedOperationException.class, () -> retrievedParams.add("param3"));
-        assertThrows(UnsupportedOperationException.class, () -> retrievedParams.remove(0));
-        assertThrows(UnsupportedOperationException.class, () -> retrievedParams.clear());
+        assertThrows(UnsupportedOperationException.class, retrievedParams::removeFirst);
+        assertThrows(UnsupportedOperationException.class, retrievedParams::clear);
     }
 
     @Test
@@ -115,19 +116,19 @@ public class PrimitiveRequirementTest {
         // Test logical operations
         Requirement<ScanReport> andReq = req.and(new FulfilledRequirement<>());
         assertNotNull(andReq);
-        assertTrue(andReq instanceof AndRequirement);
+        assertInstanceOf(AndRequirement.class, andReq);
 
         Requirement<ScanReport> orReq = req.or(new UnfulfillableRequirement<>());
         assertNotNull(orReq);
-        assertTrue(orReq instanceof OrRequirement);
+        assertInstanceOf(OrRequirement.class, orReq);
 
         Requirement<ScanReport> notReq = req.not();
         assertNotNull(notReq);
-        assertTrue(notReq instanceof NotRequirement);
+        assertInstanceOf(NotRequirement.class, notReq);
 
         Requirement<ScanReport> xorReq = req.xor(new FulfilledRequirement<>());
         assertNotNull(xorReq);
-        assertTrue(xorReq instanceof XorRequirement);
+        assertInstanceOf(XorRequirement.class, xorReq);
     }
 
     @Test

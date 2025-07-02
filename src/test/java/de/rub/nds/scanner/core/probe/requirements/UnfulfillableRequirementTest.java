@@ -44,13 +44,13 @@ public class UnfulfillableRequirementTest {
         List<Requirement<ScanReport>> unfulfilled = requirement.getUnfulfilledRequirements(report);
         assertNotNull(unfulfilled);
         assertEquals(1, unfulfilled.size());
-        assertSame(requirement, unfulfilled.get(0));
+        assertSame(requirement, unfulfilled.getFirst());
 
         // Should work even with null
         unfulfilled = requirement.getUnfulfilledRequirements(null);
         assertNotNull(unfulfilled);
         assertEquals(1, unfulfilled.size());
-        assertSame(requirement, unfulfilled.get(0));
+        assertSame(requirement, unfulfilled.getFirst());
     }
 
     @Test

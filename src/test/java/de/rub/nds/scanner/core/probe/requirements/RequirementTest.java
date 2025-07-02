@@ -76,7 +76,7 @@ public class RequirementTest {
         AndRequirement<ScanReport> and2 = and1.and(req3, false);
 
         assertEquals(2, and2.getContainedRequirements().size());
-        assertTrue(and2.getContainedRequirements().get(0) instanceof AndRequirement);
+        assertInstanceOf(AndRequirement.class, and2.getContainedRequirements().get(0));
         assertEquals(req3, and2.getContainedRequirements().get(1));
     }
 
@@ -109,7 +109,7 @@ public class RequirementTest {
         OrRequirement<ScanReport> or2 = or1.or(req3, false);
 
         assertEquals(2, or2.getContainedRequirements().size());
-        assertTrue(or2.getContainedRequirements().get(0) instanceof OrRequirement);
+        assertInstanceOf(OrRequirement.class, or2.getContainedRequirements().get(0));
         assertEquals(req3, or2.getContainedRequirements().get(1));
     }
 
@@ -124,7 +124,7 @@ public class RequirementTest {
         assertSame(req, not2);
 
         // Test that first NOT creates NotRequirement
-        assertTrue(not1 instanceof NotRequirement);
+        assertInstanceOf(NotRequirement.class, not1);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class RequirementTest {
         Requirement<ScanReport> not1 = req.not();
         Requirement<ScanReport> not2 = not1.not(false);
 
-        assertTrue(not2 instanceof NotRequirement);
+        assertInstanceOf(NotRequirement.class, not2);
         assertNotSame(req, not2);
     }
 
