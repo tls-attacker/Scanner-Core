@@ -18,10 +18,22 @@ import java.util.List;
  * negatively evaluated (TestResults.FALSE).
  */
 public class PropertyFalseRequirement<R extends ScanReport> extends PropertyValueRequirement<R> {
+    /**
+     * Constructs a new PropertyFalseRequirement that checks if the specified properties evaluate to
+     * FALSE.
+     *
+     * @param properties the list of properties that must evaluate to FALSE
+     */
     public PropertyFalseRequirement(List<AnalyzedProperty> properties) {
         super(TestResults.FALSE, properties);
     }
 
+    /**
+     * Constructs a new PropertyFalseRequirement that checks if the specified properties evaluate to
+     * FALSE.
+     *
+     * @param properties varargs of properties that must evaluate to FALSE
+     */
     public PropertyFalseRequirement(AnalyzedProperty... properties) {
         super(TestResults.FALSE, properties);
     }

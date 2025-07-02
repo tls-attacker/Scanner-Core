@@ -32,11 +32,21 @@ public class ExtractedValueContainer<ValueT> {
         this.type = null;
     }
 
+    /**
+     * Creates a new ExtractedValueContainer for the specified TrackableValue type.
+     *
+     * @param type The type of values this container will track
+     */
     public ExtractedValueContainer(TrackableValue type) {
         extractedValueList = new LinkedList<>();
         this.type = type;
     }
 
+    /**
+     * Checks if all extracted values in the container are identical.
+     *
+     * @return true if all values are identical, false otherwise
+     */
     @SuppressWarnings("unchecked")
     public boolean areAllValuesIdentical() {
         if (extractedValueList.size() > 0) {
@@ -50,28 +60,60 @@ public class ExtractedValueContainer<ValueT> {
         return true;
     }
 
+    /**
+     * Checks if all extracted values in the container are different from each other.
+     *
+     * @return true if all values are different, false otherwise
+     */
     public boolean areAllValuesDifferent() {
         Set<Object> set = new HashSet<>(extractedValueList);
         return set.size() == extractedValueList.size();
     }
 
+    /**
+     * Returns the list of extracted values.
+     *
+     * @return The list of extracted values of type ValueT
+     */
     @SuppressWarnings("unchecked")
     public List<ValueT> getExtractedValueList() {
         return (List<ValueT>) extractedValueList;
     }
 
+    /**
+     * Returns the list of extracted values cast to the specified class type.
+     *
+     * @param <S> The target type to cast values to
+     * @param valueClass The class to cast values to
+     * @return A list of values cast to type S
+     */
     public <S> List<S> getExtractedValueList(Class<S> valueClass) {
         return extractedValueList.stream().map(valueClass::cast).collect(Collectors.toList());
     }
 
+    /**
+     * Returns the number of extracted values in the container.
+     *
+     * @return The number of extracted values
+     */
     public int getNumberOfExtractedValues() {
         return extractedValueList.size();
     }
 
+    /**
+     * Adds a new value to the container.
+     *
+     * @param value The value to add to the container
+     */
     public void put(ValueT value) {
         extractedValueList.add(value);
     }
 
+    /**
+     * Returns the type of values this container tracks.
+     *
+     * @return The TrackableValue type of this container
+     */
     public TrackableValue getType() {
         return type;
     }

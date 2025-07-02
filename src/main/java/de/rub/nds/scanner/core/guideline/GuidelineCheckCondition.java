@@ -48,30 +48,70 @@ public class GuidelineCheckCondition {
         this.result = result;
     }
 
+    /**
+     * Creates a new condition that requires all of the provided conditions to be satisfied. Returns
+     * true if the list is empty.
+     *
+     * @param conditions the list of conditions that must all be satisfied
+     * @return a new AND condition
+     */
     public static GuidelineCheckCondition and(List<GuidelineCheckCondition> conditions) {
         return new GuidelineCheckCondition(conditions, null);
     }
 
+    /**
+     * Creates a new condition that requires at least one of the provided conditions to be
+     * satisfied. Returns true if the list is empty.
+     *
+     * @param conditions the list of conditions where at least one must be satisfied, or true if the
+     *     list is empty.
+     * @return a new OR condition
+     */
     public static GuidelineCheckCondition or(List<GuidelineCheckCondition> conditions) {
         return new GuidelineCheckCondition(null, conditions);
     }
 
+    /**
+     * Gets the analyzed property that this condition checks.
+     *
+     * @return the analyzed property
+     */
     public AnalyzedProperty getAnalyzedProperty() {
         return analyzedProperty;
     }
 
+    /**
+     * Sets the analyzed property that this condition checks.
+     *
+     * @param analyzedProperty the analyzed property to set
+     */
     public void setAnalyzedProperty(AnalyzedProperty analyzedProperty) {
         this.analyzedProperty = analyzedProperty;
     }
 
+    /**
+     * Gets the expected test result for the analyzed property.
+     *
+     * @return the expected test result
+     */
     public TestResult getResult() {
         return result;
     }
 
+    /**
+     * Gets the list of conditions that must all be satisfied (AND operation).
+     *
+     * @return an unmodifiable list of AND conditions, or null if this is not an AND condition
+     */
     public List<GuidelineCheckCondition> getAnd() {
         return and != null ? Collections.unmodifiableList(and) : null;
     }
 
+    /**
+     * Gets the list of conditions where at least one must be satisfied (OR operation).
+     *
+     * @return an unmodifiable list of OR conditions, or null if this is not an OR condition
+     */
     public List<GuidelineCheckCondition> getOr() {
         return or != null ? Collections.unmodifiableList(or) : null;
     }
