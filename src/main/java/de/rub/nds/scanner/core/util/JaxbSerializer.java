@@ -83,7 +83,10 @@ public abstract class JaxbSerializer<T> {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.transform(new JAXBSource(context, obj), new StreamResult(tempStream));
-            String xmlText = tempStream.toString().replaceAll("\r?\n", System.lineSeparator());
+            String xmlText =
+                    tempStream
+                            .toString(StandardCharsets.UTF_8)
+                            .replaceAll("\r?\n", System.lineSeparator());
             outputStream.write(xmlText.getBytes(StandardCharsets.UTF_8));
         } catch (TransformerException e) {
             LOGGER.warn(e);
