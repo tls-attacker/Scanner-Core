@@ -15,6 +15,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +37,7 @@ import java.util.List;
             "propertyRecommendations"
         })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Recommendation {
+public class Recommendation implements Serializable {
 
     static final String NO_INFORMATION_FOUND = "No detailed information available";
 

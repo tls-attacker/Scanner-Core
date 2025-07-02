@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.report.rating;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.TestResult;
 import jakarta.xml.bind.annotation.*;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RatingInfluencer {
+public class RatingInfluencer implements Serializable {
 
     @XmlAnyElement(lax = true)
     private AnalyzedProperty analyzedProperty;
