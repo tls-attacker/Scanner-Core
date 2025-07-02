@@ -20,10 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,10 +55,10 @@ public class ThreadedScanJobExecutor<
     private final ThreadPoolExecutor executor;
 
     // Used for waiting for Threads in the ThreadPoolExecutor
-    private final Semaphore semaphore = new Semaphore(0);
+    private final Semaphore semaphore;
 
-    private int probeCount;
-    private int finishedProbes = 0;
+    private volatile int probeCount;
+    private final AtomicInteger finishedProbes = new AtomicInteger(0);
 
     /**
      * Creates a new ThreadedScanJobExecutor with a custom thread pool.
@@ -76,7 +74,8 @@ public class ThreadedScanJobExecutor<
             int threadCount,
             String prefix) {
         long probeTimeout = config.getProbeTimeout();
-        executor =
+        this.semaphore = new Semaphore(0);
+        this.executor =
                 new ScannerThreadPoolExecutor(
                         threadCount, new NamedThreadFactory(prefix), semaphore, probeTimeout);
         this.config = config;
@@ -90,11 +89,14 @@ public class ThreadedScanJobExecutor<
      * @param config the executor configuration
      * @param scanJob the scan job containing probes to execute
      * @param executor the thread pool executor to use
+     * @param semaphore the semaphore released by the executor when a probe finishes
      */
     public ThreadedScanJobExecutor(
             ExecutorConfig config,
             ScanJob<ReportT, ProbeT, AfterProbeT, StateT> scanJob,
-            ThreadPoolExecutor executor) {
+            ThreadPoolExecutor executor,
+            Semaphore semaphore) {
+        this.semaphore = semaphore;
         this.executor = executor;
         this.config = config;
         this.scanJob = scanJob;
@@ -139,13 +141,13 @@ public class ThreadedScanJobExecutor<
             List<Future<ScannerProbe<ReportT, StateT>>> finishedFutures = new ArrayList<>();
             for (Future<ScannerProbe<ReportT, StateT>> result : new ArrayList<>(futureResults)) {
                 if (result.isDone()) {
-                    finishedProbes++;
+                    int currentFinishedProbes = finishedProbes.incrementAndGet();
                     ScannerProbe<ReportT, StateT> probeResult = null;
                     try {
                         probeResult = result.get();
                         LOGGER.info(
                                 "[{}/{}] {} probe executed",
-                                finishedProbes,
+                                currentFinishedProbes,
                                 probeCount,
                                 probeResult.getType().getName());
                     } catch (ExecutionException e) {
