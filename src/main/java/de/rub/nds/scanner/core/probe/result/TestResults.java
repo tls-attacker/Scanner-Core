@@ -29,21 +29,30 @@ public enum TestResults implements SummarizableTestResult {
     UNASSIGNED_ERROR,
     TIMEOUT;
 
-    private TestResults() {}
+    TestResults() {}
 
     @Override
     public String getName() {
         return name();
     }
 
+    /**
+     * Creates a TestResults enum value from a string representation.
+     *
+     * @param value the string representation of the TestResults
+     * @return the corresponding TestResults enum value
+     * @throws IllegalArgumentException if the value does not match any TestResults constant
+     */
     @JsonCreator
     public static TestResults fromString(String value) {
         return TestResults.valueOf(value);
     }
 
     /**
-     * @param value evaluation of a boolean to TestResults.
-     * @return TestResults.TRUE if true and TestResults.FALSE if false
+     * Converts a boolean value to a TestResults enum value.
+     *
+     * @param value the boolean value to convert
+     * @return TestResults.TRUE if true, TestResults.FALSE if false
      */
     public static TestResults of(boolean value) {
         return value ? TRUE : FALSE;

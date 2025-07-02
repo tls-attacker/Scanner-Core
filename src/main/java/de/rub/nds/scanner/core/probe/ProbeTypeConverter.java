@@ -9,6 +9,7 @@
 package de.rub.nds.scanner.core.probe;
 
 import com.beust.jcommander.IStringConverter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
@@ -46,8 +47,11 @@ public class ProbeTypeConverter implements IStringConverter<ProbeType> {
                 if (convertedType != null) {
                     return convertedType;
                 }
-            } catch (Exception e) {
-                // Ignore
+            } catch (NoSuchMethodException
+                    | IllegalAccessException
+                    | IllegalArgumentException
+                    | InvocationTargetException ignored) {
+                // Ignore conversion failures and try next method
             }
         }
         return null;

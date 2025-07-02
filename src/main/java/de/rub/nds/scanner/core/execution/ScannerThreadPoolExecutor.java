@@ -8,6 +8,9 @@
  */
 package de.rub.nds.scanner.core.execution;
 
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -15,14 +18,13 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
  * Extends {@link ThreadPoolExecutor} with its own afterExecute function. A
  * ScannerThreadPoolExecutor hold a semaphore which is released each time a Thread finished
- * executing.
+ * executing or is aborted on timeout.
  */
 public class ScannerThreadPoolExecutor extends ScheduledThreadPoolExecutor {
 
@@ -34,6 +36,8 @@ public class ScannerThreadPoolExecutor extends ScheduledThreadPoolExecutor {
 
     /** The time after which tasks are automatically cancelled */
     private final long timeout;
+
+    private final Timer timer;
 
     /**
      * Call super and assign the semaphore
@@ -50,6 +54,7 @@ public class ScannerThreadPoolExecutor extends ScheduledThreadPoolExecutor {
         this.timeout = timeout;
         this.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
         this.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+        this.timer = new Timer();
     }
 
     /**
@@ -75,34 +80,72 @@ public class ScannerThreadPoolExecutor extends ScheduledThreadPoolExecutor {
         return future;
     }
 
+    /**
+     * Submits a Runnable task for execution and returns a Future representing that task. The task
+     * will be automatically cancelled if it exceeds the configured timeout.
+     *
+     * @param <T> the type of the result
+     * @param task the task to submit
+     * @param result the result to return when the task completes
+     * @return a Future representing pending completion of the task
+     */
+    @Override
     public <T> Future<T> submit(Runnable task, T result) {
         Future<T> future = super.submit(task, result);
         cancelFuture(future);
         return future;
     }
 
+    /**
+     * Submits a value-returning task for execution and returns a Future representing the pending
+     * results. The task will be automatically cancelled if it exceeds the configured timeout.
+     *
+     * @param <T> the type of the task's result
+     * @param task the task to submit
+     * @return a Future representing pending completion of the task
+     */
+    @Override
     public <T> Future<T> submit(Callable<T> task) {
         Future<T> future = super.submit(task);
         cancelFuture(future);
         return future;
     }
 
+    @Override
+    public void shutdown() {
+        super.shutdown();
+        timer.cancel();
+    }
+
+    @Override
+    public List<Runnable> shutdownNow() {
+        timer.cancel();
+        return super.shutdownNow();
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        timer.cancel();
+    }
+
     private void cancelFuture(Future<?> future) {
-        this.schedule(
-                () -> {
-                    if (!future.isDone()) {
-                        future.cancel(true);
-                        if (future.isCancelled()) {
-                            LOGGER.error("Killed task {}", future);
+        timer.schedule(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (!future.isDone()) {
+                            future.cancel(true);
+                            if (future.isCancelled()) {
+                                LOGGER.error("Killed task {}", future);
+                            } else {
+                                LOGGER.error("Could not kill task {}", future);
+                            }
                         } else {
-                            LOGGER.error("Could not kill task {}", future);
+                            LOGGER.debug("Future already done! {}", future);
                         }
-                    } else {
-                        LOGGER.debug("Future already done! {}", future);
                     }
-                    semaphore.release();
                 },
-                timeout,
-                TimeUnit.MILLISECONDS);
+                timeout);
     }
 }

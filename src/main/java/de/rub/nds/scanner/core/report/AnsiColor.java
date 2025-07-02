@@ -11,6 +11,10 @@ package de.rub.nds.scanner.core.report;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Enum representing ANSI color codes for terminal output. Provides foreground colors, background
+ * colors, and text formatting options.
+ */
 public enum AnsiColor {
     RESET("\u001B[0m"),
     BLACK("\u001B[30m"),
@@ -43,15 +47,26 @@ public enum AnsiColor {
 
     static {
         MAP = new HashMap<>();
-        for (AnsiColor c : AnsiColor.values()) {
+        for (AnsiColor c : values()) {
             MAP.put(c.code, c);
         }
     }
 
+    /**
+     * Returns the AnsiColor corresponding to the given ANSI code string.
+     *
+     * @param code the ANSI code string
+     * @return the corresponding AnsiColor, or null if no match is found
+     */
     public static AnsiColor getAnsiColor(String code) {
         return MAP.get(code);
     }
 
+    /**
+     * Returns the ANSI code string for this color.
+     *
+     * @return the ANSI code string
+     */
     public String getCode() {
         return code;
     }
