@@ -15,10 +15,16 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Represents a comprehensive recommendation for an analyzed property. This class contains all
+ * information needed to provide guidance about a specific property, including descriptions,
+ * documentation, links, and specific recommendations for different test results.
+ */
 @XmlRootElement
 @XmlType(
         propOrder = {
@@ -31,7 +37,7 @@ import java.util.List;
             "propertyRecommendations"
         })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Recommendation {
+public class Recommendation implements Serializable {
 
     static final String NO_INFORMATION_FOUND = "No detailed information available";
 
@@ -53,7 +59,8 @@ public class Recommendation {
     private List<PropertyResultRecommendation> propertyRecommendations;
 
     /**
-     * Constructs an empty Recommendation with empty lists for property recommendations and links.
+     * Constructs an empty Recommendation with initialized empty lists for property recommendations
+     * and links.
      */
     public Recommendation() {
         propertyRecommendations = new LinkedList<>();
@@ -61,10 +68,11 @@ public class Recommendation {
     }
 
     /**
-     * Constructs a Recommendation with the specified property and recommendations list.
+     * Constructs a Recommendation with the specified analyzed property and list of property
+     * recommendations.
      *
-     * @param analyzedProperty the analyzed property this recommendation applies to
-     * @param propertyRecommendations the list of property result recommendations
+     * @param analyzedProperty the property this recommendation applies to
+     * @param propertyRecommendations the list of recommendations for different test results
      */
     public Recommendation(
             AnalyzedProperty analyzedProperty,
@@ -74,10 +82,10 @@ public class Recommendation {
     }
 
     /**
-     * Constructs a Recommendation with a property and short name.
+     * Constructs a Recommendation with the specified analyzed property and short name.
      *
-     * @param analyzedProperty the analyzed property this recommendation applies to
-     * @param shortName the short name for this recommendation
+     * @param analyzedProperty the property this recommendation applies to
+     * @param shortName a short, human-readable name for the property
      */
     public Recommendation(AnalyzedProperty analyzedProperty, String shortName) {
         this();
@@ -86,13 +94,13 @@ public class Recommendation {
     }
 
     /**
-     * Constructs a Recommendation with detailed information.
+     * Constructs a Recommendation with descriptions and links.
      *
-     * @param analyzedProperty the analyzed property this recommendation applies to
-     * @param shortName the short name for this recommendation
-     * @param shortDescription the short description of the recommendation
-     * @param detailedDescription the detailed description of the recommendation
-     * @param links additional reference links
+     * @param analyzedProperty the property this recommendation applies to
+     * @param shortName a short, human-readable name for the property
+     * @param shortDescription a brief description of the property
+     * @param detailedDescription a comprehensive description of the property
+     * @param links relevant links for more information
      */
     public Recommendation(
             AnalyzedProperty analyzedProperty,
@@ -111,11 +119,11 @@ public class Recommendation {
     /**
      * Constructs a Recommendation with a single property recommendation.
      *
-     * @param analyzedProperty the analyzed property this recommendation applies to
-     * @param shortName the short name for this recommendation
-     * @param shortDescription the short description of the recommendation
-     * @param propertyRecommendation the property result recommendation to add
-     * @param links additional reference links
+     * @param analyzedProperty the property this recommendation applies to
+     * @param shortName a short, human-readable name for the property
+     * @param shortDescription a brief description of the property
+     * @param propertyRecommendation a recommendation for a specific test result
+     * @param links relevant links for more information
      */
     public Recommendation(
             AnalyzedProperty analyzedProperty,
@@ -132,14 +140,14 @@ public class Recommendation {
     }
 
     /**
-     * Constructs a Recommendation with detailed information and a single property recommendation.
+     * Constructs a Recommendation with complete descriptions and a single property recommendation.
      *
-     * @param analyzedProperty the analyzed property this recommendation applies to
-     * @param shortName the short name for this recommendation
-     * @param shortDescription the short description of the recommendation
-     * @param detailedDescription the detailed description of the recommendation
-     * @param propertyRecommendation the property result recommendation to add
-     * @param links additional reference links
+     * @param analyzedProperty the property this recommendation applies to
+     * @param shortName a short, human-readable name for the property
+     * @param shortDescription a brief description of the property
+     * @param detailedDescription a comprehensive description of the property
+     * @param propertyRecommendation a recommendation for a specific test result
+     * @param links relevant links for more information
      */
     public Recommendation(
             AnalyzedProperty analyzedProperty,
@@ -158,15 +166,15 @@ public class Recommendation {
     }
 
     /**
-     * Constructs a fully-specified Recommendation with all fields.
+     * Constructs a fully specified Recommendation with all fields.
      *
-     * @param analyzedProperty the analyzed property this recommendation applies to
-     * @param shortName the short name for this recommendation
-     * @param shortDescription the short description of the recommendation
-     * @param detailedDescription the detailed description of the recommendation
-     * @param testDocumentation the test documentation
-     * @param links the list of reference links
-     * @param propertyRecommendations the list of property result recommendations
+     * @param analyzedProperty the property this recommendation applies to
+     * @param shortName a short, human-readable name for the property
+     * @param shortDescription a brief description of the property
+     * @param detailedDescription a comprehensive description of the property
+     * @param testDocumentation documentation about how the property is tested
+     * @param links relevant links for more information
+     * @param propertyRecommendations list of recommendations for different test results
      */
     public Recommendation(
             AnalyzedProperty analyzedProperty,
@@ -186,7 +194,7 @@ public class Recommendation {
     }
 
     /**
-     * Gets the analyzed property this recommendation applies to.
+     * Gets the analyzed property that this recommendation applies to.
      *
      * @return the analyzed property
      */
@@ -195,7 +203,7 @@ public class Recommendation {
     }
 
     /**
-     * Sets the analyzed property.
+     * Sets the analyzed property that this recommendation applies to.
      *
      * @param analyzedProperty the analyzed property to set
      */
@@ -204,10 +212,10 @@ public class Recommendation {
     }
 
     /**
-     * Gets the short name of this recommendation. If no short name is set, returns the analyzed
-     * property's string representation.
+     * Gets the short name for the property. If no short name is set, returns the string
+     * representation of the analyzed property.
      *
-     * @return the short name or property string if short name is null or empty
+     * @return the short name or property string representation
      */
     public String getShortName() {
         if (shortName == null || shortName.equals("")) {
@@ -218,7 +226,7 @@ public class Recommendation {
     }
 
     /**
-     * Sets the short name.
+     * Sets the short name for the property.
      *
      * @param shortName the short name to set
      */
@@ -227,7 +235,7 @@ public class Recommendation {
     }
 
     /**
-     * Gets the short description of this recommendation.
+     * Gets the brief description of the property.
      *
      * @return the short description
      */
@@ -236,7 +244,7 @@ public class Recommendation {
     }
 
     /**
-     * Sets the short description.
+     * Sets the brief description of the property.
      *
      * @param shortDescription the short description to set
      */
@@ -245,7 +253,7 @@ public class Recommendation {
     }
 
     /**
-     * Gets the detailed description of this recommendation.
+     * Gets the comprehensive description of the property.
      *
      * @return the detailed description
      */
@@ -254,7 +262,7 @@ public class Recommendation {
     }
 
     /**
-     * Sets the detailed description.
+     * Sets the comprehensive description of the property.
      *
      * @param detailedDescription the detailed description to set
      */
@@ -263,7 +271,7 @@ public class Recommendation {
     }
 
     /**
-     * Gets the test documentation.
+     * Gets the documentation about how the property is tested.
      *
      * @return the test documentation
      */
@@ -272,7 +280,7 @@ public class Recommendation {
     }
 
     /**
-     * Sets the test documentation.
+     * Sets the documentation about how the property is tested.
      *
      * @param testDocumentation the test documentation to set
      */
@@ -281,18 +289,18 @@ public class Recommendation {
     }
 
     /**
-     * Gets the list of property result recommendations.
+     * Gets the list of recommendations for different test results.
      *
-     * @return the list of property recommendations
+     * @return the list of property result recommendations
      */
     public List<PropertyResultRecommendation> getPropertyRecommendations() {
         return propertyRecommendations;
     }
 
     /**
-     * Sets the property recommendations.
+     * Sets the list of recommendations for different test results.
      *
-     * @param propertyRecommendations the list of property recommendations to set
+     * @param propertyRecommendations the list of property result recommendations to set
      */
     public void setPropertyRecommendations(
             List<PropertyResultRecommendation> propertyRecommendations) {
@@ -300,12 +308,11 @@ public class Recommendation {
     }
 
     /**
-     * Gets the property result recommendation for a specific test result. If no matching
-     * recommendation is found, returns a default recommendation with NO_INFORMATION_FOUND and
-     * NO_RECOMMENDATION_FOUND messages.
+     * Gets the recommendation for a specific test result. If no recommendation is found, returns a
+     * default recommendation with no information available message.
      *
      * @param result the test result to find a recommendation for
-     * @return the matching property result recommendation or a default one
+     * @return the matching recommendation or a default recommendation if not found
      */
     public PropertyResultRecommendation getPropertyResultRecommendation(TestResult result) {
         for (PropertyResultRecommendation r : propertyRecommendations) {
@@ -318,7 +325,7 @@ public class Recommendation {
     }
 
     /**
-     * Gets the list of reference links.
+     * Gets the list of relevant links for more information.
      *
      * @return the list of links
      */
@@ -327,7 +334,7 @@ public class Recommendation {
     }
 
     /**
-     * Sets the reference links.
+     * Sets the list of relevant links for more information.
      *
      * @param links the list of links to set
      */

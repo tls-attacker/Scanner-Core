@@ -11,6 +11,11 @@ package de.rub.nds.scanner.core.report.rating;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.util.Map;
 
+/**
+ * Represents a score report containing the calculated rating score and the influencers that
+ * contributed to that score. This class provides a summary of how different property results
+ * affected the final rating.
+ */
 public class ScoreReport {
 
     private final int score;
@@ -25,11 +30,10 @@ public class ScoreReport {
     }
 
     /**
-     * Constructs a ScoreReport with the specified score and influencers.
+     * Constructs a ScoreReport with the specified score and map of influencers.
      *
-     * @param score the calculated score
-     * @param influencers the map of properties to their rating influencers that contributed to the
-     *     score
+     * @param score the calculated rating score
+     * @param influencers a map of analyzed properties to their rating influencers
      */
     public ScoreReport(
             int score, Map<AnalyzedProperty, PropertyResultRatingInfluencer> influencers) {
@@ -38,18 +42,19 @@ public class ScoreReport {
     }
 
     /**
-     * Gets the calculated score.
+     * Gets the calculated rating score.
      *
-     * @return the score value
+     * @return the rating score
      */
     public int getScore() {
         return score;
     }
 
     /**
-     * Gets the map of properties to their rating influencers.
+     * Gets the map of influencers that contributed to the score. The map contains analyzed
+     * properties as keys and their corresponding rating influencers as values.
      *
-     * @return the map of analyzed properties to property result rating influencers
+     * @return the map of analyzed properties to rating influencers
      */
     public Map<AnalyzedProperty, PropertyResultRatingInfluencer> getInfluencers() {
         return influencers;
