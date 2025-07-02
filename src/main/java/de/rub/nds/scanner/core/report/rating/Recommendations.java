@@ -17,6 +17,11 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Container class for a collection of recommendations. This class manages multiple Recommendation
+ * instances and provides methods to retrieve specific recommendations based on analyzed properties
+ * and test results.
+ */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Recommendations implements Serializable {
@@ -29,9 +34,9 @@ public class Recommendations implements Serializable {
     private Recommendations() {}
 
     /**
-     * Constructs a Recommendations with the specified list of recommendations.
+     * Constructs a Recommendations container with the specified list of recommendations.
      *
-     * @param recommendations the list of recommendations
+     * @param recommendations the list of recommendations to manage
      */
     public Recommendations(List<Recommendation> recommendations) {
         this.recommendations = recommendations;
@@ -47,7 +52,7 @@ public class Recommendations implements Serializable {
     }
 
     /**
-     * Sets the recommendations list.
+     * Sets the list of recommendations.
      *
      * @param recommendations the list of recommendations to set
      */
@@ -56,13 +61,13 @@ public class Recommendations implements Serializable {
     }
 
     /**
-     * Gets the property result recommendation for a specific property and test result. If no
-     * matching recommendation is found, returns a default recommendation with
-     * NO_RECOMMENDATION_FOUND messages.
+     * Gets the property result recommendation for a specific analyzed property and test result. If
+     * no matching recommendation is found, returns a default recommendation with "No recommendation
+     * found" messages.
      *
-     * @param property the analyzed property to find a recommendation for
-     * @param result the test result to find a recommendation for
-     * @return the matching property result recommendation or a default one
+     * @param property the analyzed property to search for
+     * @param result the test result to match
+     * @return the matching property result recommendation or a default if not found
      */
     public PropertyResultRecommendation getPropertyRecommendation(
             AnalyzedProperty property, TestResult result) {
@@ -79,11 +84,11 @@ public class Recommendations implements Serializable {
 
     /**
      * Gets the recommendation for a specific analyzed property. If no matching recommendation is
-     * found, returns a default recommendation with the property's string representation as the
-     * short name.
+     * found, returns a new recommendation with the property's string representation as the short
+     * name.
      *
-     * @param property the analyzed property to find a recommendation for
-     * @return the matching recommendation or a default one
+     * @param property the analyzed property to search for
+     * @return the matching recommendation or a new basic recommendation if not found
      */
     public Recommendation getRecommendation(AnalyzedProperty property) {
         for (Recommendation r : recommendations) {

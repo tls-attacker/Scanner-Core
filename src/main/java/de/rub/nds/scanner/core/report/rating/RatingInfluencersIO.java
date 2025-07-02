@@ -13,14 +13,19 @@ import de.rub.nds.scanner.core.util.JaxbSerializer;
 import jakarta.xml.bind.JAXBException;
 import java.util.Set;
 
+/**
+ * Provides XML serialization and deserialization functionality for RatingInfluencers objects. This
+ * class extends JaxbSerializer to handle the marshalling and unmarshalling of rating influencer
+ * configurations to and from XML format.
+ */
 public class RatingInfluencersIO extends JaxbSerializer<RatingInfluencers> {
 
     /**
-     * Constructs a RatingInfluencersIO with support for the specified AnalyzedProperty class.
-     * Creates a JAXB serializer configured to handle RatingInfluencers and related classes.
+     * Constructs a RatingInfluencersIO serializer for the specified analyzed property class. This
+     * constructor initializes the JAXB context with all necessary classes for serialization.
      *
-     * @param analyzedPropertyClass the class of AnalyzedProperty to support in serialization
-     * @throws JAXBException if JAXB context creation fails
+     * @param analyzedPropertyClass the class of analyzed properties to include in the JAXB context
+     * @throws JAXBException if there is an error creating the JAXB context
      */
     public RatingInfluencersIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {

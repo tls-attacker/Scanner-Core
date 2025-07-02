@@ -20,6 +20,11 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import java.util.Objects;
 
+/**
+ * Represents a rating influencer for a specific property result. This class encapsulates how a
+ * particular test result affects the overall rating score, including potential score caps and
+ * references to other properties.
+ */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
@@ -52,10 +57,10 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     private PropertyResultRatingInfluencer() {}
 
     /**
-     * Constructs a PropertyResultRatingInfluencer with the given test result and influence.
+     * Constructs a PropertyResultRatingInfluencer with the specified result and influence.
      *
-     * @param result the test result associated with this rating influencer
-     * @param influence the influence value to apply to the rating
+     * @param result the test result that triggers this influence
+     * @param influence the influence value (positive or negative) on the rating score
      */
     public PropertyResultRatingInfluencer(TestResult result, Integer influence) {
         this.result = result;
@@ -63,11 +68,11 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     }
 
     /**
-     * Constructs a PropertyResultRatingInfluencer with a referenced property.
+     * Constructs a PropertyResultRatingInfluencer with a reference to another property.
      *
-     * @param result the test result associated with this rating influencer
-     * @param referencedProperty the property being referenced
-     * @param referencedPropertyResult the test result of the referenced property
+     * @param result the test result that triggers this influence
+     * @param referencedProperty the property that this influencer references
+     * @param referencedPropertyResult the expected result of the referenced property
      */
     public PropertyResultRatingInfluencer(
             TestResult result,
@@ -79,11 +84,12 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     }
 
     /**
-     * Constructs a PropertyResultRatingInfluencer with a score cap.
+     * Constructs a PropertyResultRatingInfluencer with the specified result, influence, and score
+     * cap.
      *
-     * @param result the test result associated with this rating influencer
-     * @param influence the influence value to apply to the rating
-     * @param scoreCap the maximum score that can be achieved
+     * @param result the test result that triggers this influence
+     * @param influence the influence value (positive or negative) on the rating score
+     * @param scoreCap the maximum score cap when this influencer is applied
      */
     public PropertyResultRatingInfluencer(TestResult result, Integer influence, Integer scoreCap) {
         this.result = result;
@@ -92,7 +98,7 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     }
 
     /**
-     * Gets the test result associated with this rating influencer.
+     * Gets the test result that triggers this rating influence.
      *
      * @return the test result
      */
@@ -101,34 +107,34 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     }
 
     /**
-     * Gets the influence value.
+     * Gets the influence value that this result has on the rating score.
      *
-     * @return the influence value
+     * @return the influence value (positive or negative)
      */
     public Integer getInfluence() {
         return influence;
     }
 
     /**
-     * Gets the score cap value.
+     * Gets the score cap value. When applied, this caps the maximum possible score.
      *
-     * @return the score cap value
+     * @return the score cap value, or null if no cap is set
      */
     public Integer getScoreCap() {
         return scoreCap;
     }
 
     /**
-     * Checks if this influencer has a non-zero score cap.
+     * Checks whether this influencer has a score cap defined.
      *
-     * @return true if the score cap exists and is non-zero, false otherwise
+     * @return true if a score cap is set and is not zero, false otherwise
      */
     public boolean hasScoreCap() {
         return scoreCap != null && scoreCap != 0;
     }
 
     /**
-     * Sets the test result.
+     * Sets the test result that triggers this rating influence.
      *
      * @param result the test result to set
      */
@@ -137,16 +143,16 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     }
 
     /**
-     * Sets the influence value.
+     * Sets the influence value that this result has on the rating score.
      *
-     * @param influence the influence value to set
+     * @param influence the influence value to set (positive or negative)
      */
     public void setInfluence(Integer influence) {
         this.influence = influence;
     }
 
     /**
-     * Sets the score cap value.
+     * Sets the score cap value. When applied, this caps the maximum possible score.
      *
      * @param scoreCap the score cap value to set
      */
@@ -155,45 +161,46 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
     }
 
     /**
-     * Gets the referenced property.
+     * Gets the property that this influencer references.
      *
-     * @return the referenced property
+     * @return the referenced property, or null if no property is referenced
      */
     public AnalyzedProperty getReferencedProperty() {
         return referencedProperty;
     }
 
     /**
-     * Sets the referenced property.
+     * Sets the property that this influencer references.
      *
-     * @param referencedProperty the referenced property to set
+     * @param referencedProperty the property to reference
      */
     public void setReferencedProperty(AnalyzedProperty referencedProperty) {
         this.referencedProperty = referencedProperty;
     }
 
     /**
-     * Gets the test result of the referenced property.
+     * Gets the expected result of the referenced property.
      *
-     * @return the referenced property test result
+     * @return the expected test result of the referenced property
      */
     public TestResult getReferencedPropertyResult() {
         return referencedPropertyResult;
     }
 
     /**
-     * Sets the test result of the referenced property.
+     * Sets the expected result of the referenced property.
      *
-     * @param referencedPropertyResult the referenced property test result to set
+     * @param referencedPropertyResult the expected test result to set
      */
     public void setReferencedPropertyResult(TestResult referencedPropertyResult) {
         this.referencedPropertyResult = referencedPropertyResult;
     }
 
     /**
-     * Checks if this is a bad influence (negative influence or has a score cap).
+     * Determines whether this influencer has a negative impact on the rating. An influencer is
+     * considered bad if it has a negative influence value or if it sets a score cap.
      *
-     * @return true if this has a negative influence or a score cap, false otherwise
+     * @return true if this is a bad influence, false otherwise
      */
     @JsonIgnore
     public boolean isBadInfluence() {
@@ -202,9 +209,8 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
 
     /**
      * Compares this PropertyResultRatingInfluencer with another based on score cap and influence.
-     * Objects with score caps are ordered before those without. When both have score caps, they are
-     * compared by score cap value. When score caps are equal or both absent, they are compared by
-     * influence value.
+     * Influencers with score caps are ordered before those without. Among influencers with the same
+     * score cap status, they are ordered by their influence values.
      *
      * @param t the PropertyResultRatingInfluencer to compare to
      * @return a negative integer, zero, or a positive integer as this object is less than, equal
@@ -241,6 +247,11 @@ public class PropertyResultRatingInfluencer implements Comparable<PropertyResult
         return Objects.hash(scoreCap, influence);
     }
 
+    /**
+     * Returns a string representation of this PropertyResultRatingInfluencer.
+     *
+     * @return a string representation containing all field values
+     */
     @Override
     public String toString() {
         return "PropertyResultRatingInfluencer{"
