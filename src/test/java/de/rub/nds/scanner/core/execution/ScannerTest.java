@@ -399,7 +399,7 @@ public class ScannerTest {
         assertInstanceOf(AutoCloseable.class, scanner);
 
         // Test close method
-        scanner.close();
+        assertDoesNotThrow(scanner::close);
     }
 
     @Test
