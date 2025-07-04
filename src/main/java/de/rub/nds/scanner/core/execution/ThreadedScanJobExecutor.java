@@ -147,8 +147,8 @@ public class ThreadedScanJobExecutor<
                         probeResult = result.get();
                         LOGGER.info(
                                 "[{}/{}] {} probe executed",
-                                currentFinishedProbes,
-                                probeCount,
+                                String.format("%2d", currentFinishedProbes),
+                                String.format("%2d", probeCount),
                                 probeResult.getType().getName());
                     } catch (ExecutionException e) {
                         LOGGER.error("Some probe execution failed", e);
