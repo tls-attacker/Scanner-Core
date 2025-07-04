@@ -27,7 +27,11 @@ public final class ProgressSpinner {
     private static final List<String> spinnerTasks = new CopyOnWriteArrayList<>();
     private static final AtomicBoolean spinnerRunning = new AtomicBoolean(false);
     private static final AtomicBoolean isInteractive = new AtomicBoolean(false);
-    private static final String[] SPINNER_FRAMES = {"⢎⡰", "⢎⡡", "⢎⡑", "⢎⠱", "⠎⡱", "⢊⡱", "⢌⡱", "⢆⡱"};
+    private static final String[] SPINNER_FRAMES_UTF_8 = {
+        "⢎⡰", "⢎⡡", "⢎⡑", "⢎⠱", "⠎⡱", "⢊⡱", "⢌⡱", "⢆⡱"
+    };
+    private static final String[] SPINNER_FRAMES_DOS = {"|", "/", "-", "\\"};
+    private static String[] SPINNER_FRAMES;
 
     private static volatile boolean firstTaskIsMeta = true;
     private static Thread spinnerThread;
@@ -38,6 +42,7 @@ public final class ProgressSpinner {
 
     private ProgressSpinner() {
         // Utility class
+
     }
 
     /**
@@ -134,6 +139,12 @@ public final class ProgressSpinner {
         String tty = System.getenv("TTY");
         boolean interactive = console != null || (tty != null && tty.equalsIgnoreCase("true"));
         isInteractive.set(interactive);
+
+        if (System.out.charset().name().equalsIgnoreCase("UTF-8")) {
+            SPINNER_FRAMES = SPINNER_FRAMES_UTF_8;
+        } else {
+            SPINNER_FRAMES = SPINNER_FRAMES_DOS;
+        }
     }
 
     private static void printSpinner(String frame) {
