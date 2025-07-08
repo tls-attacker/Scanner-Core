@@ -97,6 +97,10 @@ public final class ProgressSpinner {
     public static void stopSpinner() {
         spinnerRunning.set(false);
         spinnerTasks.clear();
+        if (System.out.charset().name().equalsIgnoreCase("UTF-8")) {
+            // Show the cursor again
+            System.out.print("\u001B[?25h");
+        }
         if (spinnerThread != null && spinnerThread.isAlive()) {
             try {
                 spinnerThread.join();
@@ -142,6 +146,8 @@ public final class ProgressSpinner {
 
         if (System.out.charset().name().equalsIgnoreCase("UTF-8")) {
             SPINNER_FRAMES = SPINNER_FRAMES_UTF_8;
+            // hide cursor
+            System.out.print("\u001B[?25l");
         } else {
             SPINNER_FRAMES = SPINNER_FRAMES_DOS;
         }
