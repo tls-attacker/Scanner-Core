@@ -13,6 +13,7 @@ import de.rub.nds.scanner.core.probe.requirements.Requirement;
 import de.rub.nds.scanner.core.probe.result.*;
 import de.rub.nds.scanner.core.report.PerformanceData;
 import de.rub.nds.scanner.core.report.ScanReport;
+import de.rub.nds.terminalutils.ProgressSpinner;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +42,10 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
     @Override
     public ScannerProbe<ReportT, StateT> call() {
         LOGGER.debug("Executing: {}", getProbeName());
+        ProgressSpinner.startSpinnerTask(getProbeName() + " probe");
         this.startTime = System.currentTimeMillis();
         executeTest();
+        ProgressSpinner.stopSpinnerTask(getProbeName() + " probe");
         this.stopTime = System.currentTimeMillis();
 
         LOGGER.debug("Finished {} -  Took {}s", getProbeName(), (stopTime - startTime) / 1000);
