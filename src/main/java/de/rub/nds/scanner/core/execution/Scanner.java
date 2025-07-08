@@ -17,7 +17,7 @@ import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.report.ScanReport;
 import de.rub.nds.scanner.core.report.rating.ScoreReport;
 import de.rub.nds.scanner.core.report.rating.SiteReportRater;
-import de.rub.nds.scanner.core.util.ProgressSpinner;
+import de.rub.nds.terminalutils.ProgressSpinner;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;

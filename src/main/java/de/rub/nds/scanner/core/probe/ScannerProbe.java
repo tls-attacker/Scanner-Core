@@ -13,7 +13,7 @@ import de.rub.nds.scanner.core.probe.requirements.Requirement;
 import de.rub.nds.scanner.core.probe.result.*;
 import de.rub.nds.scanner.core.report.PerformanceData;
 import de.rub.nds.scanner.core.report.ScanReport;
-import de.rub.nds.scanner.core.util.ProgressSpinner;
+import de.rub.nds.terminalutils.ProgressSpinner;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
