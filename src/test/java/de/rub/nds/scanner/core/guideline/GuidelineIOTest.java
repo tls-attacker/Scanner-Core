@@ -47,13 +47,13 @@ class GuidelineIOTest {
 
     @Test
     void testConstructorWithAnalyzedPropertyClass() throws JAXBException {
-        GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
+        GuidelineIO<IOTestScanReport> io = new GuidelineIO<>(TestAnalyzedProperty.class);
         assertNotNull(io);
     }
 
     @Test
     void testWriteAndReadGuideline(@TempDir File tempDir) throws Exception {
-        GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
+        GuidelineIO<IOTestScanReport> io = new GuidelineIO<>(TestAnalyzedProperty.class);
 
         // Create a guideline
         Guideline<IOTestScanReport> guideline =
@@ -70,7 +70,7 @@ class GuidelineIOTest {
         assertTrue(file.exists());
 
         // Read back
-        Guideline<?> readGuideline = io.read(file);
+        Guideline<IOTestScanReport> readGuideline = io.read(file);
         assertNotNull(readGuideline);
         assertEquals("Test Guideline", readGuideline.getName());
         assertEquals("https://test.com", readGuideline.getLink());
@@ -79,7 +79,7 @@ class GuidelineIOTest {
 
     @Test
     void testWriteAndReadToStream() throws Exception {
-        GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
+        GuidelineIO<IOTestScanReport> io = new GuidelineIO<>(TestAnalyzedProperty.class);
 
         // Create a guideline
         Guideline<IOTestScanReport> guideline =
@@ -105,7 +105,7 @@ class GuidelineIOTest {
 
     @Test
     void testSerializationWithConditions() throws Exception {
-        GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
+        GuidelineIO<IOTestScanReport> io = new GuidelineIO<>(TestAnalyzedProperty.class);
 
         // Create guideline with condition
         TestAnalyzedProperty property = new TestAnalyzedProperty("TestProp");
@@ -125,7 +125,7 @@ class GuidelineIOTest {
         io.write(baos, guideline);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        Guideline<?> readGuideline = io.read(bais);
+        Guideline<IOTestScanReport> readGuideline = io.read(bais);
 
         assertNotNull(readGuideline);
         assertEquals(1, readGuideline.getChecks().size());
@@ -133,7 +133,7 @@ class GuidelineIOTest {
 
     @Test
     void testEmptyGuideline() throws Exception {
-        GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
+        GuidelineIO<IOTestScanReport> io = new GuidelineIO<>(TestAnalyzedProperty.class);
 
         Guideline<IOTestScanReport> emptyGuideline =
                 new Guideline<>("Empty", "https://empty.test", Arrays.asList());
@@ -151,7 +151,7 @@ class GuidelineIOTest {
 
     @Test
     void testInvalidXmlInput() throws Exception {
-        GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
+        GuidelineIO<IOTestScanReport> io = new GuidelineIO<>(TestAnalyzedProperty.class);
 
         String invalidXml = "This is not valid XML";
         ByteArrayInputStream bais =
@@ -164,7 +164,7 @@ class GuidelineIOTest {
     void testReflectionScanning() throws Exception {
         // This test verifies that the reflection scanning works
         // The GuidelineIO constructor should find IOTestGuidelineCheck via reflection
-        GuidelineIO io = new GuidelineIO(TestAnalyzedProperty.class);
+        GuidelineIO<IOTestScanReport> io = new GuidelineIO<>(TestAnalyzedProperty.class);
 
         // Create guideline with our test check
         Guideline<IOTestScanReport> guideline =
