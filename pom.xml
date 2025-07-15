@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>scanner-core</artifactId>
-    <version>6.2.2</version>
+    <version>6.2.3-SNAPSHOT</version>
 
     <name>Scanner Core</name>
     <description>A generic scanner framework which can execute a set of probes and combine the results into a report.</description>
