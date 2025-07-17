@@ -23,4 +23,9 @@ public class FailedCheckGuidelineResult extends GuidelineCheckResult {
     public FailedCheckGuidelineResult(String checkName, GuidelineAdherence adherence, String hint) {
         super(checkName, adherence, hint);
     }
+
+    @Override
+    public String toString() {
+        return "Failed guideline check: " + getHint();
+    }
 }

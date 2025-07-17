@@ -33,13 +33,13 @@ class GuidelineTest {
         }
     }
 
-    private static class TestGuidelineCheck extends GuidelineCheck<TestScanReport> {
+    private static class TestGuidelineCheck extends GuidelineCheck {
         public TestGuidelineCheck(String name) {
             super(name, RequirementLevel.MUST);
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
+        public <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report) {
             return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
         }
     }
@@ -48,12 +48,11 @@ class GuidelineTest {
     void testConstructorWithParameters() {
         String name = "Test Guideline";
         String link = "https://example.com/guideline";
-        List<GuidelineCheck<TestScanReport>> checks = new ArrayList<>();
+        List<GuidelineCheck> checks = new ArrayList<>();
         checks.add(new TestGuidelineCheck("Check1"));
         checks.add(new TestGuidelineCheck("Check2"));
-        List<GuidelineCheck<TestScanReport>> originalList = new ArrayList<>(checks);
 
-        Guideline<TestScanReport> guideline = new Guideline<>(name, link, checks);
+        Guideline guideline = new Guideline(name, link, checks);
 
         assertEquals(name, guideline.getName());
         assertEquals(link, guideline.getLink());
@@ -66,8 +65,7 @@ class GuidelineTest {
 
     @Test
     void testSettersAndGetters() {
-        Guideline<TestScanReport> guideline =
-                new Guideline<>("Initial", "https://initial.com", new ArrayList<>());
+        Guideline guideline = new Guideline("Initial", "https://initial.com", new ArrayList<>());
 
         guideline.setName("Updated Name");
         guideline.setLink("https://updated.com");
@@ -78,8 +76,7 @@ class GuidelineTest {
 
     @Test
     void testAddCheck() {
-        Guideline<TestScanReport> guideline =
-                new Guideline<>("Test", "https://test.com", new ArrayList<>());
+        Guideline guideline = new Guideline("Test", "https://test.com", new ArrayList<>());
 
         assertEquals(0, guideline.getChecks().size());
 
@@ -90,11 +87,10 @@ class GuidelineTest {
 
     @Test
     void testGetChecksReturnsUnmodifiableList() {
-        List<GuidelineCheck<TestScanReport>> checks =
-                Arrays.asList(new TestGuidelineCheck("Check1"));
-        Guideline<TestScanReport> guideline = new Guideline<>("Test", "https://test.com", checks);
+        List<GuidelineCheck> checks = Arrays.asList(new TestGuidelineCheck("Check1"));
+        Guideline guideline = new Guideline("Test", "https://test.com", checks);
 
-        List<GuidelineCheck<TestScanReport>> returnedChecks = guideline.getChecks();
+        List<GuidelineCheck> returnedChecks = guideline.getChecks();
         assertThrows(
                 UnsupportedOperationException.class,
                 () -> returnedChecks.add(new TestGuidelineCheck("NewCheck")));
@@ -102,8 +98,7 @@ class GuidelineTest {
 
     @Test
     void testImplementsSerializable() {
-        Guideline<TestScanReport> guideline =
-                new Guideline<>("Test", "https://test.com", new ArrayList<>());
+        Guideline guideline = new Guideline("Test", "https://test.com", new ArrayList<>());
         assertTrue(guideline instanceof Serializable);
     }
 
@@ -116,7 +111,7 @@ class GuidelineTest {
         Object instance = constructor.newInstance();
 
         assertNotNull(instance);
-        Guideline<?> guideline = (Guideline<?>) instance;
+        Guideline guideline = (Guideline) instance;
         assertNull(guideline.getName());
         assertNull(guideline.getLink());
         // Note: checks field will be null after default constructor

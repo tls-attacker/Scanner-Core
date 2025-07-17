@@ -13,12 +13,13 @@ import de.rub.nds.scanner.core.guideline.GuidelineAdherence;
 import de.rub.nds.scanner.core.guideline.GuidelineCheck;
 import de.rub.nds.scanner.core.guideline.GuidelineCheckResult;
 import de.rub.nds.scanner.core.guideline.RequirementLevel;
+import de.rub.nds.scanner.core.report.ScanReport;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "ioTestGuidelineCheck")
 @XmlType(name = "ioTestGuidelineCheckType")
-public class IOTestGuidelineCheck extends GuidelineCheck<IOTestScanReport> {
+public class IOTestGuidelineCheck extends GuidelineCheck {
     // Public constructor for JAXB
     public IOTestGuidelineCheck() {
         super("TestCheck", RequirementLevel.MUST);
@@ -29,7 +30,7 @@ public class IOTestGuidelineCheck extends GuidelineCheck<IOTestScanReport> {
     }
 
     @Override
-    public GuidelineCheckResult evaluate(IOTestScanReport report) {
+    public <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report) {
         return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
     }
 }
