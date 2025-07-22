@@ -86,7 +86,7 @@ class GuidelineCheckTest {
 
         @Override
         public <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report) {
-            return new FailedCheckGuidelineResult(getName(), fixedResult);
+            return new FailedCheckGuidelineResult(this, fixedResult);
         }
     }
 

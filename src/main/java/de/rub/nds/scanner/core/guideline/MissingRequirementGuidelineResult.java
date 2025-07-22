@@ -17,12 +17,12 @@ public class MissingRequirementGuidelineResult extends GuidelineCheckResult {
         super(null, null);
     }
 
-    public MissingRequirementGuidelineResult(String checkName, GuidelineAdherence adherence) {
-        super(checkName, adherence);
+    public MissingRequirementGuidelineResult(GuidelineCheck check, GuidelineAdherence adherence) {
+        super(check, adherence);
     }
 
     public MissingRequirementGuidelineResult(
-            String checkName, GuidelineAdherence adherence, String hint) {
-        super(checkName, adherence, hint);
+            GuidelineCheck check, GuidelineAdherence adherence, String hint) {
+        super(check, adherence, hint);
     }
 }

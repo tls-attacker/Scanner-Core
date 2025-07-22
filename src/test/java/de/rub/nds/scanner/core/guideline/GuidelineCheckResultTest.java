@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import de.rub.nds.scanner.core.guideline.testutil.IOTestGuidelineCheck;
 import java.lang.reflect.Constructor;
 import org.junit.jupiter.api.Test;
 
@@ -19,13 +20,13 @@ class GuidelineCheckResultTest {
 
     // Concrete implementation for testing
     private static class ConcreteGuidelineCheckResult extends GuidelineCheckResult {
-        public ConcreteGuidelineCheckResult(String checkName, GuidelineAdherence adherence) {
-            super(checkName, adherence);
+        public ConcreteGuidelineCheckResult(GuidelineCheck check, GuidelineAdherence adherence) {
+            super(check, adherence);
         }
 
         public ConcreteGuidelineCheckResult(
-                String checkName, GuidelineAdherence adherence, String hint) {
-            super(checkName, adherence, hint);
+                GuidelineCheck check, GuidelineAdherence adherence, String hint) {
+            super(check, adherence, hint);
         }
 
         @SuppressWarnings("unused")
@@ -35,42 +36,46 @@ class GuidelineCheckResultTest {
     }
 
     @Test
-    void testConstructorWithNameAndAdherence() {
-        String checkName = "TestCheck";
+    void testConstructorWithCheckAndAdherence() {
+        GuidelineCheck check = new IOTestGuidelineCheck("Test name", RequirementLevel.MUST);
         GuidelineAdherence adherence = GuidelineAdherence.ADHERED;
 
-        ConcreteGuidelineCheckResult result =
-                new ConcreteGuidelineCheckResult(checkName, adherence);
+        ConcreteGuidelineCheckResult result = new ConcreteGuidelineCheckResult(check, adherence);
 
-        assertEquals(checkName, result.getCheckName());
+        assertEquals(check.getName(), result.getCheckName());
+        assertEquals(check.getRequirementLevel(), result.getLevel());
         assertEquals(adherence, result.getAdherence());
         assertNull(result.getHint());
     }
 
     @Test
-    void testConstructorWithNameAdherenceAndHint() {
-        String checkName = "TestCheck";
+    void testConstructorWithCheckAdherenceAndHint() {
+        GuidelineCheck check = new IOTestGuidelineCheck("Test name", RequirementLevel.MUST);
         GuidelineAdherence adherence = GuidelineAdherence.VIOLATED;
         String hint = "Test hint";
 
         ConcreteGuidelineCheckResult result =
-                new ConcreteGuidelineCheckResult(checkName, adherence, hint);
+                new ConcreteGuidelineCheckResult(check, adherence, hint);
 
-        assertEquals(checkName, result.getCheckName());
+        assertEquals(check.getName(), result.getCheckName());
+        assertEquals(check.getRequirementLevel(), result.getLevel());
         assertEquals(adherence, result.getAdherence());
         assertEquals(hint, result.getHint());
     }
 
     @Test
     void testSettersAndGetters() {
+        GuidelineCheck check = new IOTestGuidelineCheck("Test name", RequirementLevel.MUST);
         ConcreteGuidelineCheckResult result =
-                new ConcreteGuidelineCheckResult("InitialName", GuidelineAdherence.ADHERED);
+                new ConcreteGuidelineCheckResult(check, GuidelineAdherence.ADHERED);
 
         result.setCheckName("UpdatedName");
         result.setAdherence(GuidelineAdherence.VIOLATED);
+        result.setLevel(RequirementLevel.MAY);
         result.setHint("Updated hint");
 
         assertEquals("UpdatedName", result.getCheckName());
+        assertEquals(RequirementLevel.MAY, result.getLevel());
         assertEquals(GuidelineAdherence.VIOLATED, result.getAdherence());
         assertEquals("Updated hint", result.getHint());
     }
@@ -87,6 +92,7 @@ class GuidelineCheckResultTest {
         ConcreteGuidelineCheckResult result = (ConcreteGuidelineCheckResult) instance;
         assertNull(result.getCheckName());
         assertNull(result.getAdherence());
+        assertNull(result.getLevel());
         assertNull(result.getHint());
     }
 }

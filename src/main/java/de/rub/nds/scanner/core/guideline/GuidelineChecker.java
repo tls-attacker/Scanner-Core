@@ -37,7 +37,7 @@ public class GuidelineChecker<ReportT extends ScanReport> {
             if (!check.passesCondition(report)) {
                 result =
                         new MissingRequirementGuidelineResult(
-                                check.getName(),
+                                check,
                                 GuidelineAdherence.CONDITION_NOT_MET,
                                 "Condition was not met => Check is skipped.");
             } else {
@@ -47,7 +47,7 @@ public class GuidelineChecker<ReportT extends ScanReport> {
                     LOGGER.debug("Failed evaluating check: ", throwable);
                     result =
                             new FailedCheckGuidelineResult(
-                                    check.getName(),
+                                    check,
                                     GuidelineAdherence.CHECK_FAILED,
                                     throwable.getLocalizedMessage());
                 }

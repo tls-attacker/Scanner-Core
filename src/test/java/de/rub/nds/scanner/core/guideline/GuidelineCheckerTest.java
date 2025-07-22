@@ -84,7 +84,7 @@ class GuidelineCheckerTest {
 
         @Override
         public <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report) {
-            return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
+            return new FailedCheckGuidelineResult(this, GuidelineAdherence.ADHERED);
         }
     }
 
@@ -95,7 +95,7 @@ class GuidelineCheckerTest {
 
         @Override
         public <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report) {
-            return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.VIOLATED);
+            return new FailedCheckGuidelineResult(this, GuidelineAdherence.VIOLATED);
         }
     }
 
@@ -106,7 +106,7 @@ class GuidelineCheckerTest {
 
         @Override
         public <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report) {
-            return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
+            return new FailedCheckGuidelineResult(this, GuidelineAdherence.ADHERED);
         }
     }
 

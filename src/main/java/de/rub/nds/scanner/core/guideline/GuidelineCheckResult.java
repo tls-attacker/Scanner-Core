@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public abstract class GuidelineCheckResult {
 
     private String checkName;
+    private RequirementLevel level;
     private GuidelineAdherence adherence;
     private String hint;
 
@@ -21,18 +22,22 @@ public abstract class GuidelineCheckResult {
     // Default constructor for deserialization
     private GuidelineCheckResult() {
         this.checkName = null;
+        this.level = null;
         this.adherence = null;
         this.hint = null;
     }
 
-    protected GuidelineCheckResult(String checkName, GuidelineAdherence adherence) {
-        this.checkName = checkName;
+    protected GuidelineCheckResult(GuidelineCheck check, GuidelineAdherence adherence) {
+        this.checkName = check != null ? check.getName() : null;
+        this.level = check != null ? check.getRequirementLevel() : null;
         this.adherence = adherence;
         this.hint = null;
     }
 
-    protected GuidelineCheckResult(String checkName, GuidelineAdherence adherence, String hint) {
-        this.checkName = checkName;
+    protected GuidelineCheckResult(
+            GuidelineCheck check, GuidelineAdherence adherence, String hint) {
+        this.checkName = check.getName();
+        this.level = check.getRequirementLevel();
         this.adherence = adherence;
         this.hint = hint;
     }
@@ -89,5 +94,23 @@ public abstract class GuidelineCheckResult {
      */
     public void setHint(String hint) {
         this.hint = hint;
+    }
+
+    /**
+     * Sets the requirement level of the check.
+     *
+     * @return the requirementLevel to set
+     */
+    public RequirementLevel getLevel() {
+        return level;
+    }
+
+    /**
+     * Sets the requirement level of the check.
+     *
+     * @param level the requirementLevel or null if non is set
+     */
+    public void setLevel(RequirementLevel level) {
+        this.level = level;
     }
 }
