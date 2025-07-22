@@ -16,11 +16,17 @@ public class FailedCheckGuidelineResult extends GuidelineCheckResult {
         super(null, null);
     }
 
-    public FailedCheckGuidelineResult(String checkName, GuidelineAdherence adherence) {
-        super(checkName, adherence);
+    public FailedCheckGuidelineResult(GuidelineCheck check, GuidelineAdherence adherence) {
+        super(check, adherence);
     }
 
-    public FailedCheckGuidelineResult(String checkName, GuidelineAdherence adherence, String hint) {
-        super(checkName, adherence, hint);
+    public FailedCheckGuidelineResult(
+            GuidelineCheck check, GuidelineAdherence adherence, String hint) {
+        super(check, adherence, hint);
+    }
+
+    @Override
+    public String toString() {
+        return "Failed guideline check: " + getHint();
     }
 }

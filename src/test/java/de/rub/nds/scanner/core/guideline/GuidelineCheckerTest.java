@@ -77,40 +77,40 @@ class GuidelineCheckerTest {
         }
     }
 
-    private static class PassingCheck extends GuidelineCheck<TestScanReport> {
+    private static class PassingCheck extends GuidelineCheck {
         public PassingCheck(String name) {
             super(name, RequirementLevel.MUST);
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
-            return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
+        public <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report) {
+            return new FailedCheckGuidelineResult(this, GuidelineAdherence.ADHERED);
         }
     }
 
-    private static class FailingCheck extends GuidelineCheck<TestScanReport> {
+    private static class FailingCheck extends GuidelineCheck {
         public FailingCheck(String name) {
             super(name, RequirementLevel.MUST);
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
-            return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.VIOLATED);
+        public <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report) {
+            return new FailedCheckGuidelineResult(this, GuidelineAdherence.VIOLATED);
         }
     }
 
-    private static class ConditionalCheck extends GuidelineCheck<TestScanReport> {
+    private static class ConditionalCheck extends GuidelineCheck {
         public ConditionalCheck(String name, GuidelineCheckCondition condition) {
             super(name, RequirementLevel.SHOULD, condition);
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
-            return new FailedCheckGuidelineResult(getName(), GuidelineAdherence.ADHERED);
+        public <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report) {
+            return new FailedCheckGuidelineResult(this, GuidelineAdherence.ADHERED);
         }
     }
 
-    private static class ExceptionThrowingCheck extends GuidelineCheck<TestScanReport> {
+    private static class ExceptionThrowingCheck extends GuidelineCheck {
         private final RuntimeException exception;
 
         public ExceptionThrowingCheck(String name, RuntimeException exception) {
@@ -119,12 +119,12 @@ class GuidelineCheckerTest {
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
+        public <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report) {
             throw exception;
         }
     }
 
-    private Guideline<TestScanReport> guideline;
+    private Guideline guideline;
     private TestScanReport report;
 
     @BeforeEach
@@ -134,9 +134,9 @@ class GuidelineCheckerTest {
 
     @Test
     void testFillReportWithPassingChecks() {
-        List<GuidelineCheck<TestScanReport>> checks =
+        List<GuidelineCheck> checks =
                 Arrays.asList(new PassingCheck("Check1"), new PassingCheck("Check2"));
-        guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
+        guideline = new Guideline("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
 
         checker.fillReport(report);
@@ -152,12 +152,12 @@ class GuidelineCheckerTest {
 
     @Test
     void testFillReportWithFailingChecks() {
-        List<GuidelineCheck<TestScanReport>> checks =
+        List<GuidelineCheck> checks =
                 Arrays.asList(
                         new PassingCheck("Check1"),
                         new FailingCheck("Check2"),
                         new FailingCheck("Check3"));
-        guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
+        guideline = new Guideline("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
 
         checker.fillReport(report);
@@ -174,11 +174,11 @@ class GuidelineCheckerTest {
         TestAnalyzedProperty property = new TestAnalyzedProperty("TestProp");
         GuidelineCheckCondition condition = new GuidelineCheckCondition(property, TestResults.TRUE);
 
-        List<GuidelineCheck<TestScanReport>> checks =
+        List<GuidelineCheck> checks =
                 Arrays.asList(
                         new PassingCheck("Check1"),
                         new ConditionalCheck("ConditionalCheck", condition));
-        guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
+        guideline = new Guideline("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
 
         // Set condition to false
@@ -202,9 +202,9 @@ class GuidelineCheckerTest {
         TestAnalyzedProperty property = new TestAnalyzedProperty("TestProp");
         GuidelineCheckCondition condition = new GuidelineCheckCondition(property, TestResults.TRUE);
 
-        List<GuidelineCheck<TestScanReport>> checks =
+        List<GuidelineCheck> checks =
                 Arrays.asList(new ConditionalCheck("ConditionalCheck", condition));
-        guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
+        guideline = new Guideline("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
 
         // Set condition to true
@@ -222,12 +222,12 @@ class GuidelineCheckerTest {
     @Test
     void testFillReportWithExceptionThrowingCheck() {
         RuntimeException exception = new RuntimeException("Test exception");
-        List<GuidelineCheck<TestScanReport>> checks =
+        List<GuidelineCheck> checks =
                 Arrays.asList(
                         new PassingCheck("Check1"),
                         new ExceptionThrowingCheck("ExceptionCheck", exception),
                         new PassingCheck("Check3"));
-        guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
+        guideline = new Guideline("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
 
         checker.fillReport(report);
@@ -247,10 +247,10 @@ class GuidelineCheckerTest {
     @Test
     void testFillReportWithError() {
         Error error = new OutOfMemoryError("Test error");
-        List<GuidelineCheck<TestScanReport>> checks =
+        List<GuidelineCheck> checks =
                 Arrays.asList(
                         new ExceptionThrowingCheck("ErrorCheck", new RuntimeException(error)));
-        guideline = new Guideline<>("Test Guideline", "https://test.com", checks);
+        guideline = new Guideline("Test Guideline", "https://test.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
 
         checker.fillReport(report);
@@ -265,7 +265,7 @@ class GuidelineCheckerTest {
 
     @Test
     void testFillReportWithEmptyChecks() {
-        guideline = new Guideline<>("Test Guideline", "https://test.com", new ArrayList<>());
+        guideline = new Guideline("Test Guideline", "https://test.com", new ArrayList<>());
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
 
         checker.fillReport(report);
@@ -280,13 +280,13 @@ class GuidelineCheckerTest {
         TestAnalyzedProperty property = new TestAnalyzedProperty("TestProp");
         GuidelineCheckCondition condition = new GuidelineCheckCondition(property, TestResults.TRUE);
 
-        List<GuidelineCheck<TestScanReport>> checks =
+        List<GuidelineCheck> checks =
                 Arrays.asList(
                         new PassingCheck("PassCheck"),
                         new FailingCheck("FailCheck"),
                         new ConditionalCheck("UnmetConditionCheck", condition),
                         new ExceptionThrowingCheck("ExceptionCheck", new RuntimeException("Test")));
-        guideline = new Guideline<>("Mixed Guideline", "https://mixed.com", checks);
+        guideline = new Guideline("Mixed Guideline", "https://mixed.com", checks);
         GuidelineChecker<TestScanReport> checker = new GuidelineChecker<>(guideline);
 
         // Set condition to false

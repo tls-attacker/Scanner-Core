@@ -12,34 +12,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import de.rub.nds.scanner.core.guideline.testutil.IOTestGuidelineCheck;
 import java.lang.reflect.Constructor;
 import org.junit.jupiter.api.Test;
 
 class MissingRequirementGuidelineResultTest {
 
     @Test
-    void testConstructorWithNameAndAdherence() {
-        String checkName = "TestCheck";
+    void testConstructorWithCheckAndAdherence() {
+        GuidelineCheck check = new IOTestGuidelineCheck("TestCheck", RequirementLevel.MUST);
         GuidelineAdherence adherence = GuidelineAdherence.CONDITION_NOT_MET;
 
         MissingRequirementGuidelineResult result =
-                new MissingRequirementGuidelineResult(checkName, adherence);
+                new MissingRequirementGuidelineResult(check, adherence);
 
-        assertEquals(checkName, result.getCheckName());
+        assertEquals(check.getName(), result.getCheckName());
+        assertEquals(check.getRequirementLevel(), result.getLevel());
         assertEquals(adherence, result.getAdherence());
         assertNull(result.getHint());
     }
 
     @Test
     void testConstructorWithNameAdherenceAndHint() {
-        String checkName = "TestCheck";
+        GuidelineCheck check = new IOTestGuidelineCheck("TestCheck", RequirementLevel.MUST);
         GuidelineAdherence adherence = GuidelineAdherence.CONDITION_NOT_MET;
         String hint = "Precondition not satisfied";
 
         MissingRequirementGuidelineResult result =
-                new MissingRequirementGuidelineResult(checkName, adherence, hint);
+                new MissingRequirementGuidelineResult(check, adherence, hint);
 
-        assertEquals(checkName, result.getCheckName());
+        assertEquals(check.getName(), result.getCheckName());
+        assertEquals(check.getRequirementLevel(), result.getLevel());
         assertEquals(adherence, result.getAdherence());
         assertEquals(hint, result.getHint());
     }
@@ -60,15 +63,18 @@ class MissingRequirementGuidelineResultTest {
 
     @Test
     void testInheritanceFromGuidelineCheckResult() {
+        GuidelineCheck check = new IOTestGuidelineCheck("Test", RequirementLevel.MUST);
         MissingRequirementGuidelineResult result =
-                new MissingRequirementGuidelineResult("Test", GuidelineAdherence.CONDITION_NOT_MET);
+                new MissingRequirementGuidelineResult(check, GuidelineAdherence.CONDITION_NOT_MET);
 
         // Test inherited setters
         result.setCheckName("NewName");
+        result.setLevel(RequirementLevel.MAY);
         result.setAdherence(GuidelineAdherence.ADHERED);
         result.setHint("New hint");
 
         assertEquals("NewName", result.getCheckName());
+        assertEquals(RequirementLevel.MAY, result.getLevel());
         assertEquals(GuidelineAdherence.ADHERED, result.getAdherence());
         assertEquals("New hint", result.getHint());
     }

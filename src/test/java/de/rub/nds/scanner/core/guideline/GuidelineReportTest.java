@@ -10,6 +10,7 @@ package de.rub.nds.scanner.core.guideline;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import de.rub.nds.scanner.core.guideline.testutil.IOTestGuidelineCheck;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +24,25 @@ class GuidelineReportTest {
     @BeforeEach
     void setUp() {
         sampleResults = new ArrayList<>();
-        sampleResults.add(new FailedCheckGuidelineResult("Check1", GuidelineAdherence.ADHERED));
-        sampleResults.add(new FailedCheckGuidelineResult("Check2", GuidelineAdherence.VIOLATED));
+        sampleResults.add(
+                new FailedCheckGuidelineResult(
+                        new IOTestGuidelineCheck("Check1", null), GuidelineAdherence.ADHERED));
+        sampleResults.add(
+                new FailedCheckGuidelineResult(
+                        new IOTestGuidelineCheck("Check2", null), GuidelineAdherence.VIOLATED));
         sampleResults.add(
                 new MissingRequirementGuidelineResult(
-                        "Check3", GuidelineAdherence.CONDITION_NOT_MET));
+                        new IOTestGuidelineCheck("Check3", null),
+                        GuidelineAdherence.CONDITION_NOT_MET));
         sampleResults.add(
-                new FailedCheckGuidelineResult("Check4", GuidelineAdherence.CHECK_FAILED));
-        sampleResults.add(new FailedCheckGuidelineResult("Check5", GuidelineAdherence.ADHERED));
-        sampleResults.add(new FailedCheckGuidelineResult("Check6", GuidelineAdherence.VIOLATED));
+                new FailedCheckGuidelineResult(
+                        new IOTestGuidelineCheck("Check4", null), GuidelineAdherence.CHECK_FAILED));
+        sampleResults.add(
+                new FailedCheckGuidelineResult(
+                        new IOTestGuidelineCheck("Check5", null), GuidelineAdherence.ADHERED));
+        sampleResults.add(
+                new FailedCheckGuidelineResult(
+                        new IOTestGuidelineCheck("Check6", null), GuidelineAdherence.VIOLATED));
     }
 
     @Test
@@ -68,7 +79,9 @@ class GuidelineReportTest {
 
         assertEquals(0, report.getResults().size());
 
-        report.addResult(new FailedCheckGuidelineResult("NewCheck", GuidelineAdherence.ADHERED));
+        report.addResult(
+                new FailedCheckGuidelineResult(
+                        new IOTestGuidelineCheck("NewCheck", null), GuidelineAdherence.ADHERED));
         assertEquals(1, report.getResults().size());
         assertEquals("NewCheck", report.getResults().get(0).getCheckName());
     }
@@ -83,7 +96,9 @@ class GuidelineReportTest {
                 UnsupportedOperationException.class,
                 () ->
                         results.add(
-                                new FailedCheckGuidelineResult("New", GuidelineAdherence.ADHERED)));
+                                new FailedCheckGuidelineResult(
+                                        new IOTestGuidelineCheck("New", null),
+                                        GuidelineAdherence.ADHERED)));
     }
 
     @Test
@@ -98,7 +113,9 @@ class GuidelineReportTest {
                 UnsupportedOperationException.class,
                 () ->
                         adhered.add(
-                                new FailedCheckGuidelineResult("New", GuidelineAdherence.ADHERED)));
+                                new FailedCheckGuidelineResult(
+                                        new IOTestGuidelineCheck("New", null),
+                                        GuidelineAdherence.ADHERED)));
     }
 
     @Test
@@ -115,7 +132,8 @@ class GuidelineReportTest {
                 () ->
                         violated.add(
                                 new FailedCheckGuidelineResult(
-                                        "New", GuidelineAdherence.VIOLATED)));
+                                        new IOTestGuidelineCheck("New", null),
+                                        GuidelineAdherence.VIOLATED)));
     }
 
     @Test
@@ -133,7 +151,8 @@ class GuidelineReportTest {
                 () ->
                         conditionNotMet.add(
                                 new MissingRequirementGuidelineResult(
-                                        "New", GuidelineAdherence.CONDITION_NOT_MET)));
+                                        new IOTestGuidelineCheck("New", null),
+                                        GuidelineAdherence.CONDITION_NOT_MET)));
     }
 
     @Test
@@ -149,7 +168,8 @@ class GuidelineReportTest {
                 () ->
                         failed.add(
                                 new FailedCheckGuidelineResult(
-                                        "New", GuidelineAdherence.CHECK_FAILED)));
+                                        new IOTestGuidelineCheck("New", null),
+                                        GuidelineAdherence.CHECK_FAILED)));
     }
 
     @Test

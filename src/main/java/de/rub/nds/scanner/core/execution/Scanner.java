@@ -127,7 +127,7 @@ public abstract class Scanner<
      *
      * @return A list of guidelines.
      */
-    protected List<Guideline<ReportT>> getGuidelines() {
+    protected List<Guideline> getGuidelines() {
         return List.of();
     }
 
@@ -191,9 +191,9 @@ public abstract class Scanner<
 
         // Guideline Evaluation
         LOGGER.debug("Retrieving guidelines for evaluation");
-        List<Guideline<ReportT>> guidelines = getGuidelines();
+        List<Guideline> guidelines = getGuidelines();
         LOGGER.debug("Got a total of {} guidelines to evaluate", guidelines.size());
-        for (Guideline<ReportT> guideline : guidelines) {
+        for (Guideline guideline : guidelines) {
             LOGGER.debug("Executing evaluation of guideline '{}'", guideline.getName());
             GuidelineChecker<ReportT> checker = new GuidelineChecker<>(guideline);
             checker.fillReport(report);

@@ -18,9 +18,9 @@ public class GuidelineChecker<ReportT extends ScanReport> {
 
     protected static final Logger LOGGER = LogManager.getLogger();
 
-    private final Guideline<ReportT> guideline;
+    private final Guideline guideline;
 
-    public GuidelineChecker(Guideline<ReportT> guideline) {
+    public GuidelineChecker(Guideline guideline) {
         this.guideline = guideline;
     }
 
@@ -32,12 +32,12 @@ public class GuidelineChecker<ReportT extends ScanReport> {
      */
     public void fillReport(ReportT report) {
         List<GuidelineCheckResult> results = new ArrayList<>();
-        for (GuidelineCheck<ReportT> check : guideline.getChecks()) {
+        for (GuidelineCheck check : guideline.getChecks()) {
             GuidelineCheckResult result;
             if (!check.passesCondition(report)) {
                 result =
                         new MissingRequirementGuidelineResult(
-                                check.getName(),
+                                check,
                                 GuidelineAdherence.CONDITION_NOT_MET,
                                 "Condition was not met => Check is skipped.");
             } else {
@@ -47,7 +47,7 @@ public class GuidelineChecker<ReportT extends ScanReport> {
                     LOGGER.debug("Failed evaluating check: ", throwable);
                     result =
                             new FailedCheckGuidelineResult(
-                                    check.getName(),
+                                    check,
                                     GuidelineAdherence.CHECK_FAILED,
                                     throwable.getLocalizedMessage());
                 }

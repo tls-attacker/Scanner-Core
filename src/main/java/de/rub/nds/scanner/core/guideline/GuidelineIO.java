@@ -9,7 +9,6 @@
 package de.rub.nds.scanner.core.guideline;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
-import de.rub.nds.scanner.core.report.ScanReport;
 import de.rub.nds.scanner.core.util.JaxbSerializer;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -33,8 +32,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
-public final class GuidelineIO<ReportT extends ScanReport>
-        extends JaxbSerializer<Guideline<ReportT>> {
+public final class GuidelineIO extends JaxbSerializer<Guideline> {
 
     private Logger LOGGER = LogManager.getLogger();
 
@@ -112,11 +110,11 @@ public final class GuidelineIO<ReportT extends ScanReport>
         return xmlFilePaths;
     }
 
-    public List<Guideline<ReportT>> readGuidelines(ClassLoader classLoader, String subFolder) {
+    public List<Guideline> readGuidelines(ClassLoader classLoader, String subFolder) {
 
         LOGGER.debug("Loading guidelines from files...");
 
-        List<Guideline<ReportT>> guidelines = new ArrayList<>();
+        List<Guideline> guidelines = new ArrayList<>();
 
         try {
             // Get all files in guideline folder
