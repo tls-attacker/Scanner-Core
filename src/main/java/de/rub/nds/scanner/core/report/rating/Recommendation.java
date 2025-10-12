@@ -10,6 +10,7 @@ package de.rub.nds.scanner.core.report.rating;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.TestResult;
+import de.rub.nds.scanner.core.report.ScanReport;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAnyElement;
@@ -322,6 +323,21 @@ public class Recommendation implements Serializable {
         }
         return new PropertyResultRecommendation(
                 result, NO_INFORMATION_FOUND, NO_RECOMMENDATION_FOUND);
+    }
+
+    /**
+     * Gets the recommendation for a specific test result with access to the full scan report. This
+     * method allows subclasses to implement conditional logic based on other properties in the
+     * report. The default implementation ignores the report and delegates to {@link
+     * #getPropertyResultRecommendation(TestResult)}.
+     *
+     * @param result the test result to find a recommendation for
+     * @param report the scan report containing all property test results
+     * @return the matching recommendation or a default recommendation if not found
+     */
+    public PropertyResultRecommendation getPropertyResultRecommendation(
+            TestResult result, ScanReport report) {
+        return getPropertyResultRecommendation(result);
     }
 
     /**

@@ -12,7 +12,7 @@ import de.rub.nds.scanner.core.probe.result.TestResult;
 import de.rub.nds.scanner.core.probe.result.TestResults;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAnyElement;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
@@ -23,11 +23,11 @@ import java.io.Serializable;
  * recommendations, and detailed explanations.
  */
 @XmlRootElement
-@XmlSeeAlso({TestResults.class})
+@XmlSeeAlso({TestResults.class, ConditionalPropertyResultRecommendation.class})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyResultRecommendation implements Serializable {
 
-    @XmlAnyElement(lax = true)
+    @XmlElement(type = TestResults.class)
     private TestResult result;
 
     private String shortDescription;
@@ -38,7 +38,7 @@ public class PropertyResultRecommendation implements Serializable {
 
     /** Private no-arg constructor to please JAXB */
     @SuppressWarnings("unused")
-    private PropertyResultRecommendation() {}
+    protected PropertyResultRecommendation() {}
 
     /**
      * Constructs a PropertyResultRecommendation with the specified result and recommendations.

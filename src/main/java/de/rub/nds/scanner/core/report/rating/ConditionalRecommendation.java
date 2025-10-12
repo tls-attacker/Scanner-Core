@@ -11,8 +11,11 @@ package de.rub.nds.scanner.core.report.rating;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.TestResult;
 import de.rub.nds.scanner.core.probe.result.TestResults;
+import de.rub.nds.scanner.core.report.ScanReport;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAnyElement;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
 
@@ -21,7 +24,10 @@ import jakarta.xml.bind.annotation.XmlSeeAlso;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConditionalRecommendation extends Recommendation {
 
+    @XmlAnyElement(lax = true)
     private AnalyzedProperty propertyCondition;
+
+    @XmlElement(type = TestResults.class)
     private TestResult conditionResult;
 
     public ConditionalRecommendation() {
@@ -57,10 +63,19 @@ public class ConditionalRecommendation extends Recommendation {
         this.conditionResult = conditionResult;
     }
 
-    // if(conditionResult == True){
-    //     if(actualProperty == False){
-    //     then go ahead and recommend
-    //     }
-    // }
+    @Override
+    public PropertyResultRecommendation getPropertyResultRecommendation(
+            TestResult result, ScanReport report) {
+        // Check if the condition is satisfied by looking up the condition property in the report
+        TestResult actualConditionResult = report.getResult(propertyCondition);
 
+        // If the condition is not met, don't provide a recommendation
+        if (actualConditionResult != conditionResult) {
+            return new PropertyResultRecommendation(
+                    result, NO_INFORMATION_FOUND, NO_RECOMMENDATION_FOUND);
+        }
+
+        // If the condition is met, return the normal recommendation
+        return super.getPropertyResultRecommendation(result);
+    }
 }
