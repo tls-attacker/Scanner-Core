@@ -34,6 +34,7 @@ public class RecommendationsIO extends JaxbSerializer<Recommendations> {
                         Recommendations.class,
                         Recommendation.class,
                         PropertyResultRecommendation.class,
+                        ConditionalRecommendation.class,
                         analyzedPropertyClass));
     }
 }
