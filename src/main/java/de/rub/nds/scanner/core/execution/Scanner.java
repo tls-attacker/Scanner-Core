@@ -49,6 +49,9 @@ public abstract class Scanner<
     private final List<AfterProbeT> afterList;
     private final boolean fillProbeListsAtScanStart;
 
+    // Optional callback for probe progress updates
+    private ProbeProgressCallback<ReportT, StateT> progressCallback = ProbeProgressCallback.noOp();
+
     /**
      * Creates a new scanner instance.
      *
@@ -132,6 +135,18 @@ public abstract class Scanner<
     }
 
     /**
+     * Sets the progress callback to be invoked when probes complete during scanning. This allows
+     * external components to receive real-time updates about scan progress and partial results.
+     *
+     * @param progressCallback the callback to invoke on probe completion, or null to disable
+     *     callbacks
+     */
+    public void setProgressCallback(ProbeProgressCallback<ReportT, StateT> progressCallback) {
+        this.progressCallback =
+                progressCallback != null ? progressCallback : ProbeProgressCallback.noOp();
+    }
+
+    /**
      * Performs the scan. It will take care of all the necessary steps to perform a scan, including
      * filling the probe list by calling {@link #fillProbeLists}, checking the scan prerequisites by
      * calling {@link #checkScanPrerequisites}, and executing the scan. After the scan has been
@@ -166,6 +181,8 @@ public abstract class Scanner<
                         scanJob,
                         executorConfig.getParallelProbes(),
                         "ScannerProbeExecutor " + report.getRemoteName())) {
+            // Set the progress callback on the executor
+            scanJobExecutor.setProgressCallback(progressCallback);
             ProgressSpinner.startSpinnerTask("Executing:");
             report.setScanStartTime(System.currentTimeMillis());
             scanJobExecutor.execute(report);
