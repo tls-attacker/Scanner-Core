@@ -13,9 +13,12 @@ import de.rub.nds.scanner.core.probe.result.TestResult;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Container class for a collection of recommendations. This class manages multiple Recommendation
@@ -26,7 +29,15 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Recommendations implements Serializable {
 
-    @XmlElement(name = "recommendation")
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    @XmlElements(
+            value = {
+                @XmlElement(
+                        type = ConditionalRecommendation.class,
+                        name = "conditionalRecommendation"),
+                @XmlElement(type = Recommendation.class, name = "recommendation")
+            })
     private List<Recommendation> recommendations;
 
     /** Private no-arg constructor to please JAXB */
@@ -96,6 +107,7 @@ public class Recommendations implements Serializable {
                 return r;
             }
         }
+        LOGGER.info("Return normal Recommenation and not ConditionalRecommendtaion");
         return new Recommendation(property, property.toString());
     }
 }

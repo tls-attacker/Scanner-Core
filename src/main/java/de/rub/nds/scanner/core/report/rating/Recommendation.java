@@ -15,6 +15,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ import java.util.List;
  * documentation, links, and specific recommendations for different test results.
  */
 @XmlRootElement
+@XmlSeeAlso({ConditionalRecommendation.class})
 @XmlType(
         propOrder = {
             "analyzedProperty",

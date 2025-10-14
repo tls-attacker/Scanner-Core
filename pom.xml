@@ -123,6 +123,12 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.13.0</version>
+        </dependency>
         <!-- scope: test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

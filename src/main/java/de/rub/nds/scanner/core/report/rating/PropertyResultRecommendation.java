@@ -23,7 +23,7 @@ import java.io.Serializable;
  * recommendations, and detailed explanations.
  */
 @XmlRootElement
-@XmlSeeAlso({TestResults.class, ConditionalPropertyResultRecommendation.class})
+@XmlSeeAlso({TestResults.class})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PropertyResultRecommendation implements Serializable {
 
