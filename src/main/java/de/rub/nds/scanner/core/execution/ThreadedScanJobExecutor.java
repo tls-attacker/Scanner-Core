@@ -161,7 +161,8 @@ public class ThreadedScanJobExecutor<
                     try {
                         probeResult = result.get();
                         LOGGER.info(
-                                "[{}/{}] {} probe executed",
+                                "[{}] [{}/{}] {} probe executed",
+                                report.getRemoteName(),
                                 String.format("%2d", currentFinishedProbes),
                                 String.format("%2d", probeCount),
                                 probeResult.getType().getName());
