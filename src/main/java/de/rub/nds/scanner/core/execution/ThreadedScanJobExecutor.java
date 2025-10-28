@@ -60,6 +60,9 @@ public class ThreadedScanJobExecutor<
     private volatile int probeCount;
     private final AtomicInteger finishedProbes = new AtomicInteger(0);
 
+    // Callback for probe progress updates (optional)
+    private ProbeProgressCallback<ReportT, StateT> progressCallback = ProbeProgressCallback.noOp();
+
     /**
      * Creates a new ThreadedScanJobExecutor with a custom thread pool.
      *
@@ -101,6 +104,18 @@ public class ThreadedScanJobExecutor<
         this.config = config;
         this.scanJob = scanJob;
         this.futureResults = new LinkedList<>();
+    }
+
+    /**
+     * Sets the progress callback to be invoked when probes complete. This allows external
+     * components to receive real-time updates about scan progress.
+     *
+     * @param progressCallback the callback to invoke on probe completion, or null to disable
+     *     callbacks
+     */
+    public void setProgressCallback(ProbeProgressCallback<ReportT, StateT> progressCallback) {
+        this.progressCallback =
+                progressCallback != null ? progressCallback : ProbeProgressCallback.noOp();
     }
 
     /**
@@ -146,7 +161,8 @@ public class ThreadedScanJobExecutor<
                     try {
                         probeResult = result.get();
                         LOGGER.info(
-                                "[{}/{}] {} probe executed",
+                                "[{}] [{}/{}] {} probe executed",
+                                report.getRemoteName(),
                                 String.format("%2d", currentFinishedProbes),
                                 String.format("%2d", probeCount),
                                 probeResult.getType().getName());
@@ -157,6 +173,14 @@ public class ThreadedScanJobExecutor<
                     finishedFutures.add(result);
                     probeResult.merge(report);
                     report.markProbeAsExecuted(probeResult);
+
+                    // Notify progress callback
+                    try {
+                        progressCallback.onProbeCompleted(
+                                probeResult, report, currentFinishedProbes, probeCount);
+                    } catch (Exception e) {
+                        LOGGER.warn("Progress callback threw exception, continuing scan", e);
+                    }
                 }
             }
             futureResults.removeAll(finishedFutures);
