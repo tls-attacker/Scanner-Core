@@ -431,4 +431,79 @@ public class ScannerTest {
 
         assertTrue(testThread.isInterrupted() || !testThread.isAlive());
     }
+
+    @Test
+    public void testSetProgressCallbackWithValidCallback() {
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            ProbeProgressCallback<TestReport, TestState> callback =
+                    (probe, report, completedProbes, totalProbes) -> {
+                        // Custom callback logic
+                    };
+
+            assertDoesNotThrow(() -> scanner.setProgressCallback(callback));
+        }
+    }
+
+    @Test
+    public void testSetProgressCallbackWithNull() {
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+            // Should not throw when setting null callback
+            assertDoesNotThrow(() -> scanner.setProgressCallback(null));
+
+            // Scanner should still work with null callback
+            TestReport report = scanner.scan();
+            assertNotNull(report);
+        }
+    }
+
+    @Test
+    public void testProgressCallbackIsInvoked() {
+        List<TestProbe> probeList = new ArrayList<>();
+        probeList.add(new TestProbe(new TestProbeType("probe1")));
+        probeList.add(new TestProbe(new TestProbeType("probe2")));
+
+        List<TestAfterProbe> afterList = new ArrayList<>();
+
+        final int[] callbackInvocations = {0};
+        ProbeProgressCallback<TestReport, TestState> callback =
+                (probe, report, completedProbes, totalProbes) -> {
+                    callbackInvocations[0]++;
+                    assertTrue(completedProbes <= totalProbes);
+                    assertTrue(completedProbes > 0);
+                };
+
+        try (TestScanner scanner = new TestScanner(executorConfig, probeList, afterList)) {
+            scanner.setProgressCallback(callback);
+            scanner.scan();
+        }
+
+        // Callback should have been invoked for each probe
+        assertTrue(callbackInvocations[0] > 0, "Progress callback was not invoked");
+    }
+
+    @Test
+    public void testProgressCallbackReportsCorrectProbeCount() {
+        List<TestProbe> probeList = new ArrayList<>();
+        int expectedProbeCount = 3;
+        for (int i = 0; i < expectedProbeCount; i++) {
+            probeList.add(new TestProbe(new TestProbeType("probe" + i)));
+        }
+
+        List<TestAfterProbe> afterList = new ArrayList<>();
+
+        final List<Integer> completedCounts = new ArrayList<>();
+        ProbeProgressCallback<TestReport, TestState> callback =
+                (probe, report, completedProbes, totalProbes) -> {
+                    assertEquals(expectedProbeCount, totalProbes);
+                    completedCounts.add(completedProbes);
+                };
+
+        try (TestScanner scanner = new TestScanner(executorConfig, probeList, afterList)) {
+            scanner.setProgressCallback(callback);
+            scanner.scan();
+        }
+
+        // Verify callback was invoked for each probe
+        assertEquals(expectedProbeCount, completedCounts.size());
+    }
 }
