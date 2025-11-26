@@ -561,9 +561,11 @@ public class ThreadedScanJobExecutorTest {
 
     @Test
     public void testProgressCallbackExceptionDoesNotStopExecution() throws InterruptedException {
+        TestProbe probe1 = new TestProbe(new TestProbeType("probe1"));
+        TestProbe probe2 = new TestProbe(new TestProbeType("probe2"));
         List<TestProbe> probeList = new ArrayList<>();
-        probeList.add(new TestProbe(new TestProbeType("probe1")));
-        probeList.add(new TestProbe(new TestProbeType("probe2")));
+        probeList.add(probe1);
+        probeList.add(probe2);
 
         List<TestAfterProbe> afterList = new ArrayList<>();
         ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
@@ -586,8 +588,23 @@ public class ThreadedScanJobExecutorTest {
             // Should not throw despite callback exceptions
             assertDoesNotThrow(() -> executor.execute(report));
 
-            // All probes should still execute
+            // All probes should still execute and be marked as executed (not failed)
             assertEquals(2, report.getExecutedProbeTypes().size());
+            assertTrue(
+                    report.getExecutedProbeTypes().contains(probe1.getType()),
+                    "probe1 should be marked as executed");
+            assertTrue(
+                    report.getExecutedProbeTypes().contains(probe2.getType()),
+                    "probe2 should be marked as executed");
+
+            // Verify probes actually ran (not just marked)
+            assertTrue(probe1.wasExecuted(), "probe1 should have been executed");
+            assertTrue(probe2.wasExecuted(), "probe2 should have been executed");
+
+            // Verify no probes were marked as unexecuted/failed
+            assertTrue(
+                    report.getUnexecutedProbeTypes().isEmpty(),
+                    "No probes should be marked as unexecuted");
 
             // Callback should have been invoked for each probe despite throwing
             assertEquals(2, callbackInvocations[0]);
