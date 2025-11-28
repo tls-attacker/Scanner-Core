@@ -145,7 +145,7 @@ public class ScannerTest {
         private TestReport reportToReturn;
         private boolean checkPrerequisites = true;
         private SiteReportRater rater;
-        private List<Guideline<TestReport>> guidelines = new ArrayList<>();
+        private List<Guideline> guidelines = new ArrayList<>();
 
         TestScanner(ExecutorConfig config) {
             super(config);
@@ -200,7 +200,7 @@ public class ScannerTest {
         }
 
         @Override
-        protected List<Guideline<TestReport>> getGuidelines() {
+        protected List<Guideline> getGuidelines() {
             return guidelines;
         }
 
@@ -216,7 +216,7 @@ public class ScannerTest {
             this.rater = rater;
         }
 
-        public void setGuidelines(List<Guideline<TestReport>> guidelines) {
+        public void setGuidelines(List<Guideline> guidelines) {
             this.guidelines = guidelines;
         }
 
@@ -357,8 +357,8 @@ public class ScannerTest {
         TestReport report;
         try (TestScanner scanner = new TestScanner(executorConfig)) {
 
-            Guideline<TestReport> guideline =
-                    new Guideline<>("TestGuideline", "http://example.com", new ArrayList<>());
+            Guideline guideline =
+                    new Guideline("TestGuideline", "http://example.com", new ArrayList<>());
 
             scanner.setGuidelines(List.of(guideline));
             report = scanner.scan();

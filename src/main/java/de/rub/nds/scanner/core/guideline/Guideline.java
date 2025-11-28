@@ -8,7 +8,6 @@
  */
 package de.rub.nds.scanner.core.guideline;
 
-import de.rub.nds.scanner.core.report.ScanReport;
 import jakarta.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,19 +17,19 @@ import java.util.List;
 @XmlRootElement(name = "guideline")
 @XmlType(propOrder = {"name", "link", "checks"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Guideline<ReportT extends ScanReport> implements Serializable {
+public class Guideline implements Serializable {
 
     private String name;
     private String link;
 
     @XmlAnyElement(lax = true)
-    private List<GuidelineCheck<ReportT>> checks;
+    private List<GuidelineCheck> checks;
 
     /** Private no-arg constructor to please JAXB */
     @SuppressWarnings("unused")
     private Guideline() {}
 
-    public Guideline(String name, String link, List<GuidelineCheck<ReportT>> checks) {
+    public Guideline(String name, String link, List<GuidelineCheck> checks) {
         this.name = name;
         this.link = link;
         this.checks = new ArrayList<>(checks);
@@ -77,7 +76,7 @@ public class Guideline<ReportT extends ScanReport> implements Serializable {
      *
      * @return an unmodifiable list of guideline checks
      */
-    public List<GuidelineCheck<ReportT>> getChecks() {
+    public List<GuidelineCheck> getChecks() {
         return checks != null ? Collections.unmodifiableList(checks) : Collections.emptyList();
     }
 
@@ -86,7 +85,7 @@ public class Guideline<ReportT extends ScanReport> implements Serializable {
      *
      * @param check the guideline check to add
      */
-    public void addCheck(GuidelineCheck<ReportT> check) {
+    public void addCheck(GuidelineCheck check) {
         if (checks == null) {
             checks = new ArrayList<>();
         }

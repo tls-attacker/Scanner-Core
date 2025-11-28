@@ -17,6 +17,7 @@ import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.report.ScanReport;
 import de.rub.nds.scanner.core.report.rating.ScoreReport;
 import de.rub.nds.scanner.core.report.rating.SiteReportRater;
+import de.rub.nds.terminalutils.ProgressSpinner;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -126,7 +127,7 @@ public abstract class Scanner<
      *
      * @return A list of guidelines.
      */
-    protected List<Guideline<ReportT>> getGuidelines() {
+    protected List<Guideline> getGuidelines() {
         return List.of();
     }
 
@@ -152,7 +153,7 @@ public abstract class Scanner<
 
         // Check Scan Prerequisites
         if (!checkScanPrerequisites(report)) {
-            LOGGER.debug("Scan cannot be performed due to prerequisites not being fulfilled");
+            LOGGER.info("Scan cannot be performed due to prerequisites not being fulfilled");
             return report;
         }
 
@@ -165,15 +166,18 @@ public abstract class Scanner<
                         scanJob,
                         executorConfig.getParallelProbes(),
                         "ScannerProbeExecutor " + report.getRemoteName())) {
+            ProgressSpinner.startSpinnerTask("Executing:");
             report.setScanStartTime(System.currentTimeMillis());
             scanJobExecutor.execute(report);
         } catch (InterruptedException e) {
             LOGGER.warn("Scan execution interrupted");
             report.setScanEndTime(System.currentTimeMillis());
             Thread.currentThread().interrupt();
+            ProgressSpinner.stopSpinner();
             return report;
         }
         LOGGER.debug("Scan execution complete");
+        ProgressSpinner.stopSpinner();
 
         // Rating
         LOGGER.debug("Retrieving site report rater for score evaluation");
@@ -187,9 +191,9 @@ public abstract class Scanner<
 
         // Guideline Evaluation
         LOGGER.debug("Retrieving guidelines for evaluation");
-        List<Guideline<ReportT>> guidelines = getGuidelines();
+        List<Guideline> guidelines = getGuidelines();
         LOGGER.debug("Got a total of {} guidelines to evaluate", guidelines.size());
-        for (Guideline<ReportT> guideline : guidelines) {
+        for (Guideline guideline : guidelines) {
             LOGGER.debug("Executing evaluation of guideline '{}'", guideline.getName());
             GuidelineChecker<ReportT> checker = new GuidelineChecker<>(guideline);
             checker.fillReport(report);

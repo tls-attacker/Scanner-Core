@@ -12,33 +12,35 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import de.rub.nds.scanner.core.guideline.testutil.IOTestGuidelineCheck;
 import java.lang.reflect.Constructor;
 import org.junit.jupiter.api.Test;
 
 class FailedCheckGuidelineResultTest {
 
     @Test
-    void testConstructorWithNameAndAdherence() {
-        String checkName = "TestCheck";
+    void testConstructorWithCheckAndAdherence() {
+        GuidelineCheck check = new IOTestGuidelineCheck("Test name", RequirementLevel.MUST);
         GuidelineAdherence adherence = GuidelineAdherence.CHECK_FAILED;
 
-        FailedCheckGuidelineResult result = new FailedCheckGuidelineResult(checkName, adherence);
+        FailedCheckGuidelineResult result = new FailedCheckGuidelineResult(check, adherence);
 
-        assertEquals(checkName, result.getCheckName());
+        assertEquals(check.getName(), result.getCheckName());
+        assertEquals(check.getRequirementLevel(), result.getLevel());
         assertEquals(adherence, result.getAdherence());
         assertNull(result.getHint());
     }
 
     @Test
-    void testConstructorWithNameAdherenceAndHint() {
-        String checkName = "TestCheck";
+    void testConstructorWithCheckAdherenceAndHint() {
+        GuidelineCheck check = new IOTestGuidelineCheck("Test name", RequirementLevel.MUST);
         GuidelineAdherence adherence = GuidelineAdherence.CHECK_FAILED;
         String hint = "This check failed due to an exception";
 
-        FailedCheckGuidelineResult result =
-                new FailedCheckGuidelineResult(checkName, adherence, hint);
+        FailedCheckGuidelineResult result = new FailedCheckGuidelineResult(check, adherence, hint);
 
-        assertEquals(checkName, result.getCheckName());
+        assertEquals(check.getName(), result.getCheckName());
+        assertEquals(check.getRequirementLevel(), result.getLevel());
         assertEquals(adherence, result.getAdherence());
         assertEquals(hint, result.getHint());
     }
@@ -54,20 +56,24 @@ class FailedCheckGuidelineResultTest {
         assertNotNull(instance);
         FailedCheckGuidelineResult result = (FailedCheckGuidelineResult) instance;
         assertNull(result.getCheckName());
+        assertNull(result.getLevel());
         assertNull(result.getAdherence());
     }
 
     @Test
     void testInheritanceFromGuidelineCheckResult() {
+        GuidelineCheck check = new IOTestGuidelineCheck("Test name", RequirementLevel.MUST);
         FailedCheckGuidelineResult result =
-                new FailedCheckGuidelineResult("Test", GuidelineAdherence.CHECK_FAILED);
+                new FailedCheckGuidelineResult(check, GuidelineAdherence.CHECK_FAILED);
 
         // Test inherited setters
         result.setCheckName("NewName");
         result.setAdherence(GuidelineAdherence.VIOLATED);
         result.setHint("New hint");
+        result.setLevel(RequirementLevel.MAY);
 
         assertEquals("NewName", result.getCheckName());
+        assertEquals(RequirementLevel.MAY, result.getLevel());
         assertEquals(GuidelineAdherence.VIOLATED, result.getAdherence());
         assertEquals("New hint", result.getHint());
     }

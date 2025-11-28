@@ -15,7 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class GuidelineCheck<ReportT extends ScanReport> {
+public abstract class GuidelineCheck {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -46,7 +46,7 @@ public abstract class GuidelineCheck<ReportT extends ScanReport> {
      * @param report the scan report to evaluate
      * @return the result of the guideline check evaluation
      */
-    public abstract GuidelineCheckResult evaluate(ReportT report);
+    public abstract <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report);
 
     /**
      * Checks if the report satisfies the condition required for this guideline check.
@@ -54,11 +54,12 @@ public abstract class GuidelineCheck<ReportT extends ScanReport> {
      * @param report the scan report to check against the condition
      * @return true if the condition is satisfied or no condition is set, false otherwise
      */
-    public boolean passesCondition(ReportT report) {
+    public <ReportT extends ScanReport> boolean passesCondition(ReportT report) {
         return this.passesCondition(report, this.condition);
     }
 
-    private boolean passesCondition(ReportT report, GuidelineCheckCondition condition) {
+    private <ReportT extends ScanReport> boolean passesCondition(
+            ReportT report, GuidelineCheckCondition condition) {
         if (condition == null) {
             return true;
         }

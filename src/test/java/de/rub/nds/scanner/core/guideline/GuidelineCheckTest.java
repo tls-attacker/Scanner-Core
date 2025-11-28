@@ -64,7 +64,7 @@ class GuidelineCheckTest {
         }
     }
 
-    private static class ConcreteGuidelineCheck extends GuidelineCheck<TestScanReport> {
+    private static class ConcreteGuidelineCheck extends GuidelineCheck {
         private final GuidelineAdherence fixedResult;
 
         public ConcreteGuidelineCheck(String name, RequirementLevel level) {
@@ -85,8 +85,8 @@ class GuidelineCheckTest {
         }
 
         @Override
-        public GuidelineCheckResult evaluate(TestScanReport report) {
-            return new FailedCheckGuidelineResult(getName(), fixedResult);
+        public <ReportT extends ScanReport> GuidelineCheckResult evaluate(ReportT report) {
+            return new FailedCheckGuidelineResult(this, fixedResult);
         }
     }
 
