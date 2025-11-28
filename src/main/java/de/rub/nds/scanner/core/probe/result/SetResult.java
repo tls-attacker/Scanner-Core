@@ -18,10 +18,13 @@ import java.util.Set;
  */
 public class SetResult<T> extends CollectionResult<T> {
 
+    private final Set<T> set;
+
     @SuppressWarnings("unused")
     private SetResult() {
         // Default constructor for deserialization
         super(null, null);
+        this.set = null;
     }
 
     /**
@@ -32,12 +35,13 @@ public class SetResult<T> extends CollectionResult<T> {
      */
     public SetResult(AnalyzedProperty property, Set<T> set) {
         super(property, set);
+        this.set = set;
     }
 
     /**
      * @return The set of the SetResult.
      */
     public Set<T> getSet() {
-        return (Set<T>) collection;
+        return set;
     }
 }
