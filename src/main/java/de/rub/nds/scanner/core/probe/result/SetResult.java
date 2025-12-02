@@ -38,6 +38,14 @@ public class SetResult<T> extends CollectionResult<T> {
      * @return The set of the SetResult.
      */
     public Set<T> getSet() {
-        return (Set<T>) collection;
+        if (collection == null) {
+            return null;
+        }
+        // Handle deserialization issues where collection might not be a Set
+        if (collection instanceof Set) {
+            return (Set<T>) collection;
+        }
+        // Convert to Set if it's a different Collection type (e.g., ArrayList from old data)
+        return new java.util.HashSet<>(collection);
     }
 }
