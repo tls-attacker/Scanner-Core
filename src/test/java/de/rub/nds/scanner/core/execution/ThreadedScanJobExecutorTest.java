@@ -491,4 +491,156 @@ public class ThreadedScanJobExecutorTest {
             assertEquals(4, container.getExtractedValueList().size());
         }
     }
+
+    @Test
+    public void testSetProgressCallbackInvokesAfterEachProbe() throws InterruptedException {
+        List<TestProbe> probeList = new ArrayList<>();
+        int expectedProbes = 3;
+        for (int i = 0; i < expectedProbes; i++) {
+            probeList.add(new TestProbe(new TestProbeType("probe" + i)));
+        }
+
+        List<TestAfterProbe> afterList = new ArrayList<>();
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
+
+        try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test")) {
+
+            final List<Integer> completedCounts = new ArrayList<>();
+            final List<Integer> totalCounts = new ArrayList<>();
+
+            ProbeProgressCallback<TestReport, TestState> callback =
+                    (probe, report, completedProbes, totalProbes) -> {
+                        completedCounts.add(completedProbes);
+                        totalCounts.add(totalProbes);
+                    };
+
+            executor.setProgressCallback(callback);
+
+            TestReport report = new TestReport();
+            executor.execute(report);
+
+            // Callback should have been invoked for each probe
+            assertEquals(expectedProbes, completedCounts.size());
+
+            // Each callback should report the correct total
+            for (int total : totalCounts) {
+                assertEquals(expectedProbes, total);
+            }
+
+            // Verify completed counts are in ascending order
+            for (int i = 0; i < completedCounts.size(); i++) {
+                assertTrue(completedCounts.get(i) > 0);
+                assertTrue(completedCounts.get(i) <= expectedProbes);
+            }
+        }
+    }
+
+    @Test
+    public void testSetProgressCallbackWithNull() throws InterruptedException {
+        List<TestProbe> probeList = List.of(new TestProbe(new TestProbeType("probe1")));
+        List<TestAfterProbe> afterList = new ArrayList<>();
+
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
+
+        try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test")) {
+
+            // Should not throw when setting null callback
+            assertDoesNotThrow(() -> executor.setProgressCallback(null));
+
+            // Executor should still work with null callback
+            TestReport report = new TestReport();
+            executor.execute(report);
+
+            assertEquals(1, report.getExecutedProbeTypes().size());
+        }
+    }
+
+    @Test
+    public void testProgressCallbackExceptionDoesNotStopExecution() throws InterruptedException {
+        TestProbe probe1 = new TestProbe(new TestProbeType("probe1"));
+        TestProbe probe2 = new TestProbe(new TestProbeType("probe2"));
+        List<TestProbe> probeList = new ArrayList<>();
+        probeList.add(probe1);
+        probeList.add(probe2);
+
+        List<TestAfterProbe> afterList = new ArrayList<>();
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
+
+        try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test")) {
+
+            final int[] callbackInvocations = {0};
+
+            ProbeProgressCallback<TestReport, TestState> callback =
+                    (probe, report, completedProbes, totalProbes) -> {
+                        callbackInvocations[0]++;
+                        throw new RuntimeException("Test exception in callback");
+                    };
+
+            executor.setProgressCallback(callback);
+
+            TestReport report = new TestReport();
+            // Should not throw despite callback exceptions
+            assertDoesNotThrow(() -> executor.execute(report));
+
+            // All probes should still execute and be marked as executed (not failed)
+            assertEquals(2, report.getExecutedProbeTypes().size());
+            assertTrue(
+                    report.getExecutedProbeTypes().contains(probe1.getType()),
+                    "probe1 should be marked as executed");
+            assertTrue(
+                    report.getExecutedProbeTypes().contains(probe2.getType()),
+                    "probe2 should be marked as executed");
+
+            // Verify probes actually ran (not just marked)
+            assertTrue(probe1.wasExecuted(), "probe1 should have been executed");
+            assertTrue(probe2.wasExecuted(), "probe2 should have been executed");
+
+            // Verify no probes were marked as unexecuted/failed
+            assertTrue(
+                    report.getUnexecutedProbeTypes().isEmpty(),
+                    "No probes should be marked as unexecuted");
+
+            // Callback should have been invoked for each probe despite throwing
+            assertEquals(2, callbackInvocations[0]);
+        }
+    }
+
+    @Test
+    public void testProgressCallbackReceivesCorrectProbeReference() throws InterruptedException {
+        TestProbe probe1 = new TestProbe(new TestProbeType("probe1"));
+        TestProbe probe2 = new TestProbe(new TestProbeType("probe2"));
+
+        List<TestProbe> probeList = Arrays.asList(probe1, probe2);
+        List<TestAfterProbe> afterList = new ArrayList<>();
+
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
+
+        try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test")) {
+
+            final List<String> probeNames = new ArrayList<>();
+
+            ProbeProgressCallback<TestReport, TestState> callback =
+                    (probe, report, completedProbes, totalProbes) -> {
+                        probeNames.add(probe.getType().getName());
+                    };
+
+            executor.setProgressCallback(callback);
+
+            TestReport report = new TestReport();
+            executor.execute(report);
+
+            // Verify callback received both probes
+            assertEquals(2, probeNames.size());
+            assertTrue(probeNames.contains("probe1"));
+            assertTrue(probeNames.contains("probe2"));
+        }
+    }
 }
