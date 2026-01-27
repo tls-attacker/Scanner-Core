@@ -8,6 +8,8 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.util.Set;
 
@@ -30,7 +32,10 @@ public class SetResult<T> extends CollectionResult<T> {
      * @param property the analyzed property associated with this result
      * @param set the set of values for this result
      */
-    public SetResult(AnalyzedProperty property, Set<T> set) {
+    @JsonCreator
+    public SetResult(
+            @JsonProperty("property") AnalyzedProperty property,
+            @JsonProperty("value") Set<T> set) {
         super(property, set);
     }
 
