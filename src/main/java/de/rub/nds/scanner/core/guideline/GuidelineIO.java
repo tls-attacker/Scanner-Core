@@ -89,8 +89,14 @@ public final class GuidelineIO extends JaxbSerializer<Guideline> {
                         .forEach(p -> xmlFilePaths.add(folder + "/" + p.getFileName().toString()));
             }
         } else if ("jar".equals(protocol)) {
-            // Running from a jar
+            // Running from a jar.
+            // setUseCaches(false) ensures getJarFile() returns a private JarFile instance
+            // instead of the JVM-wide cached one from JarFileFactory. Without this, all
+            // concurrent callers share the same JarFile object and closing it in this
+            // try-with-resources block causes other threads to get
+            // IllegalStateException("zip file closed") mid-iteration (see JDK-8246714).
             JarURLConnection jarConnection = (JarURLConnection) url.openConnection();
+            jarConnection.setUseCaches(false);
             try (JarFile jarFile = jarConnection.getJarFile()) {
                 Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
