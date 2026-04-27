@@ -544,14 +544,6 @@ public class ScannerTest {
     }
 
     @Test
-    public void testConstructorWithNullCallbackScansSuccessfully() {
-        try (TestScanner scanner = new TestScanner(executorConfig, null)) {
-            TestReport report = scanner.scan();
-            assertNotNull(report);
-        }
-    }
-
-    @Test
     public void testDefaultConstructorCallbackIsInvokedViaFillProbes() {
         final int[] callbackInvocations = {0};
         ProbeProgressCallback<TestReport, TestState> callback =

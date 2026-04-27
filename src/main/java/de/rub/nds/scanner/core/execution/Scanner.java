@@ -58,25 +58,23 @@ public abstract class Scanner<
      * @param executorConfig The executor configuration to use.
      */
     public Scanner(ExecutorConfig executorConfig) {
-        this(executorConfig, (ProbeProgressCallback<ReportT, StateT>) null);
+        this.executorConfig = executorConfig;
+        probeList = new LinkedList<>();
+        afterList = new LinkedList<>();
+        fillProbeListsAtScanStart = true;
     }
 
     /**
      * Creates a new scanner instance with a progress callback.
      *
      * @param executorConfig The executor configuration to use.
-     * @param progressCallback the callback to invoke on probe completion, or null for no callbacks
+     * @param progressCallback the callback to invoke on probe completion
      */
     public Scanner(
             ExecutorConfig executorConfig,
             ProbeProgressCallback<ReportT, StateT> progressCallback) {
-        this.executorConfig = executorConfig;
-        probeList = new LinkedList<>();
-        afterList = new LinkedList<>();
-        fillProbeListsAtScanStart = true;
-        if (progressCallback != null) {
-            this.progressCallback = progressCallback;
-        }
+        this(executorConfig);
+        this.progressCallback = progressCallback;
     }
 
     /**
@@ -88,7 +86,10 @@ public abstract class Scanner<
      */
     public Scanner(
             ExecutorConfig executorConfig, List<ProbeT> probeList, List<AfterProbeT> afterList) {
-        this(executorConfig, probeList, afterList, null);
+        this.executorConfig = executorConfig;
+        this.probeList = new LinkedList<>(probeList);
+        this.afterList = new LinkedList<>(afterList);
+        fillProbeListsAtScanStart = false;
     }
 
     /**
@@ -97,20 +98,15 @@ public abstract class Scanner<
      * @param executorConfig The executor configuration to use.
      * @param probeList The list of probes to execute.
      * @param afterList The list of after probes to execute.
-     * @param progressCallback the callback to invoke on probe completion, or null for no callbacks
+     * @param progressCallback the callback to invoke on probe completion
      */
     public Scanner(
             ExecutorConfig executorConfig,
             List<ProbeT> probeList,
             List<AfterProbeT> afterList,
             ProbeProgressCallback<ReportT, StateT> progressCallback) {
-        this.executorConfig = executorConfig;
-        this.probeList = new LinkedList<>(probeList);
-        this.afterList = new LinkedList<>(afterList);
-        fillProbeListsAtScanStart = false;
-        if (progressCallback != null) {
-            this.progressCallback = progressCallback;
-        }
+        this(executorConfig, probeList, afterList);
+        this.progressCallback = progressCallback;
     }
 
     /**
