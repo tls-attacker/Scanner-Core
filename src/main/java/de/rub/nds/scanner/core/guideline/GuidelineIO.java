@@ -89,18 +89,22 @@ public final class GuidelineIO extends JaxbSerializer<Guideline> {
                         .forEach(p -> xmlFilePaths.add(folder + "/" + p.getFileName().toString()));
             }
         } else if ("jar".equals(protocol)) {
-            // Running from a jar
+            // Running from a jar.
+            // The JarFile returned by getJarFile() is the JVM-wide cached instance from
+            // JarFileFactory (useCaches=true is the default). It must not be closed here:
+            // closing it would break any other thread mid-iteration on the same shared
+            // JarFile with IllegalStateException("zip file closed") (see JDK-8246714).
+            // The JVM owns the lifecycle of cached JarFiles.
             JarURLConnection jarConnection = (JarURLConnection) url.openConnection();
-            try (JarFile jarFile = jarConnection.getJarFile()) {
-                Enumeration<JarEntry> entries = jarFile.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    String name = entry.getName();
-                    if (name.startsWith(folder + "/")
-                            && name.endsWith(".xml")
-                            && !entry.isDirectory()) {
-                        xmlFilePaths.add(name);
-                    }
+            JarFile jarFile = jarConnection.getJarFile();
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String name = entry.getName();
+                if (name.startsWith(folder + "/")
+                        && name.endsWith(".xml")
+                        && !entry.isDirectory()) {
+                    xmlFilePaths.add(name);
                 }
             }
         } else {
