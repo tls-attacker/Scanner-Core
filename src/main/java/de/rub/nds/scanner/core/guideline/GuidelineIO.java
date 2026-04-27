@@ -90,23 +90,21 @@ public final class GuidelineIO extends JaxbSerializer<Guideline> {
             }
         } else if ("jar".equals(protocol)) {
             // Running from a jar.
-            // setUseCaches(false) ensures getJarFile() returns a private JarFile instance
-            // instead of the JVM-wide cached one from JarFileFactory. Without this, all
-            // concurrent callers share the same JarFile object and closing it in this
-            // try-with-resources block causes other threads to get
-            // IllegalStateException("zip file closed") mid-iteration (see JDK-8246714).
+            // The JarFile returned by getJarFile() is the JVM-wide cached instance from
+            // JarFileFactory (useCaches=true is the default). It must not be closed here:
+            // closing it would break any other thread mid-iteration on the same shared
+            // JarFile with IllegalStateException("zip file closed") (see JDK-8246714).
+            // The JVM owns the lifecycle of cached JarFiles.
             JarURLConnection jarConnection = (JarURLConnection) url.openConnection();
-            jarConnection.setUseCaches(false);
-            try (JarFile jarFile = jarConnection.getJarFile()) {
-                Enumeration<JarEntry> entries = jarFile.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    String name = entry.getName();
-                    if (name.startsWith(folder + "/")
-                            && name.endsWith(".xml")
-                            && !entry.isDirectory()) {
-                        xmlFilePaths.add(name);
-                    }
+            JarFile jarFile = jarConnection.getJarFile();
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String name = entry.getName();
+                if (name.startsWith(folder + "/")
+                        && name.endsWith(".xml")
+                        && !entry.isDirectory()) {
+                    xmlFilePaths.add(name);
                 }
             }
         } else {

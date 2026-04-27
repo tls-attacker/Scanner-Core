@@ -41,19 +41,23 @@ import org.junit.jupiter.api.io.TempDir;
  * protocol.
  *
  * <p><b>Root cause (fixed):</b> {@code JarURLConnection} caches {@code JarFile} instances JVM-wide
- * via {@code JarFileFactory}. Without the fix, all concurrent callers received the <em>same</em>
- * {@code JarFile} object. When one thread's {@code try-with-resources} closed it, other threads
- * mid-iteration got {@code IllegalStateException: zip file closed} (JDK ≤17) or {@code
- * FileNotFoundException} (JDK 21).
+ * via {@code JarFileFactory}. All concurrent callers receive the <em>same</em> {@code JarFile}
+ * object. The original code wrapped it in a {@code try-with-resources}, so the first thread to
+ * finish closed the shared instance and other threads mid-iteration got {@code
+ * IllegalStateException: zip file closed} (JDK ≤17) or {@code FileNotFoundException} (JDK 21).
  *
- * <p><b>Fix:</b> {@code jarConnection.setUseCaches(false)} in {@code listXmlFiles} forces each
- * caller to receive a private {@code JarFile} instance that is safe to close independently.
+ * <p><b>Fix:</b> {@code listXmlFiles} no longer closes the {@code JarFile}. The JVM's {@code
+ * JarFileFactory} owns the lifecycle of cached instances, and closing them from user code is the
+ * bug. Keeping the cache also preserves performance — reopening the jar per call would be expensive
+ * in high-throughput scanning (millions of connections).
  *
  * <p>Two tests:
  *
  * <ol>
- *   <li>{@link #testUnderlyingJdkCachingStillCausesErrorWithoutFix} — proves that the JDK-level
- *       problem still exists when {@code useCaches=true}, justifying why the fix is necessary.
+ *   <li>{@link #testUnderlyingJdkCachingStillCausesErrorWithoutFix} — demonstrates the JDK-level
+ *       behaviour: when {@code useCaches=true} (the default), closing the {@code JarFile} returned
+ *       by {@code getJarFile()} breaks any other thread iterating the same shared instance. This is
+ *       why {@code GuidelineIO.listXmlFiles} must not call {@code close()}.
  *   <li>{@link #testConcurrentReadGuidelinesIsCorrectAfterFix} — verifies that all concurrent calls
  *       to {@link GuidelineIO#readGuidelines} return the correct results with the fix in place.
  * </ol>
@@ -106,7 +110,7 @@ class GuidelineIOConcurrencyTest {
     // and closing it via one reference breaks the other's iterator.
     //
     // This is the mechanism that made the original bug possible and justifies
-    // why GuidelineIO.listXmlFiles must call setUseCaches(false).
+    // why GuidelineIO.listXmlFiles must not call close() on the cached JarFile.
     //
     //   Thread A  → openConnection (useCaches=true) → getJarFile() → shared JarFile@X
     //             → entries() → nextElement() OK → barrier-1
@@ -207,8 +211,9 @@ class GuidelineIOConcurrencyTest {
     // TEST 2 — Verifies the fix: concurrent calls to readGuidelines must all
     // return the correct number of guidelines with no errors and no data loss.
     //
-    // The fix (setUseCaches(false) in listXmlFiles) gives each thread its own
-    // private JarFile instance. Closing it does not affect any other thread.
+    // The fix (listXmlFiles no longer closes the cached JarFile) means all
+    // threads share the JVM-cached instance and nobody closes it from under
+    // anyone else. The JVM owns the lifecycle.
     // -------------------------------------------------------------------------
     @Test
     void testConcurrentReadGuidelinesIsCorrectAfterFix(@TempDir File tempDir) throws Exception {
