@@ -65,6 +65,19 @@ public abstract class Scanner<
     }
 
     /**
+     * Creates a new scanner instance with a progress callback.
+     *
+     * @param executorConfig The executor configuration to use.
+     * @param progressCallback the callback to invoke on probe completion
+     */
+    public Scanner(
+            ExecutorConfig executorConfig,
+            ProbeProgressCallback<ReportT, StateT> progressCallback) {
+        this(executorConfig);
+        this.progressCallback = progressCallback;
+    }
+
+    /**
      * Creates a new scanner instance.
      *
      * @param executorConfig The executor configuration to use.
@@ -77,6 +90,23 @@ public abstract class Scanner<
         this.probeList = new LinkedList<>(probeList);
         this.afterList = new LinkedList<>(afterList);
         fillProbeListsAtScanStart = false;
+    }
+
+    /**
+     * Creates a new scanner instance with a progress callback.
+     *
+     * @param executorConfig The executor configuration to use.
+     * @param probeList The list of probes to execute.
+     * @param afterList The list of after probes to execute.
+     * @param progressCallback the callback to invoke on probe completion
+     */
+    public Scanner(
+            ExecutorConfig executorConfig,
+            List<ProbeT> probeList,
+            List<AfterProbeT> afterList,
+            ProbeProgressCallback<ReportT, StateT> progressCallback) {
+        this(executorConfig, probeList, afterList);
+        this.progressCallback = progressCallback;
     }
 
     /**

@@ -152,8 +152,22 @@ public class ScannerTest {
         }
 
         TestScanner(
+                ExecutorConfig config,
+                ProbeProgressCallback<TestReport, TestState> progressCallback) {
+            super(config, progressCallback);
+        }
+
+        TestScanner(
                 ExecutorConfig config, List<TestProbe> probeList, List<TestAfterProbe> afterList) {
             super(config, probeList, afterList);
+        }
+
+        TestScanner(
+                ExecutorConfig config,
+                List<TestProbe> probeList,
+                List<TestAfterProbe> afterList,
+                ProbeProgressCallback<TestReport, TestState> progressCallback) {
+            super(config, probeList, afterList, progressCallback);
         }
 
         @Override
@@ -504,6 +518,69 @@ public class ScannerTest {
         }
 
         // Verify callback was invoked for each probe
+        assertEquals(expectedProbeCount, completedCounts.size());
+    }
+
+    // ---- Constructor-based progress callback tests ----
+
+    @Test
+    public void testConstructorWithCallbackIsInvoked() {
+        List<TestProbe> probeList = new ArrayList<>();
+        probeList.add(new TestProbe(new TestProbeType("probe1")));
+        probeList.add(new TestProbe(new TestProbeType("probe2")));
+
+        List<TestAfterProbe> afterList = new ArrayList<>();
+
+        final int[] callbackInvocations = {0};
+        ProbeProgressCallback<TestReport, TestState> callback =
+                (probe, report, completedProbes, totalProbes) -> callbackInvocations[0]++;
+
+        try (TestScanner scanner =
+                new TestScanner(executorConfig, probeList, afterList, callback)) {
+            scanner.scan();
+        }
+
+        assertEquals(2, callbackInvocations[0], "Constructor callback should be invoked per probe");
+    }
+
+    @Test
+    public void testDefaultConstructorCallbackIsInvokedViaFillProbes() {
+        final int[] callbackInvocations = {0};
+        ProbeProgressCallback<TestReport, TestState> callback =
+                (probe, report, completedProbes, totalProbes) -> callbackInvocations[0]++;
+
+        try (TestScanner scanner = new TestScanner(executorConfig, callback)) {
+            // fillProbeLists will be called; no probes added so callback won't fire
+            TestReport report = scanner.scan();
+            assertNotNull(report);
+            assertTrue(scanner.isFillProbesCalled());
+        }
+
+        assertEquals(0, callbackInvocations[0], "No probes registered so callback should not fire");
+    }
+
+    @Test
+    public void testConstructorCallbackReportsCorrectProbeCount() {
+        List<TestProbe> probeList = new ArrayList<>();
+        int expectedProbeCount = 3;
+        for (int i = 0; i < expectedProbeCount; i++) {
+            probeList.add(new TestProbe(new TestProbeType("probe" + i)));
+        }
+
+        List<TestAfterProbe> afterList = new ArrayList<>();
+
+        final List<Integer> completedCounts = new ArrayList<>();
+        ProbeProgressCallback<TestReport, TestState> callback =
+                (probe, report, completedProbes, totalProbes) -> {
+                    assertEquals(expectedProbeCount, totalProbes);
+                    completedCounts.add(completedProbes);
+                };
+
+        try (TestScanner scanner =
+                new TestScanner(executorConfig, probeList, afterList, callback)) {
+            scanner.scan();
+        }
+
         assertEquals(expectedProbeCount, completedCounts.size());
     }
 }
