@@ -9,7 +9,7 @@
 package de.rub.nds.scanner.core.report.container;
 
 import de.rub.nds.scanner.core.config.ScannerDetail;
-import de.rub.nds.scanner.core.report.AnsiColor;
+import de.rub.nds.scanner.core.report.markup.Markup;
 
 /**
  * Abstract base class for all report containers in the scanner framework. Provides common
@@ -69,15 +69,15 @@ public abstract class ReportContainer {
      * Adds colored text to the StringBuilder if color is enabled.
      *
      * @param builder The StringBuilder to append to
-     * @param color The ANSI color to apply
+     * @param markup The ANSI color to apply
      * @param text The text to colorize
      * @param useColor Whether to apply color codes
      * @return The modified StringBuilder for method chaining
      */
     protected StringBuilder addColor(
-            StringBuilder builder, AnsiColor color, String text, boolean useColor) {
+            StringBuilder builder, Markup markup, String text, boolean useColor) {
         if (useColor) {
-            builder.append(color.getCode()).append(text).append(AnsiColor.RESET.getCode());
+            markup.applyAnsi(builder, text);
         } else {
             builder.append(text);
         }

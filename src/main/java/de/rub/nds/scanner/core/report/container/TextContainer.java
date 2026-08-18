@@ -9,7 +9,7 @@
 package de.rub.nds.scanner.core.report.container;
 
 import de.rub.nds.scanner.core.config.ScannerDetail;
-import de.rub.nds.scanner.core.report.AnsiColor;
+import de.rub.nds.scanner.core.report.markup.Markup;
 
 /**
  * Container for displaying simple text in scanner reports. Supports colored text output with
@@ -18,31 +18,31 @@ import de.rub.nds.scanner.core.report.AnsiColor;
 public class TextContainer extends ReportContainer {
 
     private final String text;
-    private final AnsiColor color;
+    private final Markup markup;
 
     /**
      * Creates a new TextContainer with normal detail level.
      *
      * @param text The text to display
-     * @param color The ANSI color for the text
+     * @param markup The ANSI color for the text
      */
-    public TextContainer(String text, AnsiColor color) {
+    public TextContainer(String text, Markup markup) {
         super(ScannerDetail.NORMAL);
         this.text = text;
-        this.color = color;
+        this.markup = markup;
     }
 
     /**
      * Creates a new TextContainer with specified detail level.
      *
      * @param text The text to display
-     * @param color The ANSI color for the text
+     * @param markup The ANSI color for the text
      * @param detail The detail level for this container
      */
-    public TextContainer(String text, AnsiColor color, ScannerDetail detail) {
+    public TextContainer(String text, Markup markup, ScannerDetail detail) {
         super(detail);
         this.text = text;
-        this.color = color;
+        this.markup = markup;
     }
 
     /**
@@ -67,7 +67,7 @@ public class TextContainer extends ReportContainer {
      */
     public void println(StringBuilder builder, int depth, boolean useColor) {
         addDepth(builder, depth);
-        addColor(builder, color, text, useColor);
+        addColor(builder, markup, text, useColor);
     }
 
     /**

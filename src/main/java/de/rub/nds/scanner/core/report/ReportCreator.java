@@ -13,6 +13,8 @@ import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.report.container.KeyValueContainer;
 import de.rub.nds.scanner.core.report.container.ReportContainer;
 import de.rub.nds.scanner.core.report.container.TextContainer;
+import de.rub.nds.scanner.core.report.markup.Markup;
+import de.rub.nds.scanner.core.report.markup.SemanticMarkup;
 
 /**
  * Base class for creating report containers from scan results. Provides utility methods for
@@ -47,8 +49,8 @@ public class ReportCreator<ReportT extends ScanReport> {
     protected ReportContainer createKeyValueContainer(AnalyzedProperty property, ReportT report) {
         String key = printingScheme.getEncodedKeyText(report, property);
         String value = printingScheme.getEncodedValueText(report, property);
-        AnsiColor keyColour = printingScheme.getKeyColor(report, property);
-        AnsiColor valueColour = printingScheme.getValueColor(report, property);
+        Markup keyColour = printingScheme.getValueColor(report, property);
+        Markup valueColour = printingScheme.getValueColor(report, property);
         return new KeyValueContainer(key, keyColour, value, valueColour);
     }
 
@@ -60,7 +62,7 @@ public class ReportCreator<ReportT extends ScanReport> {
      * @return a key-value container with default colors
      */
     protected ReportContainer createDefaultKeyValueContainer(String key, String value) {
-        return new KeyValueContainer(key, AnsiColor.DEFAULT_COLOR, value, AnsiColor.DEFAULT_COLOR);
+        return new KeyValueContainer(key, SemanticMarkup.NEUTRAL, value, SemanticMarkup.NEUTRAL);
     }
 
     /**
@@ -72,7 +74,7 @@ public class ReportCreator<ReportT extends ScanReport> {
      */
     protected ReportContainer createDefaultKeyHexValueContainer(String key, String value) {
         return new KeyValueContainer(
-                key, AnsiColor.DEFAULT_COLOR, "0x" + value, AnsiColor.DEFAULT_COLOR);
+                key, SemanticMarkup.NEUTRAL, "0x" + value, SemanticMarkup.NEUTRAL);
     }
 
     /**
@@ -82,6 +84,6 @@ public class ReportCreator<ReportT extends ScanReport> {
      * @return a text container with default color
      */
     protected TextContainer createDefaultTextContainer(String text) {
-        return new TextContainer(text, AnsiColor.DEFAULT_COLOR);
+        return new TextContainer(text, SemanticMarkup.NEUTRAL);
     }
 }
