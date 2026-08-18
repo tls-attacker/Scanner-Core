@@ -108,10 +108,10 @@ public abstract class ScanReport {
      * Returns the test result for a specific property.
      *
      * @param property the property to get the result for
-     * @return the test result, or NOT_TESTED_YET if not found
+     * @return the test result, or NOT_SCHEDULED if not found
      */
     public synchronized TestResult getResult(AnalyzedProperty property) {
-        return resultMap.getOrDefault(property, TestResults.NOT_TESTED_YET);
+        return resultMap.getOrDefault(property, TestResults.NOT_SCHEDULED);
     }
 
     /**
