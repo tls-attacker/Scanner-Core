@@ -9,32 +9,33 @@
 package de.rub.nds.scanner.core.report;
 
 import de.rub.nds.scanner.core.probe.result.TestResult;
+import de.rub.nds.scanner.core.report.markup.SemanticMarkup;
 import java.util.HashMap;
 
 /**
- * Handles color encoding for test results in terminal output. Maps test results to ANSI colors for
- * visual differentiation.
+ * Handles color encoding for test results in terminal output. Maps test results to Semantic colors
+ * for visual differentiation.
  */
 public class ColorEncoding {
 
-    private final HashMap<TestResult, AnsiColor> colorMap;
+    private final HashMap<TestResult, SemanticMarkup> colorMap;
 
     /**
      * Creates a new ColorEncoding with the specified result-to-color mapping.
      *
-     * @param colorMap a HashMap mapping TestResult instances to AnsiColor codes
+     * @param colorMap a HashMap mapping TestResult instances to SemanticMarkup codes
      */
-    public ColorEncoding(HashMap<TestResult, AnsiColor> colorMap) {
+    public ColorEncoding(HashMap<TestResult, SemanticMarkup> colorMap) {
         this.colorMap = colorMap;
     }
 
     /**
-     * Returns the AnsiColor associated with a given test result.
+     * Returns the SemanticMarkup associated with a given test result.
      *
      * @param result the test result
-     * @return the associated AnsiColor, or null if no mapping exists
+     * @return the associated SemanticMarkup, or null if no mapping exists
      */
-    public AnsiColor getColor(TestResult result) {
+    public SemanticMarkup getColor(TestResult result) {
         return colorMap.get(result);
     }
 
@@ -47,9 +48,9 @@ public class ColorEncoding {
      * @return the color-encoded text string
      */
     public String encode(TestResult result, String encodedText) {
-        AnsiColor color = this.getColor(result);
-        if (color != null && color != AnsiColor.DEFAULT_COLOR) {
-            return color.getCode() + encodedText + AnsiColor.RESET.getCode();
+        SemanticMarkup color = this.getColor(result);
+        if (color != null && color != SemanticMarkup.NEUTRAL) {
+            return color.applyAnsi(encodedText);
         } else {
             return encodedText;
         }

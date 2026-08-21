@@ -10,6 +10,7 @@ package de.rub.nds.scanner.core.report.container;
 
 import de.rub.nds.scanner.core.config.ScannerDetail;
 import de.rub.nds.scanner.core.report.AnsiColor;
+import de.rub.nds.scanner.core.report.markup.SemanticMarkup;
 
 /**
  * Container for displaying headlines in scanner reports. Supports different depth levels with
@@ -53,8 +54,7 @@ public class HeadlineContainer extends ReportContainer {
     @Override
     public void print(StringBuilder builder, int depth, boolean useColor) {
         if (useColor) {
-            builder.append(AnsiColor.BOLD.getCode());
-            builder.append(getColorByDepth(depth).getCode());
+            builder.append(getColorByDepth(depth).getAnsiCode());
         }
         if (depth == 0) {
             addHLine(builder);
@@ -68,18 +68,12 @@ public class HeadlineContainer extends ReportContainer {
         builder.append("\n");
     }
 
-    private static AnsiColor getColorByDepth(int depth) {
+    private static SemanticMarkup getColorByDepth(int depth) {
         switch (depth) {
             case 0:
-                return AnsiColor.PURPLE;
-            case 1:
-                return AnsiColor.BLUE;
-            case 2:
-                return AnsiColor.CYAN;
-            case 3:
-                return AnsiColor.WHITE;
+                return SemanticMarkup.REPORT_STRUCTURE_HEADING;
             default:
-                return AnsiColor.YELLOW;
+                return SemanticMarkup.REPORT_STRUCTURE_SUBHEADINGS;
         }
     }
 

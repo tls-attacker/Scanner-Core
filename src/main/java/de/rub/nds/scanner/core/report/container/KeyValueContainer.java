@@ -9,7 +9,7 @@
 package de.rub.nds.scanner.core.report.container;
 
 import de.rub.nds.scanner.core.config.ScannerDetail;
-import de.rub.nds.scanner.core.report.AnsiColor;
+import de.rub.nds.scanner.core.report.markup.Markup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,25 +24,25 @@ public class KeyValueContainer extends ReportContainer {
     private static final int PADDED_KEY_LENGTH = 30;
 
     private String key;
-    private AnsiColor keyColor;
+    private Markup keyMarkup;
 
     private String value;
-    private AnsiColor valueColor;
+    private Markup valueMarkup;
 
     /**
      * Creates a new KeyValueContainer with specified colors.
      *
      * @param key The key text to display
-     * @param keyColor The color for the key
+     * @param keyMarkup The color for the key
      * @param value The value text to display
-     * @param valueColor The color for the value
+     * @param valueMarkup The color for the value
      */
-    public KeyValueContainer(String key, AnsiColor keyColor, String value, AnsiColor valueColor) {
+    public KeyValueContainer(String key, Markup keyMarkup, String value, Markup valueMarkup) {
         super(ScannerDetail.NORMAL);
         this.key = key;
-        this.keyColor = keyColor;
+        this.keyMarkup = keyMarkup;
         this.value = value;
-        this.valueColor = valueColor;
+        this.valueMarkup = valueMarkup;
     }
 
     /**
@@ -56,9 +56,9 @@ public class KeyValueContainer extends ReportContainer {
     @Override
     public void print(StringBuilder builder, int depth, boolean useColor) {
         addDepth(builder, depth);
-        addColor(builder, keyColor, pad(key, PADDED_KEY_LENGTH), useColor);
+        addColor(builder, keyMarkup, pad(key, PADDED_KEY_LENGTH), useColor);
         builder.append(":    ");
-        addColor(builder, valueColor, value, useColor);
+        addColor(builder, valueMarkup, value, useColor);
         builder.append("\n");
     }
 
@@ -97,21 +97,21 @@ public class KeyValueContainer extends ReportContainer {
     }
 
     /**
-     * Gets the key color.
+     * Gets the key markup.
      *
-     * @return The ANSI color for the key
+     * @return The markup used for the key
      */
-    public AnsiColor getKeyColor() {
-        return keyColor;
+    public Markup getKeyMarkup() {
+        return keyMarkup;
     }
 
     /**
-     * Sets the key color.
+     * Sets the key markup.
      *
-     * @param keyColor The new ANSI color for the key
+     * @param keyMarkup The new markup for the key
      */
-    public void setKeyColor(AnsiColor keyColor) {
-        this.keyColor = keyColor;
+    public void setKeyMarkup(Markup keyMarkup) {
+        this.keyMarkup = keyMarkup;
     }
 
     /**
@@ -133,20 +133,20 @@ public class KeyValueContainer extends ReportContainer {
     }
 
     /**
-     * Gets the value color.
+     * Gets the value markup.
      *
-     * @return The ANSI color for the value
+     * @return The markup used for the value
      */
-    public AnsiColor getValueColor() {
-        return valueColor;
+    public Markup getValueMarkup() {
+        return valueMarkup;
     }
 
     /**
-     * Sets the value color.
+     * Sets the value markup.
      *
-     * @param valueColor The new ANSI color for the value
+     * @param valueMarkup The new markup for the value
      */
-    public void setValueColor(AnsiColor valueColor) {
-        this.valueColor = valueColor;
+    public void setValueMarkup(Markup valueMarkup) {
+        this.valueMarkup = valueMarkup;
     }
 }

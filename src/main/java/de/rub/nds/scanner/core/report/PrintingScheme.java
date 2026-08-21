@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.report;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
 import de.rub.nds.scanner.core.probe.result.TestResult;
+import de.rub.nds.scanner.core.report.markup.SemanticMarkup;
 import java.util.HashMap;
 
 /**
@@ -139,9 +140,9 @@ public class PrintingScheme {
      *
      * @param report the scan report containing the result
      * @param property the property whose result color should be determined
-     * @return the ANSI color to use for the result value
+     * @return the color to use for the result value
      */
-    public AnsiColor getValueColor(ScanReport report, AnalyzedProperty property) {
+    public SemanticMarkup getValueColor(ScanReport report, AnalyzedProperty property) {
         TestResult result = report.getResult(property);
         ColorEncoding colorEncoding =
                 valueColorEncodings.getOrDefault(property, defaultColorEncoding);
@@ -154,9 +155,9 @@ public class PrintingScheme {
      *
      * @param report the scan report (currently unused)
      * @param property the property (currently unused)
-     * @return the default ANSI color
+     * @return the default color
      */
-    public AnsiColor getKeyColor(ScanReport report, AnalyzedProperty property) {
-        return AnsiColor.DEFAULT_COLOR;
+    public SemanticMarkup getKeyColor(ScanReport report, AnalyzedProperty property) {
+        return SemanticMarkup.NEUTRAL;
     }
 }
