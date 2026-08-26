@@ -332,7 +332,7 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
         return builder.append(addIndentations(name))
                 .append(": ")
                 .append(
-                        !printColorful
+                        printColorful
                                 ? AnsiColor.UNDERLINE.getCode() + value + AnsiColor.RESET.getCode()
                                 : value)
                 .append("\n");
