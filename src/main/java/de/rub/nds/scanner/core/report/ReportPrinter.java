@@ -10,6 +10,9 @@ package de.rub.nds.scanner.core.report;
 
 import de.rub.nds.scanner.core.config.ScannerDetail;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
+import de.rub.nds.scanner.core.report.markup.Markup;
+import de.rub.nds.scanner.core.report.markup.MarkupUtil;
+import de.rub.nds.scanner.core.report.markup.SemanticMarkup;
 
 /**
  * Abstract base class for generating formatted text representations of scan reports. Provides
@@ -72,9 +75,12 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      * @return the formatted string with optional green color, "Unknown" if value is null
      */
     protected String getGreenString(String value, String format) {
-        return (printColorful ? AnsiColor.GREEN.getCode() : AnsiColor.RESET.getCode())
-                + String.format(format, value == null ? "Unknown" : value)
-                + AnsiColor.RESET.getCode();
+        String formatted = String.format(format, value == null ? "Unknown" : value);
+        if (printColorful) {
+            return SemanticMarkup.RESULT_GOOD.applyAnsi(formatted);
+        } else {
+            return formatted;
+        }
     }
 
     /**
@@ -85,9 +91,12 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      * @return the formatted string with optional yellow color, "Unknown" if value is null
      */
     protected String getYellowString(String value, String format) {
-        return (printColorful ? AnsiColor.YELLOW.getCode() : AnsiColor.RESET.getCode())
-                + String.format(format, value == null ? "Unknown" : value)
-                + AnsiColor.RESET.getCode();
+        String formatted = String.format(format, value == null ? "Unknown" : value);
+        if (printColorful) {
+            return SemanticMarkup.RESULT_MEDIUM.applyAnsi(formatted);
+        } else {
+            return formatted;
+        }
     }
 
     /**
@@ -98,9 +107,12 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      * @return the formatted string with optional red color, "Unknown" if value is null
      */
     protected String getRedString(String value, String format) {
-        return (printColorful ? AnsiColor.RED.getCode() : AnsiColor.RESET.getCode())
-                + String.format(format, value == null ? "Unknown" : value)
-                + AnsiColor.RESET.getCode();
+        String formatted = String.format(format, value == null ? "Unknown" : value);
+        if (printColorful) {
+            return SemanticMarkup.RESULT_BAD.applyAnsi(formatted);
+        } else {
+            return formatted;
+        }
     }
 
     /**
@@ -122,13 +134,12 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      * @param color the color to apply if colors are enabled
      * @return the builder for method chaining
      */
-    protected StringBuilder prettyAppend(StringBuilder builder, String value, AnsiColor color) {
+    protected StringBuilder prettyAppend(
+            StringBuilder builder, String value, SemanticMarkup color) {
         if (printColorful) {
-            builder.append(color.getCode());
-        }
-        builder.append(value);
-        if (printColorful) {
-            builder.append(AnsiColor.RESET.getCode());
+            color.applyAnsi(builder, value);
+        } else {
+            builder.append(value);
         }
         builder.append("\n");
         return builder;
@@ -221,7 +232,7 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      * @return the builder for method chaining
      */
     protected StringBuilder prettyAppend(
-            StringBuilder builder, String name, Boolean value, AnsiColor color) {
+            StringBuilder builder, String name, Boolean value, SemanticMarkup color) {
         return prettyAppend(builder, name, String.valueOf(value), color);
     }
 
@@ -235,14 +246,12 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      * @return the builder for method chaining
      */
     protected StringBuilder prettyAppend(
-            StringBuilder builder, String name, String value, AnsiColor color) {
+            StringBuilder builder, String name, String value, SemanticMarkup color) {
         builder.append(addIndentations(name)).append(": ");
         if (printColorful) {
-            builder.append(color.getCode());
-        }
-        builder.append(value);
-        if (printColorful) {
-            builder.append(AnsiColor.RESET.getCode());
+            color.applyAnsi(builder, value);
+        } else {
+            builder.append(value);
         }
         builder.append("\n");
         return builder;
@@ -258,14 +267,13 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
     protected StringBuilder prettyAppendHeading(StringBuilder builder, String value) {
         depth = 0;
 
-        return builder.append(
-                        printColorful
-                                ? AnsiColor.BOLD.getCode() + AnsiColor.BLUE.getCode()
-                                : AnsiColor.RESET.getCode())
-                .append("\n------------------------------------------------------------\n")
-                .append(value)
-                .append("\n\n")
-                .append(AnsiColor.RESET.getCode());
+        Markup headingMarkup =
+                printColorful ? SemanticMarkup.REPORT_STRUCTURE_HEADING : MarkupUtil.NONE;
+        return headingMarkup.applyAnsi(
+                builder,
+                "\n------------------------------------------------------------\n",
+                value,
+                "\n\n");
     }
 
     /**
@@ -275,7 +283,9 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      * @param name the property name
      * @param value the property value
      * @return the builder for method chaining
+     * @deprecated No replacement currently planned, if you use this, contact us.
      */
+    @Deprecated(forRemoval = true)
     protected StringBuilder prettyAppendUnderlined(
             StringBuilder builder, String name, String value) {
         return builder.append(addIndentations(name))
@@ -294,7 +304,9 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      * @param name the property name
      * @param value the boolean value
      * @return the builder for method chaining
+     * @deprecated No replacement currently planned, if you use this, contact us.
      */
+    @Deprecated(forRemoval = true)
     protected StringBuilder prettyAppendUnderlined(
             StringBuilder builder, String name, boolean value) {
         return builder.append(addIndentations(name))
@@ -313,12 +325,14 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      * @param name the property name
      * @param value the long value
      * @return the builder for method chaining
+     * @deprecated No replacement currently planned, if you use this, contact us.
      */
+    @Deprecated(forRemoval = true)
     protected StringBuilder prettyAppendUnderlined(StringBuilder builder, String name, long value) {
         return builder.append(addIndentations(name))
                 .append(": ")
                 .append(
-                        !printColorful
+                        printColorful
                                 ? AnsiColor.UNDERLINE.getCode() + value + AnsiColor.RESET.getCode()
                                 : value)
                 .append("\n");
@@ -333,16 +347,9 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      */
     protected StringBuilder prettyAppendSubheading(StringBuilder builder, String name) {
         depth = 1;
-        return builder.append("--|")
-                .append(
-                        printColorful
-                                ? AnsiColor.BOLD.getCode()
-                                        + AnsiColor.PURPLE.getCode()
-                                        + AnsiColor.UNDERLINE.getCode()
-                                        + name
-                                        + "\n\n"
-                                        + AnsiColor.RESET.getCode()
-                                : name + "\n\n");
+        Markup markup =
+                printColorful ? SemanticMarkup.REPORT_STRUCTURE_SUBHEADINGS : MarkupUtil.NONE;
+        return markup.applyAnsi(builder, "--|", name, "\n\n");
     }
 
     /**
@@ -354,16 +361,9 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      */
     protected StringBuilder prettyAppendSubSubheading(StringBuilder builder, String name) {
         depth = 2;
-        return builder.append("----|")
-                .append(
-                        printColorful
-                                ? AnsiColor.BOLD.getCode()
-                                        + AnsiColor.PURPLE.getCode()
-                                        + AnsiColor.UNDERLINE.getCode()
-                                        + name
-                                        + "\n\n"
-                                        + AnsiColor.RESET.getCode()
-                                : name + "\n\n");
+        Markup markup =
+                printColorful ? SemanticMarkup.REPORT_STRUCTURE_SUBHEADINGS : MarkupUtil.NONE;
+        return markup.applyAnsi(builder, "----|", name, "\n\n");
     }
 
     /**
@@ -375,16 +375,9 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
      */
     protected StringBuilder prettyAppendSubSubSubheading(StringBuilder builder, String name) {
         depth = 3;
-        return builder.append("------|")
-                .append(
-                        printColorful
-                                ? AnsiColor.BOLD.getCode()
-                                        + AnsiColor.PURPLE.getCode()
-                                        + AnsiColor.UNDERLINE.getCode()
-                                        + name
-                                        + "\n\n"
-                                        + AnsiColor.RESET.getCode()
-                                : name + "\n\n");
+        Markup markup =
+                printColorful ? SemanticMarkup.REPORT_STRUCTURE_SUBHEADINGS : MarkupUtil.NONE;
+        return markup.applyAnsi(builder, "------|", name, "\n\n");
     }
 
     /**

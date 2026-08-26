@@ -13,7 +13,9 @@ import de.rub.nds.scanner.core.config.ExecutorConfig;
 import de.rub.nds.scanner.core.guideline.Guideline;
 import de.rub.nds.scanner.core.guideline.GuidelineChecker;
 import de.rub.nds.scanner.core.passive.StatsWriter;
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
+import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.ScanReport;
 import de.rub.nds.scanner.core.report.rating.ScoreReport;
 import de.rub.nds.scanner.core.report.rating.SiteReportRater;
@@ -200,6 +202,13 @@ public abstract class Scanner<
         if (!checkScanPrerequisites(report)) {
             LOGGER.info("Scan cannot be performed due to prerequisites not being fulfilled");
             return report;
+        }
+
+        // prefill report with NOT_TESTED_YET for all scheduled probes
+        for (ProbeT probe : probeList) {
+            for (AnalyzedProperty property : probe.getAnalyzedProperties()) {
+                report.putResult(property, TestResults.NOT_TESTED_YET);
+            }
         }
 
         // Scan Execution

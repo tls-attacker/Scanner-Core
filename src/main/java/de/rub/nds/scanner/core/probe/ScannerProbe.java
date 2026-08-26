@@ -71,6 +71,10 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         }
     }
 
+    public Set<AnalyzedProperty> getAnalyzedProperties() {
+        return propertiesMap.keySet();
+    }
+
     public final <T> void putIfFalse(
             AnalyzedProperty determiningProperty,
             AnalyzedProperty propertyToSet,

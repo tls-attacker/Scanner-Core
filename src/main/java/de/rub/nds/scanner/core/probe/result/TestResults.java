@@ -24,7 +24,8 @@ public enum TestResults implements SummarizableTestResult {
     COULD_NOT_TEST,
     ERROR_DURING_TEST,
     UNCERTAIN,
-    UNSUPPORTED,
+    NOT_IMPLEMENTED,
+    NOT_SCHEDULED,
     NOT_TESTED_YET,
     UNASSIGNED_ERROR,
     TIMEOUT;
