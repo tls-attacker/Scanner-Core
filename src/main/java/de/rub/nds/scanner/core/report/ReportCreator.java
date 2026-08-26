@@ -49,7 +49,7 @@ public class ReportCreator<ReportT extends ScanReport> {
     protected ReportContainer createKeyValueContainer(AnalyzedProperty property, ReportT report) {
         String key = printingScheme.getEncodedKeyText(report, property);
         String value = printingScheme.getEncodedValueText(report, property);
-        Markup keyColour = printingScheme.getValueColor(report, property);
+        Markup keyColour = printingScheme.getKeyColor(report, property);
         Markup valueColour = printingScheme.getValueColor(report, property);
         return new KeyValueContainer(key, keyColour, value, valueColour);
     }
