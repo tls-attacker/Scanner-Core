@@ -395,27 +395,18 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
         return builder.toString();
     }
 
+    private final static int PAD_TO = 32;
     /**
-     * Adds indentation based on the current depth and tabs for alignment.
+     * Adds indentation based on the current depth and spaces for alignment.
      *
      * @param value the string to indent
-     * @return the indented string with appropriate tabs for alignment
+     * @return the indented string with appropriate spaces for alignment
      */
     protected String addIndentations(String value) {
         StringBuilder builder = new StringBuilder();
         builder.append(" ".repeat(Math.max(0, depth)));
         builder.append(value);
-        if (value.length() + depth < 8) {
-            builder.append("\t\t\t\t ");
-        } else if (value.length() + depth < 16) {
-            builder.append("\t\t\t ");
-        } else if (value.length() + depth < 24) {
-            builder.append("\t\t ");
-        } else if (value.length() + depth < 32) {
-            builder.append("\t ");
-        } else {
-            builder.append(" ");
-        }
+        builder.append(" ".repeat(Math.max(0, PAD_TO - (value.length() + depth))));
         return builder.toString();
     }
 
