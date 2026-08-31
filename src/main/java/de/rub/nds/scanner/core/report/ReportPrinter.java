@@ -395,7 +395,8 @@ public abstract class ReportPrinter<ReportT extends ScanReport> {
         return builder.toString();
     }
 
-    private final static int PAD_TO = 32;
+    private static final int PAD_TO = 32;
+
     /**
      * Adds indentation based on the current depth and spaces for alignment.
      *
