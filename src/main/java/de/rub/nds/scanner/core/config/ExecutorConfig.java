@@ -65,6 +65,14 @@ public final class ExecutorConfig {
                             + " directory.")
     private String profile = null;
 
+    @Parameter(
+            names = "-listProbes",
+            description =
+                    "Print every available probe, grouped by ProbeType class, in the same JSON"
+                            + " syntax used by a scan profile's 'probes' field, then exit without"
+                            + " scanning.")
+    private boolean listProbes = false;
+
     private List<ProbeType> probes = null;
     private boolean probesResolved = false;
     private boolean settingsResolved = false;
@@ -92,6 +100,25 @@ public final class ExecutorConfig {
         this.profile = profile;
         this.probesResolved = false;
         this.settingsResolved = false;
+    }
+
+    /**
+     * Returns whether {@code -listProbes} was requested, i.e. whether every available probe should
+     * be printed instead of running a scan.
+     *
+     * @return true if the available probes should be listed and no scan performed
+     */
+    public boolean isListProbes() {
+        return listProbes;
+    }
+
+    /**
+     * Sets whether every available probe should be printed instead of running a scan.
+     *
+     * @param listProbes true to list probes instead of scanning
+     */
+    public void setListProbes(boolean listProbes) {
+        this.listProbes = listProbes;
     }
 
     /**
