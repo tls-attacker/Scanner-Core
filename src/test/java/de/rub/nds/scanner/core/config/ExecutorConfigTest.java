@@ -143,9 +143,9 @@ public class ExecutorConfigTest {
         Path profilePath = tempDir.resolve("myProfile.json");
         Files.writeString(
                 profilePath,
-                "{\"name\": \"myProfile\", \"probes\": [{\"type\": \""
+                "{\"name\": \"myProfile\", \"probes\": {\""
                         + de.rub.nds.scanner.core.TestProbeType.class.getName()
-                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]}");
+                        + "\": [\"TEST_PROBE_TYPE\"]}}");
 
         config.setProfile(profilePath.toString());
         List<ProbeType> probes = config.getProbes();
@@ -160,9 +160,9 @@ public class ExecutorConfigTest {
         Path profilePath = tempDir.resolve("myProfile.json");
         Files.writeString(
                 profilePath,
-                "{\"name\": \"myProfile\", \"probes\": [{\"type\": \""
+                "{\"name\": \"myProfile\", \"probes\": {\""
                         + de.rub.nds.scanner.core.TestProbeType.class.getName()
-                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]}");
+                        + "\": [\"TEST_PROBE_TYPE\"]}}");
         config.setProfile(profilePath.toString());
         config.getProbes();
 
@@ -177,9 +177,9 @@ public class ExecutorConfigTest {
         Path profilePath = tempDir.resolve("myProfile.json");
         Files.writeString(
                 profilePath,
-                "{\"name\": \"myProfile\", \"probes\": [{\"type\": \""
+                "{\"name\": \"myProfile\", \"probes\": {\""
                         + de.rub.nds.scanner.core.TestProbeType.class.getName()
-                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]}");
+                        + "\": [\"TEST_PROBE_TYPE\"]}}");
         config.setProfile(profilePath.toString());
 
         config.setProbes(List.of());

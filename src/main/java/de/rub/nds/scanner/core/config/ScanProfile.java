@@ -10,8 +10,9 @@ package de.rub.nds.scanner.core.config;
 
 import de.rub.nds.scanner.core.probe.ProbeType;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * A named, JSON-defined scan profile. A profile declares the set of {@link ProbeType}s that should
@@ -24,7 +25,7 @@ public final class ScanProfile {
 
     private List<String> inheritedFromProfiles = new ArrayList<>();
 
-    private List<ProbeReference> probes = new ArrayList<>();
+    private Map<String, List<String>> probes = new LinkedHashMap<>();
 
     private ScanProfileSettings settings;
 
@@ -73,22 +74,26 @@ public final class ScanProfile {
     }
 
     /**
-     * Returns the raw probe references declared directly by this profile (not including inherited
-     * ones).
+     * Returns the raw probes declared directly by this profile (not including inherited ones), as a
+     * map from the fully qualified name of an enum class implementing {@link ProbeType} to the list
+     * of its constant names to run — e.g. {@code {"de.rub.nds.tlsscanner.core.constants
+     * .TlsProbeType": ["CIPHER_SUITE", "CERTIFICATE"]}}. This groups probes by type instead of
+     * repeating the type for every single probe, while still letting a profile freely combine
+     * probes from different {@link ProbeType} implementations.
      *
-     * @return the list of probe references declared by this profile
+     * @return the raw probes declared by this profile
      */
-    public List<ProbeReference> getProbes() {
+    public Map<String, List<String>> getProbes() {
         return probes;
     }
 
     /**
-     * Sets the raw probe references declared directly by this profile.
+     * Sets the raw probes declared directly by this profile.
      *
-     * @param probes the list of probe references to declare
+     * @param probes the probes to declare, grouped by {@link ProbeType} class name
      */
-    public void setProbes(List<ProbeReference> probes) {
-        this.probes = probes == null ? new ArrayList<>() : probes;
+    public void setProbes(Map<String, List<String>> probes) {
+        this.probes = probes == null ? new LinkedHashMap<>() : probes;
     }
 
     /**
@@ -98,7 +103,13 @@ public final class ScanProfile {
      * @return the resolved list of probes declared by this profile
      */
     public List<ProbeType> resolveProbes() {
-        return probes.stream().map(ProbeReference::resolve).collect(Collectors.toList());
+        List<ProbeType> resolved = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : probes.entrySet()) {
+            for (String constantName : entry.getValue()) {
+                resolved.add(ProbeTypeResolver.resolve(entry.getKey(), constantName));
+            }
+        }
+        return resolved;
     }
 
     /**

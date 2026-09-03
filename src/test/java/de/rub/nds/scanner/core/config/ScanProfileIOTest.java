@@ -36,9 +36,9 @@ public class ScanProfileIOTest {
                 "{"
                         + "\"name\": \"solo\","
                         + "\"inheritedFromProfiles\": [],"
-                        + "\"probes\": [{\"type\": \""
+                        + "\"probes\": {\""
                         + TestProbeType.class.getName()
-                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]"
+                        + "\": [\"TEST_PROBE_TYPE\"]}"
                         + "}");
 
         List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("solo.json"));
@@ -54,21 +54,41 @@ public class ScanProfileIOTest {
                 "base.json",
                 "{"
                         + "\"name\": \"base\","
-                        + "\"probes\": [{\"type\": \""
+                        + "\"probes\": {\""
                         + TestProbeType.class.getName()
-                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]"
+                        + "\": [\"TEST_PROBE_TYPE\"]}"
                         + "}");
         writeProfile(
                 "combined.json",
                 "{"
                         + "\"name\": \"combined\","
                         + "\"inheritedFromProfiles\": [\"base.json\"],"
-                        + "\"probes\": [{\"type\": \""
+                        + "\"probes\": {\""
                         + SecondTestProbeType.class.getName()
-                        + "\", \"name\": \"SECOND_TEST_PROBE_TYPE\"}]"
+                        + "\": [\"SECOND_TEST_PROBE_TYPE\"]}"
                         + "}");
 
         List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("combined.json"));
+
+        assertEquals(2, probes.size());
+        assertTrue(probes.contains(TestProbeType.TEST_PROBE_TYPE));
+        assertTrue(probes.contains(SecondTestProbeType.SECOND_TEST_PROBE_TYPE));
+    }
+
+    @Test
+    public void testProbesAreGroupedByTypeWithMultipleConstantsPerType() throws IOException {
+        writeProfile(
+                "grouped.json",
+                "{"
+                        + "\"name\": \"grouped\","
+                        + "\"probes\": {\""
+                        + TestProbeType.class.getName()
+                        + "\": [\"TEST_PROBE_TYPE\"], \""
+                        + SecondTestProbeType.class.getName()
+                        + "\": [\"SECOND_TEST_PROBE_TYPE\"]}"
+                        + "}");
+
+        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("grouped.json"));
 
         assertEquals(2, probes.size());
         assertTrue(probes.contains(TestProbeType.TEST_PROBE_TYPE));
@@ -82,14 +102,14 @@ public class ScanProfileIOTest {
                 "parents/base.json",
                 "{"
                         + "\"name\": \"base\","
-                        + "\"probes\": [{\"type\": \""
+                        + "\"probes\": {\""
                         + TestProbeType.class.getName()
-                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]"
+                        + "\": [\"TEST_PROBE_TYPE\"]}"
                         + "}");
         writeProfile(
                 "child.json",
                 "{\"name\": \"child\", \"inheritedFromProfiles\": [\"parents/base.json\"],"
-                        + " \"probes\": []}");
+                        + " \"probes\": {}}");
 
         List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("child.json"));
 
@@ -103,9 +123,9 @@ public class ScanProfileIOTest {
                 "base.json",
                 "{"
                         + "\"name\": \"base\","
-                        + "\"probes\": [{\"type\": \""
+                        + "\"probes\": {\""
                         + TestProbeType.class.getName()
-                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]"
+                        + "\": [\"TEST_PROBE_TYPE\"]}"
                         + "}");
         writeProfile(
                 "nested/child.json",
@@ -114,7 +134,7 @@ public class ScanProfileIOTest {
                                 .toAbsolutePath()
                                 .toString()
                                 .replace("\\", "\\\\")
-                        + "\"], \"probes\": []}");
+                        + "\"], \"probes\": {}}");
 
         List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("nested/child.json"));
 
@@ -128,22 +148,22 @@ public class ScanProfileIOTest {
                 "base.json",
                 "{"
                         + "\"name\": \"base\","
-                        + "\"probes\": [{\"type\": \""
+                        + "\"probes\": {\""
                         + TestProbeType.class.getName()
-                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]"
+                        + "\": [\"TEST_PROBE_TYPE\"]}"
                         + "}");
         writeProfile(
                 "middleA.json",
                 "{\"name\": \"middleA\", \"inheritedFromProfiles\": [\"base.json\"], \"probes\":"
-                        + " []}");
+                        + " {}}");
         writeProfile(
                 "middleB.json",
                 "{\"name\": \"middleB\", \"inheritedFromProfiles\": [\"base.json\"], \"probes\":"
-                        + " []}");
+                        + " {}}");
         writeProfile(
                 "diamond.json",
                 "{\"name\": \"diamond\", \"inheritedFromProfiles\": [\"middleA.json\","
-                        + " \"middleB.json\"], \"probes\": []}");
+                        + " \"middleB.json\"], \"probes\": {}}");
 
         List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("diamond.json"));
 
@@ -155,10 +175,10 @@ public class ScanProfileIOTest {
     public void testCyclicInheritanceThrows() throws IOException {
         writeProfile(
                 "a.json",
-                "{\"name\": \"a\", \"inheritedFromProfiles\": [\"b.json\"], \"probes\": []}");
+                "{\"name\": \"a\", \"inheritedFromProfiles\": [\"b.json\"], \"probes\": {}}");
         writeProfile(
                 "b.json",
-                "{\"name\": \"b\", \"inheritedFromProfiles\": [\"a.json\"], \"probes\": []}");
+                "{\"name\": \"b\", \"inheritedFromProfiles\": [\"a.json\"], \"probes\": {}}");
 
         assertThrows(
                 IllegalStateException.class,
@@ -170,10 +190,34 @@ public class ScanProfileIOTest {
         writeProfile(
                 "orphan.json",
                 "{\"name\": \"orphan\", \"inheritedFromProfiles\": [\"doesNotExist.json\"],"
-                        + " \"probes\": []}");
+                        + " \"probes\": {}}");
 
         assertThrows(
                 IOException.class,
                 () -> ScanProfileIO.resolveProbes(tempDir.resolve("orphan.json")));
+    }
+
+    @Test
+    public void testUnknownProbeTypeClassThrows() throws IOException {
+        writeProfile(
+                "badType.json",
+                "{\"name\": \"badType\", \"probes\": {\"does.not.Exist\": [\"FOO\"]}}");
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> ScanProfileIO.resolveProbes(tempDir.resolve("badType.json")));
+    }
+
+    @Test
+    public void testUnknownProbeConstantThrows() throws IOException {
+        writeProfile(
+                "badConstant.json",
+                "{\"name\": \"badConstant\", \"probes\": {\""
+                        + TestProbeType.class.getName()
+                        + "\": [\"DOES_NOT_EXIST\"]}}");
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> ScanProfileIO.resolveProbes(tempDir.resolve("badConstant.json")));
     }
 }
