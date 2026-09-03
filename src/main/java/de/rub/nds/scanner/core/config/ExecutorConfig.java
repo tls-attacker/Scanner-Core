@@ -60,8 +60,9 @@ public final class ExecutorConfig {
             description =
                     "Path to a scan profile JSON file. Only probes declared by this profile (and"
                             + " any profiles it inherits from via 'inheritedFromProfiles') will be"
-                            + " executed. Profiles it inherits from are looked up by name among the"
-                            + " other *.json files in the same directory.")
+                            + " executed. Entries in 'inheritedFromProfiles' are paths to other"
+                            + " profile JSON files, resolved relative to this profile's own"
+                            + " directory.")
     private String profile = null;
 
     private List<ProbeType> probes = null;

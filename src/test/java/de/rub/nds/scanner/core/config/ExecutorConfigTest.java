@@ -260,7 +260,7 @@ public class ExecutorConfigTest {
                 "{\"name\": \"base\", \"settings\": {\"scanDetail\": \"ALL\"}}");
         Files.writeString(
                 tempDir.resolve("child.json"),
-                "{\"name\": \"child\", \"inheritedFromProfiles\": [\"base\"]}");
+                "{\"name\": \"child\", \"inheritedFromProfiles\": [\"base.json\"]}");
 
         config.setProfile(tempDir.resolve("child.json").toString());
 

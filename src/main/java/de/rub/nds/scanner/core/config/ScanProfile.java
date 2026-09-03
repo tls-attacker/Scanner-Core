@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 /**
  * A named, JSON-defined scan profile. A profile declares the set of {@link ProbeType}s that should
- * be executed during a scan, and may additionally inherit probes from other profiles by name via
- * {@link #getInheritedFromProfiles()}.
+ * be executed during a scan, and may additionally inherit probes from other profiles, referenced by
+ * file path, via {@link #getInheritedFromProfiles()}.
  */
 public final class ScanProfile {
 
@@ -33,7 +33,8 @@ public final class ScanProfile {
     }
 
     /**
-     * Returns the name of this profile.
+     * Returns the name of this profile. Purely informational (e.g. for error messages) — it plays
+     * no role in resolving {@link #getInheritedFromProfiles()}.
      *
      * @return the profile name
      */
@@ -51,18 +52,20 @@ public final class ScanProfile {
     }
 
     /**
-     * Returns the names of the profiles this profile inherits probes from.
+     * Returns the paths of the profiles this profile inherits probes from, each resolved relative
+     * to the directory of the file this profile itself was loaded from (an absolute path is used
+     * as-is).
      *
-     * @return the list of inherited profile names
+     * @return the list of inherited profile paths
      */
     public List<String> getInheritedFromProfiles() {
         return inheritedFromProfiles;
     }
 
     /**
-     * Sets the names of the profiles this profile inherits probes from.
+     * Sets the paths of the profiles this profile inherits probes from.
      *
-     * @param inheritedFromProfiles the list of inherited profile names
+     * @param inheritedFromProfiles the list of inherited profile paths
      */
     public void setInheritedFromProfiles(List<String> inheritedFromProfiles) {
         this.inheritedFromProfiles =

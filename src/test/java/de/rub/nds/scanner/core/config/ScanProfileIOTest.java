@@ -24,7 +24,9 @@ public class ScanProfileIOTest {
     @TempDir Path tempDir;
 
     private void writeProfile(String fileName, String content) throws IOException {
-        Files.writeString(tempDir.resolve(fileName), content);
+        Path path = tempDir.resolve(fileName);
+        Files.createDirectories(path.getParent());
+        Files.writeString(path, content);
     }
 
     @Test
@@ -60,7 +62,7 @@ public class ScanProfileIOTest {
                 "combined.json",
                 "{"
                         + "\"name\": \"combined\","
-                        + "\"inheritedFromProfiles\": [\"base\"],"
+                        + "\"inheritedFromProfiles\": [\"base.json\"],"
                         + "\"probes\": [{\"type\": \""
                         + SecondTestProbeType.class.getName()
                         + "\", \"name\": \"SECOND_TEST_PROBE_TYPE\"}]"
@@ -71,6 +73,53 @@ public class ScanProfileIOTest {
         assertEquals(2, probes.size());
         assertTrue(probes.contains(TestProbeType.TEST_PROBE_TYPE));
         assertTrue(probes.contains(SecondTestProbeType.SECOND_TEST_PROBE_TYPE));
+    }
+
+    @Test
+    public void testInheritedFromProfilesResolvesRelativeToDeclaringFilesDirectory()
+            throws IOException {
+        writeProfile(
+                "parents/base.json",
+                "{"
+                        + "\"name\": \"base\","
+                        + "\"probes\": [{\"type\": \""
+                        + TestProbeType.class.getName()
+                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]"
+                        + "}");
+        writeProfile(
+                "child.json",
+                "{\"name\": \"child\", \"inheritedFromProfiles\": [\"parents/base.json\"],"
+                        + " \"probes\": []}");
+
+        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("child.json"));
+
+        assertEquals(1, probes.size());
+        assertEquals(TestProbeType.TEST_PROBE_TYPE, probes.get(0));
+    }
+
+    @Test
+    public void testInheritedFromProfilesAcceptsAbsolutePath() throws IOException {
+        writeProfile(
+                "base.json",
+                "{"
+                        + "\"name\": \"base\","
+                        + "\"probes\": [{\"type\": \""
+                        + TestProbeType.class.getName()
+                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]"
+                        + "}");
+        writeProfile(
+                "nested/child.json",
+                "{\"name\": \"child\", \"inheritedFromProfiles\": [\""
+                        + tempDir.resolve("base.json")
+                                .toAbsolutePath()
+                                .toString()
+                                .replace("\\", "\\\\")
+                        + "\"], \"probes\": []}");
+
+        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("nested/child.json"));
+
+        assertEquals(1, probes.size());
+        assertEquals(TestProbeType.TEST_PROBE_TYPE, probes.get(0));
     }
 
     @Test
@@ -85,14 +134,16 @@ public class ScanProfileIOTest {
                         + "}");
         writeProfile(
                 "middleA.json",
-                "{\"name\": \"middleA\", \"inheritedFromProfiles\": [\"base\"], \"probes\": []}");
+                "{\"name\": \"middleA\", \"inheritedFromProfiles\": [\"base.json\"], \"probes\":"
+                        + " []}");
         writeProfile(
                 "middleB.json",
-                "{\"name\": \"middleB\", \"inheritedFromProfiles\": [\"base\"], \"probes\": []}");
+                "{\"name\": \"middleB\", \"inheritedFromProfiles\": [\"base.json\"], \"probes\":"
+                        + " []}");
         writeProfile(
                 "diamond.json",
-                "{\"name\": \"diamond\", \"inheritedFromProfiles\": [\"middleA\", \"middleB\"],"
-                        + " \"probes\": []}");
+                "{\"name\": \"diamond\", \"inheritedFromProfiles\": [\"middleA.json\","
+                        + " \"middleB.json\"], \"probes\": []}");
 
         List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("diamond.json"));
 
@@ -103,9 +154,11 @@ public class ScanProfileIOTest {
     @Test
     public void testCyclicInheritanceThrows() throws IOException {
         writeProfile(
-                "a.json", "{\"name\": \"a\", \"inheritedFromProfiles\": [\"b\"], \"probes\": []}");
+                "a.json",
+                "{\"name\": \"a\", \"inheritedFromProfiles\": [\"b.json\"], \"probes\": []}");
         writeProfile(
-                "b.json", "{\"name\": \"b\", \"inheritedFromProfiles\": [\"a\"], \"probes\": []}");
+                "b.json",
+                "{\"name\": \"b\", \"inheritedFromProfiles\": [\"a.json\"], \"probes\": []}");
 
         assertThrows(
                 IllegalStateException.class,
@@ -116,26 +169,11 @@ public class ScanProfileIOTest {
     public void testUnknownInheritedProfileThrows() throws IOException {
         writeProfile(
                 "orphan.json",
-                "{\"name\": \"orphan\", \"inheritedFromProfiles\": [\"doesNotExist\"],"
+                "{\"name\": \"orphan\", \"inheritedFromProfiles\": [\"doesNotExist.json\"],"
                         + " \"probes\": []}");
 
         assertThrows(
-                IllegalArgumentException.class,
+                IOException.class,
                 () -> ScanProfileIO.resolveProbes(tempDir.resolve("orphan.json")));
-    }
-
-    @Test
-    public void testDuplicateProfileNameInDirectoryThrows() throws IOException {
-        writeProfile(
-                "first.json", "{\"name\": \"dup\", \"inheritedFromProfiles\": [], \"probes\": []}");
-        writeProfile(
-                "second.json",
-                "{\"name\": \"dup\", \"inheritedFromProfiles\": [], \"probes\": []}");
-        writeProfile(
-                "root.json",
-                "{\"name\": \"root\", \"inheritedFromProfiles\": [\"dup\"], \"probes\": []}");
-
-        assertThrows(
-                IOException.class, () -> ScanProfileIO.resolveProbes(tempDir.resolve("root.json")));
     }
 }
