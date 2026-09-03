@@ -9,15 +9,39 @@
 package de.rub.nds.scanner.core.config;
 
 import de.rub.nds.scanner.core.probe.ProbeType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Resolves a {@link ProbeType} enum constant from its declaring class's fully qualified name and
+ * Resolves {@link ProbeType} enum constants from their declaring class's fully qualified name and
  * the constant's own name, as used by {@link ScanProfile#getProbes()}.
  */
 final class ProbeTypeResolver {
 
     private ProbeTypeResolver() {
         // Utility class
+    }
+
+    /**
+     * Resolves the class named {@code className}, verifying that it is an enum implementing {@link
+     * ProbeType}.
+     *
+     * @param className the fully qualified name of an enum class implementing {@link ProbeType}
+     * @return the resolved class
+     */
+    static Class<?> resolveClass(String className) {
+        Class<?> probeTypeClass;
+        try {
+            probeTypeClass = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException(
+                    "Could not find ProbeType class '" + className + "'", e);
+        }
+        if (!ProbeType.class.isAssignableFrom(probeTypeClass) || !probeTypeClass.isEnum()) {
+            throw new IllegalArgumentException(
+                    "Class '" + className + "' does not implement ProbeType as an enum");
+        }
+        return probeTypeClass;
     }
 
     /**
@@ -30,17 +54,7 @@ final class ProbeTypeResolver {
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     static ProbeType resolve(String className, String constantName) {
-        Class<?> probeTypeClass;
-        try {
-            probeTypeClass = Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(
-                    "Could not find ProbeType class '" + className + "'", e);
-        }
-        if (!ProbeType.class.isAssignableFrom(probeTypeClass) || !probeTypeClass.isEnum()) {
-            throw new IllegalArgumentException(
-                    "Class '" + className + "' does not implement ProbeType as an enum");
-        }
+        Class<?> probeTypeClass = resolveClass(className);
         try {
             return (ProbeType) Enum.valueOf((Class<? extends Enum>) probeTypeClass, constantName);
         } catch (IllegalArgumentException e) {
@@ -52,5 +66,21 @@ final class ProbeTypeResolver {
                             + "'",
                     e);
         }
+    }
+
+    /**
+     * Returns the names of every constant declared by the enum class {@code className}, in
+     * declaration order.
+     *
+     * @param className the fully qualified name of an enum class implementing {@link ProbeType}
+     * @return the names of all of its constants
+     */
+    static List<String> allConstantNames(String className) {
+        Class<?> probeTypeClass = resolveClass(className);
+        List<String> names = new ArrayList<>();
+        for (Object constant : probeTypeClass.getEnumConstants()) {
+            names.add(((Enum<?>) constant).name());
+        }
+        return names;
     }
 }

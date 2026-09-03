@@ -220,4 +220,63 @@ public class ScanProfileIOTest {
                 IllegalArgumentException.class,
                 () -> ScanProfileIO.resolveProbes(tempDir.resolve("badConstant.json")));
     }
+
+    @Test
+    public void testWildcardExpandsToAllConstants() throws IOException {
+        writeProfile(
+                "everything.json",
+                "{\"name\": \"everything\", \"probes\": {\""
+                        + MultiConstantTestProbeType.class.getName()
+                        + "\": [\"*\"]}}");
+
+        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("everything.json"));
+
+        assertEquals(3, probes.size());
+        assertTrue(probes.contains(MultiConstantTestProbeType.FIRST));
+        assertTrue(probes.contains(MultiConstantTestProbeType.SECOND));
+        assertTrue(probes.contains(MultiConstantTestProbeType.THIRD));
+    }
+
+    @Test
+    public void testNegationExcludesConstantAddedByWildcard() throws IOException {
+        writeProfile(
+                "mostly.json",
+                "{\"name\": \"mostly\", \"probes\": {\""
+                        + MultiConstantTestProbeType.class.getName()
+                        + "\": [\"*\", \"!SECOND\"]}}");
+
+        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("mostly.json"));
+
+        assertEquals(2, probes.size());
+        assertTrue(probes.contains(MultiConstantTestProbeType.FIRST));
+        assertTrue(probes.contains(MultiConstantTestProbeType.THIRD));
+        assertFalse(probes.contains(MultiConstantTestProbeType.SECOND));
+    }
+
+    @Test
+    public void testNegationExcludesExplicitlyListedConstant() throws IOException {
+        writeProfile(
+                "explicit.json",
+                "{\"name\": \"explicit\", \"probes\": {\""
+                        + MultiConstantTestProbeType.class.getName()
+                        + "\": [\"FIRST\", \"SECOND\", \"!FIRST\"]}}");
+
+        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("explicit.json"));
+
+        assertEquals(1, probes.size());
+        assertEquals(MultiConstantTestProbeType.SECOND, probes.get(0));
+    }
+
+    @Test
+    public void testNegatingUnknownConstantThrows() throws IOException {
+        writeProfile(
+                "badNegation.json",
+                "{\"name\": \"badNegation\", \"probes\": {\""
+                        + MultiConstantTestProbeType.class.getName()
+                        + "\": [\"*\", \"!DOES_NOT_EXIST\"]}}");
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> ScanProfileIO.resolveProbes(tempDir.resolve("badNegation.json")));
+    }
 }
