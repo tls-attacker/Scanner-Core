@@ -11,15 +11,22 @@ package de.rub.nds.scanner.core.config;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.rub.nds.scanner.core.probe.ProbeType;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class ExecutorConfigTest {
 
     private ExecutorConfig config;
+
+    @TempDir private Path tempDir;
 
     @BeforeEach
     public void setUp() {
@@ -123,19 +130,67 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testExcludedProbesGetterSetter() {
-        assertTrue(config.getExcludedProbes().isEmpty());
+    public void testProfileGetterSetter() {
+        assertNull(config.getProfile());
+        config.setProfile("/tmp/some-profile.json");
+        assertEquals("/tmp/some-profile.json", config.getProfile());
+        config.setProfile(null);
+        assertNull(config.getProfile());
+    }
 
-        List<ProbeType> excludedProbes = new LinkedList<>();
-        excludedProbes.add(new TestProbeType("probe1"));
-        excludedProbes.add(new TestProbeType("probe2"));
+    @Test
+    public void testGetProbesResolvesProfile() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath,
+                "{\"name\": \"myProfile\", \"probes\": [{\"type\": \""
+                        + de.rub.nds.scanner.core.TestProbeType.class.getName()
+                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]}");
 
-        config.setExcludedProbes(excludedProbes);
-        assertEquals(2, config.getExcludedProbes().size());
+        config.setProfile(profilePath.toString());
+        List<ProbeType> probes = config.getProbes();
 
-        // Test that it returns a copy
-        config.getExcludedProbes().clear();
-        assertEquals(2, config.getExcludedProbes().size());
+        assertNotNull(probes);
+        assertEquals(1, probes.size());
+        assertEquals(de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, probes.get(0));
+    }
+
+    @Test
+    public void testGetProbesResolvesProfileOnlyOnce() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath,
+                "{\"name\": \"myProfile\", \"probes\": [{\"type\": \""
+                        + de.rub.nds.scanner.core.TestProbeType.class.getName()
+                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]}");
+        config.setProfile(profilePath.toString());
+        config.getProbes();
+
+        Files.delete(profilePath);
+
+        // Should not attempt to re-read the (now deleted) file
+        assertEquals(1, config.getProbes().size());
+    }
+
+    @Test
+    public void testSetProbesOverridesConfiguredProfile() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath,
+                "{\"name\": \"myProfile\", \"probes\": [{\"type\": \""
+                        + de.rub.nds.scanner.core.TestProbeType.class.getName()
+                        + "\", \"name\": \"TEST_PROBE_TYPE\"}]}");
+        config.setProfile(profilePath.toString());
+
+        config.setProbes(List.of());
+
+        assertTrue(config.getProbes().isEmpty());
+    }
+
+    @Test
+    public void testGetProbesThrowsUncheckedIOExceptionOnMissingProfile() {
+        config.setProfile(tempDir.resolve("doesNotExist.json").toString());
+        assertThrows(UncheckedIOException.class, () -> config.getProbes());
     }
 
     @Test

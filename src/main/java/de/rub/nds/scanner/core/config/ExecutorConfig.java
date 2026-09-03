@@ -10,7 +10,9 @@ package de.rub.nds.scanner.core.config;
 
 import com.beust.jcommander.Parameter;
 import de.rub.nds.scanner.core.probe.ProbeType;
-import de.rub.nds.scanner.core.probe.ProbeTypeConverter;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,34 +56,39 @@ public final class ExecutorConfig {
     private int overallThreads = 1;
 
     @Parameter(
-            names = "-exclude",
+            names = "-profile",
             description =
-                    "A list of probes that should be excluded from the scan. The list is separated by commas.",
-            converter = ProbeTypeConverter.class)
-    private List<ProbeType> excludedProbes = new LinkedList<>();
+                    "Path to a scan profile JSON file. Only probes declared by this profile (and"
+                            + " any profiles it inherits from via 'inheritedFromProfiles') will be"
+                            + " executed. Profiles it inherits from are looked up by name among the"
+                            + " other *.json files in the same directory.")
+    private String profile = null;
 
     private List<ProbeType> probes = null;
+    private boolean profileResolved = false;
 
     public ExecutorConfig() {
         // Default constructor
     }
 
     /**
-     * Returns a copy of the list of probe types that are excluded from scanning.
+     * Returns the path to the scan profile JSON file, if one was configured.
      *
-     * @return a new list containing the excluded probe types
+     * @return the scan profile path, or null if not set
      */
-    public List<ProbeType> getExcludedProbes() {
-        return new LinkedList<>(excludedProbes);
+    public String getProfile() {
+        return profile;
     }
 
     /**
-     * Sets the list of probe types to be excluded from scanning.
+     * Sets the path to the scan profile JSON file to use for this scan. Takes effect the next time
+     * {@link #getProbes()} is called.
      *
-     * @param excludedProbes the list of probe types to exclude
+     * @param profile the scan profile path, or null to clear
      */
-    public void setExcludedProbes(List<ProbeType> excludedProbes) {
-        this.excludedProbes = new LinkedList<>(excludedProbes);
+    public void setProfile(String profile) {
+        this.profile = profile;
+        this.profileResolved = false;
     }
 
     /**
@@ -157,12 +164,28 @@ public final class ExecutorConfig {
     }
 
     /**
-     * Returns a copy of the list of probe types to be executed.
+     * Returns a copy of the list of probe types to be executed. If a scan profile was configured
+     * via {@link #setProfile(String)} (or the {@code -profile} parameter) and no probes have been
+     * set explicitly since, the profile is resolved (including any inherited profiles) on first
+     * access.
      *
      * @return a new list containing the probe types, or null if not set
      */
     public List<ProbeType> getProbes() {
+        resolveProfileIfNecessary();
         return probes == null ? null : new LinkedList<>(probes);
+    }
+
+    private void resolveProfileIfNecessary() {
+        if (profileResolved || profile == null) {
+            return;
+        }
+        try {
+            probes = ScanProfileIO.resolveProbes(Path.of(profile));
+        } catch (IOException e) {
+            throw new UncheckedIOException("Could not load scan profile '" + profile + "'", e);
+        }
+        profileResolved = true;
     }
 
     /**
@@ -172,6 +195,7 @@ public final class ExecutorConfig {
      */
     public void setProbes(List<ProbeType> probes) {
         this.probes = probes == null ? null : new LinkedList<>(probes);
+        this.profileResolved = true;
     }
 
     /**
@@ -181,6 +205,7 @@ public final class ExecutorConfig {
      */
     public void setProbes(ProbeType... probes) {
         this.probes = Arrays.asList(probes);
+        this.profileResolved = true;
     }
 
     /**
@@ -189,6 +214,7 @@ public final class ExecutorConfig {
      * @param probes the list of probe types to add
      */
     public void addProbes(List<ProbeType> probes) {
+        resolveProfileIfNecessary();
         if (this.probes == null) {
             this.probes = new LinkedList<>();
         }
@@ -201,6 +227,7 @@ public final class ExecutorConfig {
      * @param probes the probe types to add
      */
     public void addProbes(ProbeType... probes) {
+        resolveProfileIfNecessary();
         if (this.probes == null) {
             this.probes = new LinkedList<>();
         }
