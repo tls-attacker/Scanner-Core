@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.config;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.rub.nds.scanner.core.probe.ProbeType;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +42,11 @@ public final class ProbeTypeCatalog {
     public static String toProfileProbesJson(List<Class<? extends ProbeType>> probeTypeClasses) {
         Map<String, List<String>> probesByType = new LinkedHashMap<>();
         for (Class<? extends ProbeType> probeTypeClass : probeTypeClasses) {
-            probesByType.put(
-                    probeTypeClass.getName(),
-                    ProbeTypeResolver.allConstantNames(probeTypeClass.getName()));
+            List<String> constantNames = new ArrayList<>();
+            for (Object constant : probeTypeClass.getEnumConstants()) {
+                constantNames.add(((Enum<?>) constant).name());
+            }
+            probesByType.put(probeTypeClass.getName(), constantNames);
         }
         try {
             return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(probesByType);

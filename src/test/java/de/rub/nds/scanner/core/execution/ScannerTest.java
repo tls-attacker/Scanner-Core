@@ -333,6 +333,16 @@ public class ScannerTest {
     }
 
     @Test
+    public void testRegisterProbeWithExcludedProbes() {
+        executorConfig.setExcludedProbes(List.of(new TestProbeType("excluded")));
+        try (TestScanner scanner = new TestScanner(executorConfig)) {
+
+            TestProbe excludedProbe = new TestProbe(new TestProbeType("excluded"));
+            scanner.registerProbeForExecution(excludedProbe);
+        }
+    }
+
+    @Test
     public void testRegisterAfterProbe() {
         try (TestScanner scanner = new TestScanner(executorConfig)) {
             TestAfterProbe afterProbe = new TestAfterProbe();

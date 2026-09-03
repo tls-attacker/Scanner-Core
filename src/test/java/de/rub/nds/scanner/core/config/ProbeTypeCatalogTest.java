@@ -12,12 +12,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.rub.nds.scanner.core.TestProbeType;
-import de.rub.nds.scanner.core.probe.ProbeType;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class ProbeTypeCatalogTest {
+
+    @TempDir Path tempDir;
 
     @Test
     public void testRendersOneClassPerEntryWithAllConstants() throws Exception {
@@ -35,17 +40,16 @@ public class ProbeTypeCatalogTest {
     }
 
     @Test
-    public void testOutputIsDirectlyUsableAsProfileProbesField() throws Exception {
+    public void testOutputIsDirectlyUsableAsProfileProbesField() throws IOException {
         String json =
                 ProbeTypeCatalog.toProfileProbesJson(List.of(MultiConstantTestProbeType.class));
-        String profileJson = "{\"name\": \"generated\", \"probes\": " + json + "}";
+        Path profilePath = tempDir.resolve("generated.json");
+        Files.writeString(profilePath, "{\"name\": \"generated\", \"probes\": " + json + "}");
 
-        ScanProfile profile = new ObjectMapper().readValue(profileJson, ScanProfile.class);
-        List<ProbeType> probes = profile.resolveProbes();
+        ProbeTypeSelector selector = ScanProfileIO.resolveProbeSelector(profilePath);
 
-        assertEquals(3, probes.size());
-        assertTrue(probes.contains(MultiConstantTestProbeType.FIRST));
-        assertTrue(probes.contains(MultiConstantTestProbeType.SECOND));
-        assertTrue(probes.contains(MultiConstantTestProbeType.THIRD));
+        assertTrue(selector.matches(MultiConstantTestProbeType.FIRST));
+        assertTrue(selector.matches(MultiConstantTestProbeType.SECOND));
+        assertTrue(selector.matches(MultiConstantTestProbeType.THIRD));
     }
 }

@@ -12,7 +12,7 @@ import de.rub.nds.scanner.core.probe.ProbeType;
 
 /**
  * A {@link ProbeType} implementation with several constants, used to test the {@code "*"} and
- * {@code "!CONSTANT_NAME"} tokens supported by {@link ScanProfile#resolveProbes()}.
+ * {@code "!CONSTANT_NAME"} tokens supported by {@link ProbeTypeSelector}.
  */
 public enum MultiConstantTestProbeType implements ProbeType {
     FIRST,

@@ -139,7 +139,7 @@ public class ExecutorConfigTest {
     }
 
     @Test
-    public void testGetProbesResolvesProfile() throws IOException {
+    public void testIsProbeIncludedResolvesProfile() throws IOException {
         Path profilePath = tempDir.resolve("myProfile.json");
         Files.writeString(
                 profilePath,
@@ -148,15 +148,15 @@ public class ExecutorConfigTest {
                         + "\": [\"TEST_PROBE_TYPE\"]}}");
 
         config.setProfile(profilePath.toString());
-        List<ProbeType> probes = config.getProbes();
 
-        assertNotNull(probes);
-        assertEquals(1, probes.size());
-        assertEquals(de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, probes.get(0));
+        assertTrue(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
+        assertFalse(config.isProbeIncluded(SecondTestProbeType.SECOND_TEST_PROBE_TYPE, true));
     }
 
     @Test
-    public void testGetProbesResolvesProfileOnlyOnce() throws IOException {
+    public void testIsProbeIncludedResolvesProfileOnlyOnce() throws IOException {
         Path profilePath = tempDir.resolve("myProfile.json");
         Files.writeString(
                 profilePath,
@@ -164,12 +164,14 @@ public class ExecutorConfigTest {
                         + de.rub.nds.scanner.core.TestProbeType.class.getName()
                         + "\": [\"TEST_PROBE_TYPE\"]}}");
         config.setProfile(profilePath.toString());
-        config.getProbes();
+        config.isProbeIncluded(de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false);
 
         Files.delete(profilePath);
 
         // Should not attempt to re-read the (now deleted) file
-        assertEquals(1, config.getProbes().size());
+        assertTrue(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
     }
 
     @Test
@@ -184,13 +186,80 @@ public class ExecutorConfigTest {
 
         config.setProbes(List.of());
 
-        assertTrue(config.getProbes().isEmpty());
+        assertFalse(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
     }
 
     @Test
-    public void testGetProbesThrowsUncheckedIOExceptionOnMissingProfile() {
+    public void testIsProbeIncludedThrowsUncheckedIOExceptionOnMissingProfile() {
         config.setProfile(tempDir.resolve("doesNotExist.json").toString());
-        assertThrows(UncheckedIOException.class, () -> config.getProbes());
+        assertThrows(
+                UncheckedIOException.class,
+                () ->
+                        config.isProbeIncluded(
+                                de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
+    }
+
+    @Test
+    public void testIsProbeIncludedDefaultsWhenNoProbesOrProfileConfigured() {
+        assertTrue(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, true));
+        assertFalse(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
+    }
+
+    @Test
+    public void testExcludedProbesGetterSetter() {
+        assertTrue(config.getExcludedProbes().isEmpty());
+
+        List<ProbeType> excludedProbes = new LinkedList<>();
+        excludedProbes.add(new TestProbeType("probe1"));
+        excludedProbes.add(new TestProbeType("probe2"));
+
+        config.setExcludedProbes(excludedProbes);
+        assertEquals(2, config.getExcludedProbes().size());
+
+        // Test that it returns a copy
+        config.getExcludedProbes().clear();
+        assertEquals(2, config.getExcludedProbes().size());
+    }
+
+    @Test
+    public void testExcludedProbesOverrideExecuteByDefault() {
+        ProbeType excluded = new TestProbeType("excluded");
+        config.setExcludedProbes(List.of(excluded));
+
+        assertFalse(config.isProbeIncluded(excluded, true));
+    }
+
+    @Test
+    public void testExcludedProbesOverrideExplicitProbeList() {
+        ProbeType excluded = new TestProbeType("excluded");
+        ProbeType included = new TestProbeType("included");
+        config.setProbes(excluded, included);
+        config.setExcludedProbes(List.of(excluded));
+
+        assertFalse(config.isProbeIncluded(excluded, true));
+        assertTrue(config.isProbeIncluded(included, true));
+    }
+
+    @Test
+    public void testExcludedProbesOverrideProfile() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath,
+                "{\"name\": \"myProfile\", \"probes\": {\""
+                        + de.rub.nds.scanner.core.TestProbeType.class.getName()
+                        + "\": [\"TEST_PROBE_TYPE\"]}}");
+        config.setProfile(profilePath.toString());
+        config.setExcludedProbes(List.of(de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE));
+
+        assertFalse(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
     }
 
     @Test

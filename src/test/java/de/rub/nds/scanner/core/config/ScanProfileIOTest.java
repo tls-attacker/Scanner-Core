@@ -11,11 +11,9 @@ package de.rub.nds.scanner.core.config;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.rub.nds.scanner.core.TestProbeType;
-import de.rub.nds.scanner.core.probe.ProbeType;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -41,10 +39,10 @@ public class ScanProfileIOTest {
                         + "\": [\"TEST_PROBE_TYPE\"]}"
                         + "}");
 
-        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("solo.json"));
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("solo.json"));
 
-        assertEquals(1, probes.size());
-        assertEquals(TestProbeType.TEST_PROBE_TYPE, probes.get(0));
+        assertTrue(selector.matches(TestProbeType.TEST_PROBE_TYPE));
     }
 
     @Test
@@ -68,11 +66,11 @@ public class ScanProfileIOTest {
                         + "\": [\"SECOND_TEST_PROBE_TYPE\"]}"
                         + "}");
 
-        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("combined.json"));
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("combined.json"));
 
-        assertEquals(2, probes.size());
-        assertTrue(probes.contains(TestProbeType.TEST_PROBE_TYPE));
-        assertTrue(probes.contains(SecondTestProbeType.SECOND_TEST_PROBE_TYPE));
+        assertTrue(selector.matches(TestProbeType.TEST_PROBE_TYPE));
+        assertTrue(selector.matches(SecondTestProbeType.SECOND_TEST_PROBE_TYPE));
     }
 
     @Test
@@ -88,11 +86,11 @@ public class ScanProfileIOTest {
                         + "\": [\"SECOND_TEST_PROBE_TYPE\"]}"
                         + "}");
 
-        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("grouped.json"));
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("grouped.json"));
 
-        assertEquals(2, probes.size());
-        assertTrue(probes.contains(TestProbeType.TEST_PROBE_TYPE));
-        assertTrue(probes.contains(SecondTestProbeType.SECOND_TEST_PROBE_TYPE));
+        assertTrue(selector.matches(TestProbeType.TEST_PROBE_TYPE));
+        assertTrue(selector.matches(SecondTestProbeType.SECOND_TEST_PROBE_TYPE));
     }
 
     @Test
@@ -111,10 +109,10 @@ public class ScanProfileIOTest {
                 "{\"name\": \"child\", \"inheritedFromProfiles\": [\"parents/base.json\"],"
                         + " \"probes\": {}}");
 
-        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("child.json"));
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("child.json"));
 
-        assertEquals(1, probes.size());
-        assertEquals(TestProbeType.TEST_PROBE_TYPE, probes.get(0));
+        assertTrue(selector.matches(TestProbeType.TEST_PROBE_TYPE));
     }
 
     @Test
@@ -136,39 +134,10 @@ public class ScanProfileIOTest {
                                 .replace("\\", "\\\\")
                         + "\"], \"probes\": {}}");
 
-        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("nested/child.json"));
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("nested/child.json"));
 
-        assertEquals(1, probes.size());
-        assertEquals(TestProbeType.TEST_PROBE_TYPE, probes.get(0));
-    }
-
-    @Test
-    public void testResolveProfileDeduplicatesProbesSharedByMultipleParents() throws IOException {
-        writeProfile(
-                "base.json",
-                "{"
-                        + "\"name\": \"base\","
-                        + "\"probes\": {\""
-                        + TestProbeType.class.getName()
-                        + "\": [\"TEST_PROBE_TYPE\"]}"
-                        + "}");
-        writeProfile(
-                "middleA.json",
-                "{\"name\": \"middleA\", \"inheritedFromProfiles\": [\"base.json\"], \"probes\":"
-                        + " {}}");
-        writeProfile(
-                "middleB.json",
-                "{\"name\": \"middleB\", \"inheritedFromProfiles\": [\"base.json\"], \"probes\":"
-                        + " {}}");
-        writeProfile(
-                "diamond.json",
-                "{\"name\": \"diamond\", \"inheritedFromProfiles\": [\"middleA.json\","
-                        + " \"middleB.json\"], \"probes\": {}}");
-
-        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("diamond.json"));
-
-        assertEquals(1, probes.size());
-        assertEquals(TestProbeType.TEST_PROBE_TYPE, probes.get(0));
+        assertTrue(selector.matches(TestProbeType.TEST_PROBE_TYPE));
     }
 
     @Test
@@ -182,7 +151,7 @@ public class ScanProfileIOTest {
 
         assertThrows(
                 IllegalStateException.class,
-                () -> ScanProfileIO.resolveProbes(tempDir.resolve("a.json")));
+                () -> ScanProfileIO.resolveProbeSelector(tempDir.resolve("a.json")));
     }
 
     @Test
@@ -194,63 +163,39 @@ public class ScanProfileIOTest {
 
         assertThrows(
                 IOException.class,
-                () -> ScanProfileIO.resolveProbes(tempDir.resolve("orphan.json")));
+                () -> ScanProfileIO.resolveProbeSelector(tempDir.resolve("orphan.json")));
     }
 
     @Test
-    public void testUnknownProbeTypeClassThrows() throws IOException {
-        writeProfile(
-                "badType.json",
-                "{\"name\": \"badType\", \"probes\": {\"does.not.Exist\": [\"FOO\"]}}");
-
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> ScanProfileIO.resolveProbes(tempDir.resolve("badType.json")));
-    }
-
-    @Test
-    public void testUnknownProbeConstantThrows() throws IOException {
-        writeProfile(
-                "badConstant.json",
-                "{\"name\": \"badConstant\", \"probes\": {\""
-                        + TestProbeType.class.getName()
-                        + "\": [\"DOES_NOT_EXIST\"]}}");
-
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> ScanProfileIO.resolveProbes(tempDir.resolve("badConstant.json")));
-    }
-
-    @Test
-    public void testWildcardExpandsToAllConstants() throws IOException {
+    public void testWildcardMatchesEveryConstantOfThatType() throws IOException {
         writeProfile(
                 "everything.json",
                 "{\"name\": \"everything\", \"probes\": {\""
                         + MultiConstantTestProbeType.class.getName()
                         + "\": [\"*\"]}}");
 
-        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("everything.json"));
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("everything.json"));
 
-        assertEquals(3, probes.size());
-        assertTrue(probes.contains(MultiConstantTestProbeType.FIRST));
-        assertTrue(probes.contains(MultiConstantTestProbeType.SECOND));
-        assertTrue(probes.contains(MultiConstantTestProbeType.THIRD));
+        assertTrue(selector.matches(MultiConstantTestProbeType.FIRST));
+        assertTrue(selector.matches(MultiConstantTestProbeType.SECOND));
+        assertTrue(selector.matches(MultiConstantTestProbeType.THIRD));
     }
 
     @Test
-    public void testNegationExcludesConstantAddedByWildcard() throws IOException {
+    public void testNegationExcludesConstantSelectedByWildcard() throws IOException {
         writeProfile(
                 "mostly.json",
                 "{\"name\": \"mostly\", \"probes\": {\""
                         + MultiConstantTestProbeType.class.getName()
                         + "\": [\"*\", \"!SECOND\"]}}");
 
-        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("mostly.json"));
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("mostly.json"));
 
-        assertEquals(2, probes.size());
-        assertTrue(probes.contains(MultiConstantTestProbeType.FIRST));
-        assertTrue(probes.contains(MultiConstantTestProbeType.THIRD));
-        assertFalse(probes.contains(MultiConstantTestProbeType.SECOND));
+        assertTrue(selector.matches(MultiConstantTestProbeType.FIRST));
+        assertFalse(selector.matches(MultiConstantTestProbeType.SECOND));
+        assertTrue(selector.matches(MultiConstantTestProbeType.THIRD));
     }
 
     @Test
@@ -261,22 +206,73 @@ public class ScanProfileIOTest {
                         + MultiConstantTestProbeType.class.getName()
                         + "\": [\"FIRST\", \"SECOND\", \"!FIRST\"]}}");
 
-        List<ProbeType> probes = ScanProfileIO.resolveProbes(tempDir.resolve("explicit.json"));
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("explicit.json"));
 
-        assertEquals(1, probes.size());
-        assertEquals(MultiConstantTestProbeType.SECOND, probes.get(0));
+        assertFalse(selector.matches(MultiConstantTestProbeType.FIRST));
+        assertTrue(selector.matches(MultiConstantTestProbeType.SECOND));
+        assertFalse(selector.matches(MultiConstantTestProbeType.THIRD));
     }
 
     @Test
-    public void testNegatingUnknownConstantThrows() throws IOException {
+    public void testChildProfileCanExcludeConstantSelectedByParent() throws IOException {
         writeProfile(
-                "badNegation.json",
-                "{\"name\": \"badNegation\", \"probes\": {\""
+                "base.json",
+                "{\"name\": \"base\", \"probes\": {\""
                         + MultiConstantTestProbeType.class.getName()
-                        + "\": [\"*\", \"!DOES_NOT_EXIST\"]}}");
+                        + "\": [\"*\"]}}");
+        writeProfile(
+                "child.json",
+                "{\"name\": \"child\", \"inheritedFromProfiles\": [\"base.json\"], \"probes\":"
+                        + " {\""
+                        + MultiConstantTestProbeType.class.getName()
+                        + "\": [\"!SECOND\"]}}");
 
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> ScanProfileIO.resolveProbes(tempDir.resolve("badNegation.json")));
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("child.json"));
+
+        assertTrue(selector.matches(MultiConstantTestProbeType.FIRST));
+        assertFalse(selector.matches(MultiConstantTestProbeType.SECOND));
+        assertTrue(selector.matches(MultiConstantTestProbeType.THIRD));
+    }
+
+    @Test
+    public void testUnknownClassNameNeverMatchesInsteadOfThrowing() throws IOException {
+        writeProfile(
+                "badType.json",
+                "{\"name\": \"badType\", \"probes\": {\"does.not.Exist\": [\"FOO\"]}}");
+
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("badType.json"));
+
+        assertFalse(selector.matches(TestProbeType.TEST_PROBE_TYPE));
+    }
+
+    @Test
+    public void testTypoedConstantNameNeverMatchesInsteadOfThrowing() throws IOException {
+        writeProfile(
+                "badConstant.json",
+                "{\"name\": \"badConstant\", \"probes\": {\""
+                        + TestProbeType.class.getName()
+                        + "\": [\"DOES_NOT_EXIST\"]}}");
+
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("badConstant.json"));
+
+        assertFalse(selector.matches(TestProbeType.TEST_PROBE_TYPE));
+    }
+
+    @Test
+    public void testUnmentionedTypeNeverMatches() throws IOException {
+        writeProfile(
+                "onlyFirst.json",
+                "{\"name\": \"onlyFirst\", \"probes\": {\""
+                        + TestProbeType.class.getName()
+                        + "\": [\"*\"]}}");
+
+        ProbeTypeSelector selector =
+                ScanProfileIO.resolveProbeSelector(tempDir.resolve("onlyFirst.json"));
+
+        assertFalse(selector.matches(SecondTestProbeType.SECOND_TEST_PROBE_TYPE));
     }
 }

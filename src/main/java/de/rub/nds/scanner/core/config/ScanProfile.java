@@ -8,10 +8,10 @@
  */
 package de.rub.nds.scanner.core.config;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import de.rub.nds.scanner.core.probe.ProbeType;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +28,7 @@ public final class ScanProfile {
 
     private Map<String, List<String>> probes = new LinkedHashMap<>();
 
-    private ScanProfileSettings settings;
+    private JsonNode settings;
 
     public ScanProfile() {
         // Default constructor for Jackson
@@ -82,11 +82,13 @@ public final class ScanProfile {
      * repeating the type for every single probe, while still letting a profile freely combine
      * probes from different {@link ProbeType} implementations.
      *
-     * <p>Each per-type list also accepts two special tokens, processed in order: {@code "*"} adds
-     * every constant declared by that type, and {@code "!CONSTANT_NAME"} removes a constant
-     * previously added (by name or by {@code "*"}) from that type's set. This lets an "everything"
+     * <p>Each per-type list also accepts two special tokens, processed in order: {@code "*"}
+     * selects every probe actually registered for that type, and {@code "!CONSTANT_NAME"} deselects
+     * one again (by name, or previously selected via {@code "*"}). This lets an "everything"
      * profile be written as {@code {"...TlsProbeType": ["*"]}} without enumerating every constant,
-     * and still exclude a few via {@code {"...TlsProbeType": ["*", "!TLS_LATENCY"]}}.
+     * and still exclude a few via {@code {"...TlsProbeType": ["*", "!TLS_LATENCY"]}}. These tokens
+     * are matched against the actual probes a scan registers (see {@link
+     * ScanProfileIO#resolveProbeSelector}), not resolved reflectively from the class name up front.
      *
      * @return the raw probes declared by this profile
      */
@@ -104,53 +106,24 @@ public final class ScanProfile {
     }
 
     /**
-     * Resolves the probes declared directly by this profile (not including inherited ones) to their
-     * concrete {@link ProbeType} enum constants, expanding {@code "*"} and {@code "!CONSTANT_NAME"}
-     * tokens as documented on {@link #getProbes()}.
+     * Returns the raw {@code settings} JSON object declared directly by this profile, or null if
+     * the profile declares none. Unlike {@link #getProbes()}, these are never inherited from {@link
+     * #getInheritedFromProfiles()}. {@link ExecutorConfig} applies this by deserializing it
+     * directly onto itself, so its shape always matches whatever {@code @Parameter} fields {@link
+     * ExecutorConfig} currently declares.
      *
-     * @return the resolved list of probes declared by this profile
+     * @return the raw settings object, or null
      */
-    public List<ProbeType> resolveProbes() {
-        List<ProbeType> resolved = new ArrayList<>();
-        for (Map.Entry<String, List<String>> entry : probes.entrySet()) {
-            String className = entry.getKey();
-            LinkedHashSet<String> constantNames = new LinkedHashSet<>();
-            for (String token : entry.getValue()) {
-                if ("*".equals(token)) {
-                    constantNames.addAll(ProbeTypeResolver.allConstantNames(className));
-                } else if (token.startsWith("!")) {
-                    String excludedName = token.substring(1);
-                    ProbeTypeResolver.resolve(className, excludedName); // validate, catch typos
-                    constantNames.remove(excludedName);
-                } else {
-                    ProbeTypeResolver.resolve(className, token); // validate, catch typos
-                    constantNames.add(token);
-                }
-            }
-            for (String constantName : constantNames) {
-                resolved.add(ProbeTypeResolver.resolve(className, constantName));
-            }
-        }
-        return resolved;
-    }
-
-    /**
-     * Returns the {@link ExecutorConfig} setting overrides declared directly by this profile, or
-     * null if the profile declares none. Unlike {@link #getProbes()}, these are never inherited
-     * from {@link #getInheritedFromProfiles()}.
-     *
-     * @return the setting overrides, or null
-     */
-    public ScanProfileSettings getSettings() {
+    public JsonNode getSettings() {
         return settings;
     }
 
     /**
-     * Sets the {@link ExecutorConfig} setting overrides declared directly by this profile.
+     * Sets the raw {@code settings} JSON object declared directly by this profile.
      *
-     * @param settings the setting overrides, or null
+     * @param settings the raw settings object, or null
      */
-    public void setSettings(ScanProfileSettings settings) {
+    public void setSettings(JsonNode settings) {
         this.settings = settings;
     }
 }
