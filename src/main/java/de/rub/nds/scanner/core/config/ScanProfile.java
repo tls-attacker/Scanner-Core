@@ -26,6 +26,8 @@ public final class ScanProfile {
 
     private List<ProbeReference> probes = new ArrayList<>();
 
+    private ScanProfileSettings settings;
+
     public ScanProfile() {
         // Default constructor for Jackson
     }
@@ -94,5 +96,25 @@ public final class ScanProfile {
      */
     public List<ProbeType> resolveProbes() {
         return probes.stream().map(ProbeReference::resolve).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the {@link ExecutorConfig} setting overrides declared directly by this profile, or
+     * null if the profile declares none. Unlike {@link #getProbes()}, these are never inherited
+     * from {@link #getInheritedFromProfiles()}.
+     *
+     * @return the setting overrides, or null
+     */
+    public ScanProfileSettings getSettings() {
+        return settings;
+    }
+
+    /**
+     * Sets the {@link ExecutorConfig} setting overrides declared directly by this profile.
+     *
+     * @param settings the setting overrides, or null
+     */
+    public void setSettings(ScanProfileSettings settings) {
+        this.settings = settings;
     }
 }

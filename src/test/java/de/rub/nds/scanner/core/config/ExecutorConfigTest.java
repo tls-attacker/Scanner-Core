@@ -194,6 +194,94 @@ public class ExecutorConfigTest {
     }
 
     @Test
+    public void testProfileSettingsOverrideDefaults() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath,
+                "{\"name\": \"myProfile\", \"settings\": {"
+                        + "\"noColor\": true,"
+                        + "\"scanDetail\": \"ALL\","
+                        + "\"postAnalysisDetail\": \"DETAILED\","
+                        + "\"reportDetail\": \"QUICK\","
+                        + "\"outputFile\": \"out.json\","
+                        + "\"probeTimeout\": 42,"
+                        + "\"parallelProbes\": 3,"
+                        + "\"overallThreads\": 5"
+                        + "}}");
+
+        config.setProfile(profilePath.toString());
+
+        assertTrue(config.isNoColor());
+        assertEquals(ScannerDetail.ALL, config.getScanDetail());
+        assertEquals(ScannerDetail.DETAILED, config.getPostAnalysisDetail());
+        assertEquals(ScannerDetail.QUICK, config.getReportDetail());
+        assertEquals("out.json", config.getOutputFile());
+        assertTrue(config.isWriteReportToFile());
+        assertEquals(42, config.getProbeTimeout());
+        assertEquals(3, config.getParallelProbes());
+        assertEquals(5, config.getOverallThreads());
+        assertTrue(config.isMultithreaded());
+    }
+
+    @Test
+    public void testProfileWithoutSettingsKeepsDefaults() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(profilePath, "{\"name\": \"myProfile\"}");
+
+        config.setProfile(profilePath.toString());
+
+        assertFalse(config.isNoColor());
+        assertEquals(ScannerDetail.NORMAL, config.getScanDetail());
+        assertEquals(ScannerDetail.NORMAL, config.getPostAnalysisDetail());
+        assertEquals(ScannerDetail.NORMAL, config.getReportDetail());
+        assertNull(config.getOutputFile());
+        assertEquals(1800000, config.getProbeTimeout());
+        assertEquals(1, config.getParallelProbes());
+        assertEquals(1, config.getOverallThreads());
+    }
+
+    @Test
+    public void testProfileWithPartialSettingsOnlyOverridesDeclaredFields() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath, "{\"name\": \"myProfile\", \"settings\": {\"scanDetail\": \"ALL\"}}");
+
+        config.setProfile(profilePath.toString());
+
+        assertEquals(ScannerDetail.ALL, config.getScanDetail());
+        assertEquals(ScannerDetail.NORMAL, config.getReportDetail());
+        assertEquals(1, config.getParallelProbes());
+    }
+
+    @Test
+    public void testProfileSettingsAreNotInheritedFromParentProfiles() throws IOException {
+        Files.writeString(
+                tempDir.resolve("base.json"),
+                "{\"name\": \"base\", \"settings\": {\"scanDetail\": \"ALL\"}}");
+        Files.writeString(
+                tempDir.resolve("child.json"),
+                "{\"name\": \"child\", \"inheritedFromProfiles\": [\"base\"]}");
+
+        config.setProfile(tempDir.resolve("child.json").toString());
+
+        assertEquals(ScannerDetail.NORMAL, config.getScanDetail());
+    }
+
+    @Test
+    public void testExplicitSetScanDetailIsNotOverwrittenBeforeProfileIsSet() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath, "{\"name\": \"myProfile\", \"settings\": {\"scanDetail\": \"ALL\"}}");
+
+        config.setProfile(profilePath.toString());
+        // Accessing a setting once resolves and locks in the profile's settings.
+        config.getScanDetail();
+        config.setScanDetail(ScannerDetail.QUICK);
+
+        assertEquals(ScannerDetail.QUICK, config.getScanDetail());
+    }
+
+    @Test
     public void testProbesGetterSetterWithList() {
         assertNull(config.getProbes());
 

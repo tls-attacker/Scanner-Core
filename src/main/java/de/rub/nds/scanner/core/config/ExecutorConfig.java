@@ -65,7 +65,8 @@ public final class ExecutorConfig {
     private String profile = null;
 
     private List<ProbeType> probes = null;
-    private boolean profileResolved = false;
+    private boolean probesResolved = false;
+    private boolean settingsResolved = false;
 
     public ExecutorConfig() {
         // Default constructor
@@ -82,13 +83,58 @@ public final class ExecutorConfig {
 
     /**
      * Sets the path to the scan profile JSON file to use for this scan. Takes effect the next time
-     * {@link #getProbes()} is called.
+     * {@link #getProbes()} or one of the setting getters (e.g. {@link #getScanDetail()}) is called.
      *
      * @param profile the scan profile path, or null to clear
      */
     public void setProfile(String profile) {
         this.profile = profile;
-        this.profileResolved = false;
+        this.probesResolved = false;
+        this.settingsResolved = false;
+    }
+
+    /**
+     * Applies the settings declared directly by the active scan profile (not including any
+     * inherited profiles) on top of the current values, the first time this is called after {@link
+     * #setProfile(String)}. Fields the profile does not declare are left untouched.
+     */
+    private void resolveSettingsFromProfileIfNecessary() {
+        if (settingsResolved || profile == null) {
+            return;
+        }
+        ScanProfileSettings settings;
+        try {
+            settings = ScanProfileIO.read(Path.of(profile)).getSettings();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Could not load scan profile '" + profile + "'", e);
+        }
+        if (settings != null) {
+            if (settings.getNoColor() != null) {
+                noColor = settings.getNoColor();
+            }
+            if (settings.getScanDetail() != null) {
+                scanDetail = settings.getScanDetail();
+            }
+            if (settings.getPostAnalysisDetail() != null) {
+                postAnalysisDetail = settings.getPostAnalysisDetail();
+            }
+            if (settings.getReportDetail() != null) {
+                reportDetail = settings.getReportDetail();
+            }
+            if (settings.getOutputFile() != null) {
+                outputFile = settings.getOutputFile();
+            }
+            if (settings.getProbeTimeout() != null) {
+                probeTimeout = settings.getProbeTimeout();
+            }
+            if (settings.getParallelProbes() != null) {
+                parallelProbes = settings.getParallelProbes();
+            }
+            if (settings.getOverallThreads() != null) {
+                overallThreads = settings.getOverallThreads();
+            }
+        }
+        settingsResolved = true;
     }
 
     /**
@@ -97,6 +143,7 @@ public final class ExecutorConfig {
      * @return the current scanner detail level
      */
     public ScannerDetail getScanDetail() {
+        resolveSettingsFromProfileIfNecessary();
         return scanDetail;
     }
 
@@ -115,6 +162,7 @@ public final class ExecutorConfig {
      * @return the current post-analysis detail level
      */
     public ScannerDetail getPostAnalysisDetail() {
+        resolveSettingsFromProfileIfNecessary();
         return postAnalysisDetail;
     }
 
@@ -133,6 +181,7 @@ public final class ExecutorConfig {
      * @return the current report detail level
      */
     public ScannerDetail getReportDetail() {
+        resolveSettingsFromProfileIfNecessary();
         return reportDetail;
     }
 
@@ -151,6 +200,7 @@ public final class ExecutorConfig {
      * @return true if colored text is disabled, false otherwise
      */
     public boolean isNoColor() {
+        resolveSettingsFromProfileIfNecessary();
         return noColor;
     }
 
@@ -172,12 +222,12 @@ public final class ExecutorConfig {
      * @return a new list containing the probe types, or null if not set
      */
     public List<ProbeType> getProbes() {
-        resolveProfileIfNecessary();
+        resolveProbesFromProfileIfNecessary();
         return probes == null ? null : new LinkedList<>(probes);
     }
 
-    private void resolveProfileIfNecessary() {
-        if (profileResolved || profile == null) {
+    private void resolveProbesFromProfileIfNecessary() {
+        if (probesResolved || profile == null) {
             return;
         }
         try {
@@ -185,7 +235,7 @@ public final class ExecutorConfig {
         } catch (IOException e) {
             throw new UncheckedIOException("Could not load scan profile '" + profile + "'", e);
         }
-        profileResolved = true;
+        probesResolved = true;
     }
 
     /**
@@ -195,7 +245,7 @@ public final class ExecutorConfig {
      */
     public void setProbes(List<ProbeType> probes) {
         this.probes = probes == null ? null : new LinkedList<>(probes);
-        this.profileResolved = true;
+        this.probesResolved = true;
     }
 
     /**
@@ -205,7 +255,7 @@ public final class ExecutorConfig {
      */
     public void setProbes(ProbeType... probes) {
         this.probes = Arrays.asList(probes);
-        this.profileResolved = true;
+        this.probesResolved = true;
     }
 
     /**
@@ -214,7 +264,7 @@ public final class ExecutorConfig {
      * @param probes the list of probe types to add
      */
     public void addProbes(List<ProbeType> probes) {
-        resolveProfileIfNecessary();
+        resolveProbesFromProfileIfNecessary();
         if (this.probes == null) {
             this.probes = new LinkedList<>();
         }
@@ -227,7 +277,7 @@ public final class ExecutorConfig {
      * @param probes the probe types to add
      */
     public void addProbes(ProbeType... probes) {
-        resolveProfileIfNecessary();
+        resolveProbesFromProfileIfNecessary();
         if (this.probes == null) {
             this.probes = new LinkedList<>();
         }
@@ -240,6 +290,7 @@ public final class ExecutorConfig {
      * @return the probe timeout in milliseconds
      */
     public int getProbeTimeout() {
+        resolveSettingsFromProfileIfNecessary();
         return probeTimeout;
     }
 
@@ -258,6 +309,7 @@ public final class ExecutorConfig {
      * @return true if an output file is specified, false otherwise
      */
     public boolean isWriteReportToFile() {
+        resolveSettingsFromProfileIfNecessary();
         return outputFile != null;
     }
 
@@ -267,6 +319,7 @@ public final class ExecutorConfig {
      * @return the output file path, or null if not specified
      */
     public String getOutputFile() {
+        resolveSettingsFromProfileIfNecessary();
         return outputFile;
     }
 
@@ -285,6 +338,7 @@ public final class ExecutorConfig {
      * @return the number of parallel probe threads
      */
     public int getParallelProbes() {
+        resolveSettingsFromProfileIfNecessary();
         return parallelProbes;
     }
 
@@ -303,6 +357,7 @@ public final class ExecutorConfig {
      * @return the maximum number of overall threads
      */
     public int getOverallThreads() {
+        resolveSettingsFromProfileIfNecessary();
         return overallThreads;
     }
 
@@ -321,6 +376,6 @@ public final class ExecutorConfig {
      * @return true if either parallel probes or overall threads is greater than 1
      */
     public boolean isMultithreaded() {
-        return parallelProbes > 1 || overallThreads > 1;
+        return getParallelProbes() > 1 || getOverallThreads() > 1;
     }
 }
