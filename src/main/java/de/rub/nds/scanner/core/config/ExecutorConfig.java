@@ -9,13 +9,21 @@
 package de.rub.nds.scanner.core.config;
 
 import com.beust.jcommander.Parameter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.rub.nds.scanner.core.probe.ProbeType;
 import de.rub.nds.scanner.core.probe.ProbeTypeConverter;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 public final class ExecutorConfig {
+
+    private static final ObjectMapper SETTINGS_MAPPER = new ObjectMapper();
 
     @Parameter(names = "-noColor", description = "If you use Windows or don't want colored text.")
     private boolean noColor = false;
@@ -60,14 +68,38 @@ public final class ExecutorConfig {
             converter = ProbeTypeConverter.class)
     private List<ProbeType> excludedProbes = new LinkedList<>();
 
+    @Parameter(
+            names = "-profile",
+            description =
+                    "Path to a scan profile JSON file. Only probes declared by this profile (and"
+                            + " any profiles it inherits from via 'inheritedFromProfiles') will be"
+                            + " executed. Entries in 'inheritedFromProfiles' are paths to other"
+                            + " profile JSON files, resolved relative to this profile's own"
+                            + " directory. Probes excluded via -exclude are removed regardless of"
+                            + " where they came from.")
+    private String profile = null;
+
+    @Parameter(
+            names = "-listProbes",
+            description =
+                    "Print every available probe, grouped by ProbeType class, in the same JSON"
+                            + " syntax used by a scan profile's 'probes' field, then exit without"
+                            + " scanning.")
+    private boolean listProbes = false;
+
     private List<ProbeType> probes = null;
+
+    private ProbeTypeSelector profileProbeSelector = null;
+    private boolean profileProbeSelectorResolved = false;
+    private boolean settingsResolved = false;
 
     public ExecutorConfig() {
         // Default constructor
     }
 
     /**
-     * Returns a copy of the list of probe types that are excluded from scanning.
+     * Returns a copy of the list of probe types that are excluded from scanning, regardless of
+     * whether they were selected via {@link #setProbes(List)} or via a scan profile.
      *
      * @return a new list containing the excluded probe types
      */
@@ -85,11 +117,82 @@ public final class ExecutorConfig {
     }
 
     /**
+     * Returns the path to the scan profile JSON file, if one was configured.
+     *
+     * @return the scan profile path, or null if not set
+     */
+    public String getProfile() {
+        return profile;
+    }
+
+    /**
+     * Sets the path to the scan profile JSON file to use for this scan. Takes effect the next time
+     * {@link #isProbeIncluded(ProbeType, boolean)} or one of the setting getters (e.g. {@link
+     * #getScanDetail()}) is called.
+     *
+     * @param profile the scan profile path, or null to clear
+     */
+    public void setProfile(String profile) {
+        this.profile = profile;
+        this.profileProbeSelectorResolved = false;
+        this.settingsResolved = false;
+    }
+
+    /**
+     * Returns whether {@code -listProbes} was requested, i.e. whether every available probe should
+     * be printed instead of running a scan.
+     *
+     * @return true if the available probes should be listed and no scan performed
+     */
+    public boolean isListProbes() {
+        return listProbes;
+    }
+
+    /**
+     * Sets whether every available probe should be printed instead of running a scan.
+     *
+     * @param listProbes true to list probes instead of scanning
+     */
+    public void setListProbes(boolean listProbes) {
+        this.listProbes = listProbes;
+    }
+
+    /**
+     * Applies the settings declared directly by the active scan profile (not including any
+     * inherited profiles) on top of the current values, the first time this is called after {@link
+     * #setProfile(String)}. Fields the profile does not declare are left untouched. This works by
+     * deserializing the profile's {@code settings} JSON object directly onto this instance, so
+     * adding a new overridable setting only requires adding the corresponding {@code @Parameter}
+     * field and its getter/setter above — no separate mapping to maintain.
+     */
+    private void resolveSettingsFromProfileIfNecessary() {
+        if (settingsResolved || profile == null) {
+            return;
+        }
+        JsonNode settings;
+        try {
+            settings = ScanProfileIO.read(Path.of(profile)).getSettings();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Could not load scan profile '" + profile + "'", e);
+        }
+        if (settings != null) {
+            try {
+                SETTINGS_MAPPER.readerForUpdating(this).readValue(settings);
+            } catch (IOException e) {
+                throw new UncheckedIOException(
+                        "Could not apply settings from scan profile '" + profile + "'", e);
+            }
+        }
+        settingsResolved = true;
+    }
+
+    /**
      * Returns the scanner detail level for the scan operation.
      *
      * @return the current scanner detail level
      */
     public ScannerDetail getScanDetail() {
+        resolveSettingsFromProfileIfNecessary();
         return scanDetail;
     }
 
@@ -108,6 +211,7 @@ public final class ExecutorConfig {
      * @return the current post-analysis detail level
      */
     public ScannerDetail getPostAnalysisDetail() {
+        resolveSettingsFromProfileIfNecessary();
         return postAnalysisDetail;
     }
 
@@ -126,6 +230,7 @@ public final class ExecutorConfig {
      * @return the current report detail level
      */
     public ScannerDetail getReportDetail() {
+        resolveSettingsFromProfileIfNecessary();
         return reportDetail;
     }
 
@@ -144,6 +249,7 @@ public final class ExecutorConfig {
      * @return true if colored text is disabled, false otherwise
      */
     public boolean isNoColor() {
+        resolveSettingsFromProfileIfNecessary();
         return noColor;
     }
 
@@ -157,7 +263,10 @@ public final class ExecutorConfig {
     }
 
     /**
-     * Returns a copy of the list of probe types to be executed.
+     * Returns a copy of the list of probe types to be executed, as set via {@link
+     * #setProbes(List)}/{@link #addProbes(List)}. This is independent of any scan profile
+     * configured via {@link #setProfile(String)} — see {@link #isProbeIncluded(ProbeType, boolean)}
+     * for the combined effect of both mechanisms.
      *
      * @return a new list containing the probe types, or null if not set
      */
@@ -179,6 +288,7 @@ public final class ExecutorConfig {
      *
      * @param probes the probe types to execute
      */
+    @JsonIgnore
     public void setProbes(ProbeType... probes) {
         this.probes = Arrays.asList(probes);
     }
@@ -208,11 +318,59 @@ public final class ExecutorConfig {
     }
 
     /**
+     * Determines whether a candidate probe should be executed, combining every selection mechanism
+     * this config supports:
+     *
+     * <ol>
+     *   <li>If {@link #setProbes(List)}/{@link #addProbes(List)} configured an explicit inclusion
+     *       list, {@code probeType} must be contained in it.
+     *   <li>Otherwise, if a scan profile is configured via {@link #setProfile(String)}, {@code
+     *       probeType} must be matched by it (resolved lazily, once, against the actual candidate
+     *       probes passed here rather than by reflectively resolving class names up front).
+     *   <li>Otherwise, {@code executeByDefault} decides.
+     * </ol>
+     *
+     * In every case, a probe named via {@code -exclude} ({@link #getExcludedProbes()}) is always
+     * removed, regardless of how it was otherwise selected.
+     *
+     * @param probeType the candidate probe's type
+     * @param executeByDefault whether the probe should run when neither an explicit probe list nor
+     *     a profile is configured
+     * @return true if the probe should be executed
+     */
+    public boolean isProbeIncluded(ProbeType probeType, boolean executeByDefault) {
+        if (excludedProbes.contains(probeType)) {
+            return false;
+        }
+        if (probes != null) {
+            return probes.contains(probeType);
+        }
+        resolveProfileProbeSelectorIfNecessary();
+        if (profileProbeSelector != null) {
+            return profileProbeSelector.matches(probeType);
+        }
+        return executeByDefault;
+    }
+
+    private void resolveProfileProbeSelectorIfNecessary() {
+        if (profileProbeSelectorResolved || profile == null) {
+            return;
+        }
+        try {
+            profileProbeSelector = ScanProfileIO.resolveProbeSelector(Path.of(profile));
+        } catch (IOException e) {
+            throw new UncheckedIOException("Could not load scan profile '" + profile + "'", e);
+        }
+        profileProbeSelectorResolved = true;
+    }
+
+    /**
      * Returns the timeout value for each probe execution in milliseconds.
      *
      * @return the probe timeout in milliseconds
      */
     public int getProbeTimeout() {
+        resolveSettingsFromProfileIfNecessary();
         return probeTimeout;
     }
 
@@ -231,6 +389,7 @@ public final class ExecutorConfig {
      * @return true if an output file is specified, false otherwise
      */
     public boolean isWriteReportToFile() {
+        resolveSettingsFromProfileIfNecessary();
         return outputFile != null;
     }
 
@@ -240,6 +399,7 @@ public final class ExecutorConfig {
      * @return the output file path, or null if not specified
      */
     public String getOutputFile() {
+        resolveSettingsFromProfileIfNecessary();
         return outputFile;
     }
 
@@ -258,6 +418,7 @@ public final class ExecutorConfig {
      * @return the number of parallel probe threads
      */
     public int getParallelProbes() {
+        resolveSettingsFromProfileIfNecessary();
         return parallelProbes;
     }
 
@@ -276,6 +437,7 @@ public final class ExecutorConfig {
      * @return the maximum number of overall threads
      */
     public int getOverallThreads() {
+        resolveSettingsFromProfileIfNecessary();
         return overallThreads;
     }
 
@@ -294,6 +456,6 @@ public final class ExecutorConfig {
      * @return true if either parallel probes or overall threads is greater than 1
      */
     public boolean isMultithreaded() {
-        return parallelProbes > 1 || overallThreads > 1;
+        return getParallelProbes() > 1 || getOverallThreads() > 1;
     }
 }

@@ -11,15 +11,22 @@ package de.rub.nds.scanner.core.config;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.rub.nds.scanner.core.probe.ProbeType;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class ExecutorConfigTest {
 
     private ExecutorConfig config;
+
+    @TempDir private Path tempDir;
 
     @BeforeEach
     public void setUp() {
@@ -123,6 +130,88 @@ public class ExecutorConfigTest {
     }
 
     @Test
+    public void testProfileGetterSetter() {
+        assertNull(config.getProfile());
+        config.setProfile("/tmp/some-profile.json");
+        assertEquals("/tmp/some-profile.json", config.getProfile());
+        config.setProfile(null);
+        assertNull(config.getProfile());
+    }
+
+    @Test
+    public void testIsProbeIncludedResolvesProfile() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath,
+                "{\"probes\": {\""
+                        + de.rub.nds.scanner.core.TestProbeType.class.getName()
+                        + "\": [\"TEST_PROBE_TYPE\"]}}");
+
+        config.setProfile(profilePath.toString());
+
+        assertTrue(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
+        assertFalse(config.isProbeIncluded(SecondTestProbeType.SECOND_TEST_PROBE_TYPE, true));
+    }
+
+    @Test
+    public void testIsProbeIncludedResolvesProfileOnlyOnce() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath,
+                "{\"probes\": {\""
+                        + de.rub.nds.scanner.core.TestProbeType.class.getName()
+                        + "\": [\"TEST_PROBE_TYPE\"]}}");
+        config.setProfile(profilePath.toString());
+        config.isProbeIncluded(de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false);
+
+        Files.delete(profilePath);
+
+        // Should not attempt to re-read the (now deleted) file
+        assertTrue(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
+    }
+
+    @Test
+    public void testSetProbesOverridesConfiguredProfile() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath,
+                "{\"probes\": {\""
+                        + de.rub.nds.scanner.core.TestProbeType.class.getName()
+                        + "\": [\"TEST_PROBE_TYPE\"]}}");
+        config.setProfile(profilePath.toString());
+
+        config.setProbes(List.of());
+
+        assertFalse(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
+    }
+
+    @Test
+    public void testIsProbeIncludedThrowsUncheckedIOExceptionOnMissingProfile() {
+        config.setProfile(tempDir.resolve("doesNotExist.json").toString());
+        assertThrows(
+                UncheckedIOException.class,
+                () ->
+                        config.isProbeIncluded(
+                                de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
+    }
+
+    @Test
+    public void testIsProbeIncludedDefaultsWhenNoProbesOrProfileConfigured() {
+        assertTrue(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, true));
+        assertFalse(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
+    }
+
+    @Test
     public void testExcludedProbesGetterSetter() {
         assertTrue(config.getExcludedProbes().isEmpty());
 
@@ -136,6 +225,125 @@ public class ExecutorConfigTest {
         // Test that it returns a copy
         config.getExcludedProbes().clear();
         assertEquals(2, config.getExcludedProbes().size());
+    }
+
+    @Test
+    public void testExcludedProbesOverrideExecuteByDefault() {
+        ProbeType excluded = new TestProbeType("excluded");
+        config.setExcludedProbes(List.of(excluded));
+
+        assertFalse(config.isProbeIncluded(excluded, true));
+    }
+
+    @Test
+    public void testExcludedProbesOverrideExplicitProbeList() {
+        ProbeType excluded = new TestProbeType("excluded");
+        ProbeType included = new TestProbeType("included");
+        config.setProbes(excluded, included);
+        config.setExcludedProbes(List.of(excluded));
+
+        assertFalse(config.isProbeIncluded(excluded, true));
+        assertTrue(config.isProbeIncluded(included, true));
+    }
+
+    @Test
+    public void testExcludedProbesOverrideProfile() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath,
+                "{\"probes\": {\""
+                        + de.rub.nds.scanner.core.TestProbeType.class.getName()
+                        + "\": [\"TEST_PROBE_TYPE\"]}}");
+        config.setProfile(profilePath.toString());
+        config.setExcludedProbes(List.of(de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE));
+
+        assertFalse(
+                config.isProbeIncluded(
+                        de.rub.nds.scanner.core.TestProbeType.TEST_PROBE_TYPE, false));
+    }
+
+    @Test
+    public void testProfileSettingsOverrideDefaults() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(
+                profilePath,
+                "{\"settings\": {"
+                        + "\"noColor\": true,"
+                        + "\"scanDetail\": \"ALL\","
+                        + "\"postAnalysisDetail\": \"DETAILED\","
+                        + "\"reportDetail\": \"QUICK\","
+                        + "\"outputFile\": \"out.json\","
+                        + "\"probeTimeout\": 42,"
+                        + "\"parallelProbes\": 3,"
+                        + "\"overallThreads\": 5"
+                        + "}}");
+
+        config.setProfile(profilePath.toString());
+
+        assertTrue(config.isNoColor());
+        assertEquals(ScannerDetail.ALL, config.getScanDetail());
+        assertEquals(ScannerDetail.DETAILED, config.getPostAnalysisDetail());
+        assertEquals(ScannerDetail.QUICK, config.getReportDetail());
+        assertEquals("out.json", config.getOutputFile());
+        assertTrue(config.isWriteReportToFile());
+        assertEquals(42, config.getProbeTimeout());
+        assertEquals(3, config.getParallelProbes());
+        assertEquals(5, config.getOverallThreads());
+        assertTrue(config.isMultithreaded());
+    }
+
+    @Test
+    public void testProfileWithoutSettingsKeepsDefaults() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(profilePath, "{}");
+
+        config.setProfile(profilePath.toString());
+
+        assertFalse(config.isNoColor());
+        assertEquals(ScannerDetail.NORMAL, config.getScanDetail());
+        assertEquals(ScannerDetail.NORMAL, config.getPostAnalysisDetail());
+        assertEquals(ScannerDetail.NORMAL, config.getReportDetail());
+        assertNull(config.getOutputFile());
+        assertEquals(1800000, config.getProbeTimeout());
+        assertEquals(1, config.getParallelProbes());
+        assertEquals(1, config.getOverallThreads());
+    }
+
+    @Test
+    public void testProfileWithPartialSettingsOnlyOverridesDeclaredFields() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(profilePath, "{\"settings\": {\"scanDetail\": \"ALL\"}}");
+
+        config.setProfile(profilePath.toString());
+
+        assertEquals(ScannerDetail.ALL, config.getScanDetail());
+        assertEquals(ScannerDetail.NORMAL, config.getReportDetail());
+        assertEquals(1, config.getParallelProbes());
+    }
+
+    @Test
+    public void testProfileSettingsAreNotInheritedFromParentProfiles() throws IOException {
+        Files.writeString(
+                tempDir.resolve("base.json"), "{\"settings\": {\"scanDetail\": \"ALL\"}}");
+        Files.writeString(
+                tempDir.resolve("child.json"), "{\"inheritedFromProfiles\": [\"base.json\"]}");
+
+        config.setProfile(tempDir.resolve("child.json").toString());
+
+        assertEquals(ScannerDetail.NORMAL, config.getScanDetail());
+    }
+
+    @Test
+    public void testExplicitSetScanDetailIsNotOverwrittenBeforeProfileIsSet() throws IOException {
+        Path profilePath = tempDir.resolve("myProfile.json");
+        Files.writeString(profilePath, "{\"settings\": {\"scanDetail\": \"ALL\"}}");
+
+        config.setProfile(profilePath.toString());
+        // Accessing a setting once resolves and locks in the profile's settings.
+        config.getScanDetail();
+        config.setScanDetail(ScannerDetail.QUICK);
+
+        assertEquals(ScannerDetail.QUICK, config.getScanDetail());
     }
 
     @Test
