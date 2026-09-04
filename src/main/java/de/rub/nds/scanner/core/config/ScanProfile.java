@@ -16,13 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A named, JSON-defined scan profile. A profile declares the set of {@link ProbeType}s that should
- * be executed during a scan, and may additionally inherit probes from other profiles, referenced by
+ * A JSON-defined scan profile. A profile declares the set of {@link ProbeType}s that should be
+ * executed during a scan, and may additionally inherit probes from other profiles, referenced by
  * file path, via {@link #getInheritedFromProfiles()}.
  */
 public final class ScanProfile {
-
-    private String name;
 
     private List<String> inheritedFromProfiles = new ArrayList<>();
 
@@ -32,25 +30,6 @@ public final class ScanProfile {
 
     public ScanProfile() {
         // Default constructor for Jackson
-    }
-
-    /**
-     * Returns the name of this profile. Purely informational (e.g. for error messages) — it plays
-     * no role in resolving {@link #getInheritedFromProfiles()}.
-     *
-     * @return the profile name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the name of this profile.
-     *
-     * @param name the profile name
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**

@@ -143,7 +143,7 @@ public class ExecutorConfigTest {
         Path profilePath = tempDir.resolve("myProfile.json");
         Files.writeString(
                 profilePath,
-                "{\"name\": \"myProfile\", \"probes\": {\""
+                "{\"probes\": {\""
                         + de.rub.nds.scanner.core.TestProbeType.class.getName()
                         + "\": [\"TEST_PROBE_TYPE\"]}}");
 
@@ -160,7 +160,7 @@ public class ExecutorConfigTest {
         Path profilePath = tempDir.resolve("myProfile.json");
         Files.writeString(
                 profilePath,
-                "{\"name\": \"myProfile\", \"probes\": {\""
+                "{\"probes\": {\""
                         + de.rub.nds.scanner.core.TestProbeType.class.getName()
                         + "\": [\"TEST_PROBE_TYPE\"]}}");
         config.setProfile(profilePath.toString());
@@ -179,7 +179,7 @@ public class ExecutorConfigTest {
         Path profilePath = tempDir.resolve("myProfile.json");
         Files.writeString(
                 profilePath,
-                "{\"name\": \"myProfile\", \"probes\": {\""
+                "{\"probes\": {\""
                         + de.rub.nds.scanner.core.TestProbeType.class.getName()
                         + "\": [\"TEST_PROBE_TYPE\"]}}");
         config.setProfile(profilePath.toString());
@@ -251,7 +251,7 @@ public class ExecutorConfigTest {
         Path profilePath = tempDir.resolve("myProfile.json");
         Files.writeString(
                 profilePath,
-                "{\"name\": \"myProfile\", \"probes\": {\""
+                "{\"probes\": {\""
                         + de.rub.nds.scanner.core.TestProbeType.class.getName()
                         + "\": [\"TEST_PROBE_TYPE\"]}}");
         config.setProfile(profilePath.toString());
@@ -267,7 +267,7 @@ public class ExecutorConfigTest {
         Path profilePath = tempDir.resolve("myProfile.json");
         Files.writeString(
                 profilePath,
-                "{\"name\": \"myProfile\", \"settings\": {"
+                "{\"settings\": {"
                         + "\"noColor\": true,"
                         + "\"scanDetail\": \"ALL\","
                         + "\"postAnalysisDetail\": \"DETAILED\","
@@ -295,7 +295,7 @@ public class ExecutorConfigTest {
     @Test
     public void testProfileWithoutSettingsKeepsDefaults() throws IOException {
         Path profilePath = tempDir.resolve("myProfile.json");
-        Files.writeString(profilePath, "{\"name\": \"myProfile\"}");
+        Files.writeString(profilePath, "{}");
 
         config.setProfile(profilePath.toString());
 
@@ -312,8 +312,7 @@ public class ExecutorConfigTest {
     @Test
     public void testProfileWithPartialSettingsOnlyOverridesDeclaredFields() throws IOException {
         Path profilePath = tempDir.resolve("myProfile.json");
-        Files.writeString(
-                profilePath, "{\"name\": \"myProfile\", \"settings\": {\"scanDetail\": \"ALL\"}}");
+        Files.writeString(profilePath, "{\"settings\": {\"scanDetail\": \"ALL\"}}");
 
         config.setProfile(profilePath.toString());
 
@@ -325,11 +324,9 @@ public class ExecutorConfigTest {
     @Test
     public void testProfileSettingsAreNotInheritedFromParentProfiles() throws IOException {
         Files.writeString(
-                tempDir.resolve("base.json"),
-                "{\"name\": \"base\", \"settings\": {\"scanDetail\": \"ALL\"}}");
+                tempDir.resolve("base.json"), "{\"settings\": {\"scanDetail\": \"ALL\"}}");
         Files.writeString(
-                tempDir.resolve("child.json"),
-                "{\"name\": \"child\", \"inheritedFromProfiles\": [\"base.json\"]}");
+                tempDir.resolve("child.json"), "{\"inheritedFromProfiles\": [\"base.json\"]}");
 
         config.setProfile(tempDir.resolve("child.json").toString());
 
@@ -339,8 +336,7 @@ public class ExecutorConfigTest {
     @Test
     public void testExplicitSetScanDetailIsNotOverwrittenBeforeProfileIsSet() throws IOException {
         Path profilePath = tempDir.resolve("myProfile.json");
-        Files.writeString(
-                profilePath, "{\"name\": \"myProfile\", \"settings\": {\"scanDetail\": \"ALL\"}}");
+        Files.writeString(profilePath, "{\"settings\": {\"scanDetail\": \"ALL\"}}");
 
         config.setProfile(profilePath.toString());
         // Accessing a setting once resolves and locks in the profile's settings.

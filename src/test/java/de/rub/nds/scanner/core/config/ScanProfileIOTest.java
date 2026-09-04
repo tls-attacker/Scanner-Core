@@ -32,7 +32,6 @@ public class ScanProfileIOTest {
         writeProfile(
                 "solo.json",
                 "{"
-                        + "\"name\": \"solo\","
                         + "\"inheritedFromProfiles\": [],"
                         + "\"probes\": {\""
                         + TestProbeType.class.getName()
@@ -51,7 +50,6 @@ public class ScanProfileIOTest {
         writeProfile(
                 "base.json",
                 "{"
-                        + "\"name\": \"base\","
                         + "\"probes\": {\""
                         + TestProbeType.class.getName()
                         + "\": [\"TEST_PROBE_TYPE\"]}"
@@ -59,7 +57,6 @@ public class ScanProfileIOTest {
         writeProfile(
                 "combined.json",
                 "{"
-                        + "\"name\": \"combined\","
                         + "\"inheritedFromProfiles\": [\"base.json\"],"
                         + "\"probes\": {\""
                         + SecondTestProbeType.class.getName()
@@ -78,7 +75,6 @@ public class ScanProfileIOTest {
         writeProfile(
                 "grouped.json",
                 "{"
-                        + "\"name\": \"grouped\","
                         + "\"probes\": {\""
                         + TestProbeType.class.getName()
                         + "\": [\"TEST_PROBE_TYPE\"], \""
@@ -99,15 +95,13 @@ public class ScanProfileIOTest {
         writeProfile(
                 "parents/base.json",
                 "{"
-                        + "\"name\": \"base\","
                         + "\"probes\": {\""
                         + TestProbeType.class.getName()
                         + "\": [\"TEST_PROBE_TYPE\"]}"
                         + "}");
         writeProfile(
                 "child.json",
-                "{\"name\": \"child\", \"inheritedFromProfiles\": [\"parents/base.json\"],"
-                        + " \"probes\": {}}");
+                "{\"inheritedFromProfiles\": [\"parents/base.json\"]," + " \"probes\": {}}");
 
         ProbeTypeSelector selector =
                 ScanProfileIO.resolveProbeSelector(tempDir.resolve("child.json"));
@@ -120,14 +114,13 @@ public class ScanProfileIOTest {
         writeProfile(
                 "base.json",
                 "{"
-                        + "\"name\": \"base\","
                         + "\"probes\": {\""
                         + TestProbeType.class.getName()
                         + "\": [\"TEST_PROBE_TYPE\"]}"
                         + "}");
         writeProfile(
                 "nested/child.json",
-                "{\"name\": \"child\", \"inheritedFromProfiles\": [\""
+                "{\"inheritedFromProfiles\": [\""
                         + tempDir.resolve("base.json")
                                 .toAbsolutePath()
                                 .toString()
@@ -142,12 +135,8 @@ public class ScanProfileIOTest {
 
     @Test
     public void testCyclicInheritanceThrows() throws IOException {
-        writeProfile(
-                "a.json",
-                "{\"name\": \"a\", \"inheritedFromProfiles\": [\"b.json\"], \"probes\": {}}");
-        writeProfile(
-                "b.json",
-                "{\"name\": \"b\", \"inheritedFromProfiles\": [\"a.json\"], \"probes\": {}}");
+        writeProfile("a.json", "{\"inheritedFromProfiles\": [\"b.json\"], \"probes\": {}}");
+        writeProfile("b.json", "{\"inheritedFromProfiles\": [\"a.json\"], \"probes\": {}}");
 
         assertThrows(
                 IllegalStateException.class,
@@ -158,8 +147,7 @@ public class ScanProfileIOTest {
     public void testUnknownInheritedProfileThrows() throws IOException {
         writeProfile(
                 "orphan.json",
-                "{\"name\": \"orphan\", \"inheritedFromProfiles\": [\"doesNotExist.json\"],"
-                        + " \"probes\": {}}");
+                "{\"inheritedFromProfiles\": [\"doesNotExist.json\"]," + " \"probes\": {}}");
 
         assertThrows(
                 IOException.class,
@@ -170,9 +158,7 @@ public class ScanProfileIOTest {
     public void testWildcardMatchesEveryConstantOfThatType() throws IOException {
         writeProfile(
                 "everything.json",
-                "{\"name\": \"everything\", \"probes\": {\""
-                        + MultiConstantTestProbeType.class.getName()
-                        + "\": [\"*\"]}}");
+                "{\"probes\": {\"" + MultiConstantTestProbeType.class.getName() + "\": [\"*\"]}}");
 
         ProbeTypeSelector selector =
                 ScanProfileIO.resolveProbeSelector(tempDir.resolve("everything.json"));
@@ -186,7 +172,7 @@ public class ScanProfileIOTest {
     public void testNegationExcludesConstantSelectedByWildcard() throws IOException {
         writeProfile(
                 "mostly.json",
-                "{\"name\": \"mostly\", \"probes\": {\""
+                "{\"probes\": {\""
                         + MultiConstantTestProbeType.class.getName()
                         + "\": [\"*\", \"!SECOND\"]}}");
 
@@ -202,7 +188,7 @@ public class ScanProfileIOTest {
     public void testNegationExcludesExplicitlyListedConstant() throws IOException {
         writeProfile(
                 "explicit.json",
-                "{\"name\": \"explicit\", \"probes\": {\""
+                "{\"probes\": {\""
                         + MultiConstantTestProbeType.class.getName()
                         + "\": [\"FIRST\", \"SECOND\", \"!FIRST\"]}}");
 
@@ -218,12 +204,10 @@ public class ScanProfileIOTest {
     public void testChildProfileCanExcludeConstantSelectedByParent() throws IOException {
         writeProfile(
                 "base.json",
-                "{\"name\": \"base\", \"probes\": {\""
-                        + MultiConstantTestProbeType.class.getName()
-                        + "\": [\"*\"]}}");
+                "{\"probes\": {\"" + MultiConstantTestProbeType.class.getName() + "\": [\"*\"]}}");
         writeProfile(
                 "child.json",
-                "{\"name\": \"child\", \"inheritedFromProfiles\": [\"base.json\"], \"probes\":"
+                "{\"inheritedFromProfiles\": [\"base.json\"], \"probes\":"
                         + " {\""
                         + MultiConstantTestProbeType.class.getName()
                         + "\": [\"!SECOND\"]}}");
@@ -238,9 +222,7 @@ public class ScanProfileIOTest {
 
     @Test
     public void testUnknownClassNameNeverMatchesInsteadOfThrowing() throws IOException {
-        writeProfile(
-                "badType.json",
-                "{\"name\": \"badType\", \"probes\": {\"does.not.Exist\": [\"FOO\"]}}");
+        writeProfile("badType.json", "{\"probes\": {\"does.not.Exist\": [\"FOO\"]}}");
 
         ProbeTypeSelector selector =
                 ScanProfileIO.resolveProbeSelector(tempDir.resolve("badType.json"));
@@ -252,9 +234,7 @@ public class ScanProfileIOTest {
     public void testTypoedConstantNameNeverMatchesInsteadOfThrowing() throws IOException {
         writeProfile(
                 "badConstant.json",
-                "{\"name\": \"badConstant\", \"probes\": {\""
-                        + TestProbeType.class.getName()
-                        + "\": [\"DOES_NOT_EXIST\"]}}");
+                "{\"probes\": {\"" + TestProbeType.class.getName() + "\": [\"DOES_NOT_EXIST\"]}}");
 
         ProbeTypeSelector selector =
                 ScanProfileIO.resolveProbeSelector(tempDir.resolve("badConstant.json"));
@@ -266,13 +246,24 @@ public class ScanProfileIOTest {
     public void testUnmentionedTypeNeverMatches() throws IOException {
         writeProfile(
                 "onlyFirst.json",
-                "{\"name\": \"onlyFirst\", \"probes\": {\""
-                        + TestProbeType.class.getName()
-                        + "\": [\"*\"]}}");
+                "{\"probes\": {\"" + TestProbeType.class.getName() + "\": [\"*\"]}}");
 
         ProbeTypeSelector selector =
                 ScanProfileIO.resolveProbeSelector(tempDir.resolve("onlyFirst.json"));
 
         assertFalse(selector.matches(SecondTestProbeType.SECOND_TEST_PROBE_TYPE));
+    }
+
+    @Test
+    public void testUnknownPropertyThrows() throws IOException {
+        writeProfile(
+                "withName.json",
+                "{\"name\": \"legacy\", \"probes\": {\""
+                        + TestProbeType.class.getName()
+                        + "\": [\"TEST_PROBE_TYPE\"]}}");
+
+        assertThrows(
+                IOException.class,
+                () -> ScanProfileIO.resolveProbeSelector(tempDir.resolve("withName.json")));
     }
 }

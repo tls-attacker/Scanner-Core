@@ -44,7 +44,7 @@ public class ProbeTypeCatalogTest {
         String json =
                 ProbeTypeCatalog.toProfileProbesJson(List.of(MultiConstantTestProbeType.class));
         Path profilePath = tempDir.resolve("generated.json");
-        Files.writeString(profilePath, "{\"name\": \"generated\", \"probes\": " + json + "}");
+        Files.writeString(profilePath, "{\"probes\": " + json + "}");
 
         ProbeTypeSelector selector = ScanProfileIO.resolveProbeSelector(profilePath);
 
