@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>scanner-core</artifactId>
-    <version>6.5.2-SNAPSHOT</version>
+    <version>6.5.3-SNAPSHOT</version>
 
     <name>Scanner Core</name>
     <description>A generic scanner framework which can execute a set of probes and combine the results into a report.</description>
@@ -96,7 +96,7 @@
         <dependency>
             <groupId>de.rub.nds</groupId>
             <artifactId>protocol-attacker</artifactId>
-            <version>2.3.0</version>
+            <version>2.4.1</version>
         </dependency>
         <dependency>
             <groupId>de.rub.nds</groupId>

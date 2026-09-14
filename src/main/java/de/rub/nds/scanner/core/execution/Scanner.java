@@ -300,14 +300,8 @@ public abstract class Scanner<
      * @param executeByDefault Whether the probe should be executed by default.
      */
     protected void registerProbeForExecution(ProbeT probe, boolean executeByDefault) {
-        if ((executorConfig.getProbes() == null && executeByDefault)
-                || (executorConfig.getProbes() != null
-                        && executorConfig.getProbes().contains(probe.getType()))) {
-            if (executorConfig.getExcludedProbes().contains(probe.getType())) {
-                LOGGER.debug("Probe {} is excluded from the scan", probe.getType());
-            } else {
-                probeList.add(probe);
-            }
+        if (executorConfig.isProbeIncluded(probe.getType(), executeByDefault)) {
+            probeList.add(probe);
         }
     }
 
