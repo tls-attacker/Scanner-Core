@@ -109,8 +109,10 @@ public class RatingInfluencer implements Serializable {
     }
 
     /**
-     * Gets the property rating influencer for a specific test result. If no influencer is found for
-     * the given result, returns a new influencer with zero influence.
+     * Gets the property rating influencer for a specific test result. A complex result which
+     * summarizes to a plain {@link de.rub.nds.scanner.core.probe.result.TestResults} is matched by
+     * its summary. If no influencer is found for the given result, returns a new influencer with
+     * zero influence.
      *
      * @param result the test result to find an influencer for
      * @return the matching property rating influencer, or a new one with zero influence if not
@@ -118,7 +120,7 @@ public class RatingInfluencer implements Serializable {
      */
     public PropertyResultRatingInfluencer getPropertyRatingInfluencer(TestResult result) {
         for (PropertyResultRatingInfluencer ri : propertyRatingInfluencers) {
-            if (ri.getResult().equalsExpectedResult(result)) {
+            if (ResultMatcher.matches(result, ri.getResult())) {
                 return ri;
             }
         }
