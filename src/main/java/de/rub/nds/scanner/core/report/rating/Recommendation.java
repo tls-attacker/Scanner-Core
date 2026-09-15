@@ -308,15 +308,17 @@ public class Recommendation implements Serializable {
     }
 
     /**
-     * Gets the recommendation for a specific test result. If no recommendation is found, returns a
-     * default recommendation with no information available message.
+     * Gets the recommendation for a specific test result. A complex result which summarizes to a
+     * plain {@link de.rub.nds.scanner.core.probe.result.TestResults} is matched by its summary. If
+     * no recommendation is found, returns a default recommendation with no information available
+     * message.
      *
      * @param result the test result to find a recommendation for
      * @return the matching recommendation or a default recommendation if not found
      */
     public PropertyResultRecommendation getPropertyResultRecommendation(TestResult result) {
         for (PropertyResultRecommendation r : propertyRecommendations) {
-            if (r.getResult() == result) {
+            if (ResultMatcher.matches(result, r.getResult())) {
                 return r;
             }
         }

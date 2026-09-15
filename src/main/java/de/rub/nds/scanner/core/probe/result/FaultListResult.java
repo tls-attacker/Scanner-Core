@@ -20,21 +20,11 @@ import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.util.List;
 
 /**
- * Represents {@link TestResult}s which list the features for which a fault has been observed, e.g.
- * the named groups for which a peer reused its key. The list holds the affected features only, the
- * summary states whether any fault was found at all: an empty list summarizes to {@link
- * TestResults#FALSE}, a non-empty list to {@link TestResults#TRUE}. Since the summary is derived
- * from the list, the result can be used in requirements and rating influencers that expect a plain
- * {@link TestResults} (cf. {@link SummarizableTestResult#equalsExpectedResult(TestResult)}).
- *
- * <p>If the features could not be examined at all, e.g. because a precondition of the probe was not
- * met, an explicit summary such as {@link TestResults#CANNOT_BE_TESTED} can be set instead. In this
- * case no list is collected and {@link #getList()} returns null, so that the absence of faults is
- * not confused with an actual absence of faults.
- *
- * <p>Note that a probe must set this result explicitly (i.e. {@code put(property, new
- * FaultListResult<>(property, faults))}), as passing a bare {@link List} yields a plain {@link
- * ListResult}.
+ * Represents {@link TestResult}s which list the features for which a fault has been observed. The
+ * list holds the affected features only, the summary states whether any fault was found at all: an
+ * empty list summarizes to {@link TestResults#FALSE}, a non-empty list to {@link TestResults#TRUE}.
+ * An explicit TestResult can be set, for example, to communicate that the test could not be
+ * applied.
  *
  * @param <T> the type of the listed faulty features.
  */
