@@ -8,14 +8,11 @@
  */
 package de.rub.nds.scanner.core.probe.result;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import java.util.List;
 
@@ -32,6 +29,8 @@ import java.util.List;
 @JsonPropertyOrder({"type", "value", "summary"})
 public class FaultListResult<T> extends ListResult<T> implements SummarizableTestResult {
 
+    @JsonProperty("summary")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final TestResults explicitSummary;
 
     @SuppressWarnings("unused")
@@ -79,33 +78,11 @@ public class FaultListResult<T> extends ListResult<T> implements SummarizableTes
     }
 
     /**
-     * Restores a FaultListResult from its serialized form. The analyzed property is not part of the
-     * serialized form and is therefore not restored.
-     *
-     * @param faultyFeatures the features for which a fault has been observed
-     * @param explicitSummary the name of the explicitly set summary, or null if the summary is
-     *     derived from the listed faulty features
-     * @return the deserialized FaultListResult
-     */
-    @JsonCreator
-    private static <T> FaultListResult<T> fromJson(
-            @JsonProperty("value") List<T> faultyFeatures,
-            @JsonProperty("summary") String explicitSummary) {
-        return new FaultListResult<>(
-                null,
-                faultyFeatures,
-                explicitSummary == null ? null : TestResults.valueOf(explicitSummary));
-    }
-
-    /**
      * Returns the explicitly set summary of this result.
      *
      * @return the explicit summary, or null if the summary is derived from the listed faulty
      *     features
      */
-    @JsonGetter("summary")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
     public TestResults getExplicitSummary() {
         return explicitSummary;
     }
