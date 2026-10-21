@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.report.rating;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.util.JaxbSerializer;
 import jakarta.xml.bind.JAXBException;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -29,11 +30,33 @@ public class RatingInfluencersIO extends JaxbSerializer<RatingInfluencers> {
      */
     public RatingInfluencersIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
             throws JAXBException {
-        super(
-                Set.of(
-                        RatingInfluencers.class,
-                        RatingInfluencer.class,
-                        PropertyResultRatingInfluencer.class,
-                        analyzedPropertyClass));
+        this(Set.of(analyzedPropertyClass));
+    }
+
+    /**
+     * Constructs a RatingInfluencersIO serializer for the specified analyzed property classes. This
+     * allows mixing properties of different classes in one file. Each class must use a distinct XML
+     * root element name, as the element name determines the class of a property during
+     * deserialization.
+     *
+     * @param analyzedPropertyClasses the classes of analyzed properties to include in the JAXB
+     *     context
+     * @throws JAXBException if there is an error creating the JAXB context
+     */
+    public RatingInfluencersIO(Set<Class<? extends AnalyzedProperty>> analyzedPropertyClasses)
+            throws JAXBException {
+        super(getClassesToBeBound(analyzedPropertyClasses));
+    }
+
+    private static Set<Class<?>> getClassesToBeBound(
+            Set<Class<? extends AnalyzedProperty>> analyzedPropertyClasses) {
+        Set<Class<?>> classesToBeBound =
+                new HashSet<>(
+                        Set.of(
+                                RatingInfluencers.class,
+                                RatingInfluencer.class,
+                                PropertyResultRatingInfluencer.class));
+        classesToBeBound.addAll(analyzedPropertyClasses);
+        return classesToBeBound;
     }
 }
