@@ -133,6 +133,74 @@ public class ScopedRatingInfluencer<S extends Enum<S>> {
     }
 
     /**
+     * Creates influencers for boolean properties that only affect the rating if they are {@link
+     * TestResults#TRUE}. The result {@link TestResults#FALSE} has no impact on the rating.
+     *
+     * @param <S> the enum type defining the available scopes
+     * @param scope the scope the influencers are applicable to
+     * @param impactIfTrue the impact if the property is {@link TestResults#TRUE}
+     * @param properties the analyzed properties
+     * @return a list containing one influencer per property
+     */
+    public static <S extends Enum<S>> List<ScopedRatingInfluencer<S>> ifTrue(
+            S scope, RatingImpact impactIfTrue, AnalyzedProperty... properties) {
+        return ifTrue(EnumSet.of(scope), impactIfTrue, properties);
+    }
+
+    /**
+     * Creates influencers for boolean properties that only affect the rating if they are {@link
+     * TestResults#TRUE}. The result {@link TestResults#FALSE} has no impact on the rating.
+     *
+     * @param <S> the enum type defining the available scopes
+     * @param scopes the scopes the influencers are applicable to, must not be empty
+     * @param impactIfTrue the impact if the property is {@link TestResults#TRUE}
+     * @param properties the analyzed properties
+     * @return a list containing one influencer per property
+     */
+    public static <S extends Enum<S>> List<ScopedRatingInfluencer<S>> ifTrue(
+            Set<S> scopes, RatingImpact impactIfTrue, AnalyzedProperty... properties) {
+        return forProperties(
+                scopes,
+                Arrays.asList(properties),
+                new PropertyResultRatingInfluencer(TestResults.TRUE, impactIfTrue),
+                new PropertyResultRatingInfluencer(TestResults.FALSE, 0));
+    }
+
+    /**
+     * Creates influencers for boolean properties that only affect the rating if they are {@link
+     * TestResults#FALSE}. The result {@link TestResults#TRUE} has no impact on the rating.
+     *
+     * @param <S> the enum type defining the available scopes
+     * @param scope the scope the influencers are applicable to
+     * @param impactIfFalse the impact if the property is {@link TestResults#FALSE}
+     * @param properties the analyzed properties
+     * @return a list containing one influencer per property
+     */
+    public static <S extends Enum<S>> List<ScopedRatingInfluencer<S>> ifFalse(
+            S scope, RatingImpact impactIfFalse, AnalyzedProperty... properties) {
+        return ifFalse(EnumSet.of(scope), impactIfFalse, properties);
+    }
+
+    /**
+     * Creates influencers for boolean properties that only affect the rating if they are {@link
+     * TestResults#FALSE}. The result {@link TestResults#TRUE} has no impact on the rating.
+     *
+     * @param <S> the enum type defining the available scopes
+     * @param scopes the scopes the influencers are applicable to, must not be empty
+     * @param impactIfFalse the impact if the property is {@link TestResults#FALSE}
+     * @param properties the analyzed properties
+     * @return a list containing one influencer per property
+     */
+    public static <S extends Enum<S>> List<ScopedRatingInfluencer<S>> ifFalse(
+            Set<S> scopes, RatingImpact impactIfFalse, AnalyzedProperty... properties) {
+        return forProperties(
+                scopes,
+                Arrays.asList(properties),
+                new PropertyResultRatingInfluencer(TestResults.TRUE, 0),
+                new PropertyResultRatingInfluencer(TestResults.FALSE, impactIfFalse));
+    }
+
+    /**
      * Creates influencers without impact on the rating for all given properties.
      *
      * @param <S> the enum type defining the available scopes

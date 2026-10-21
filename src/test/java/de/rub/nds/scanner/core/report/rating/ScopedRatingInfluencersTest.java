@@ -224,4 +224,43 @@ public class ScopedRatingInfluencersTest {
             assertEquals(null, ifFalse.getScoreCap());
         }
     }
+
+    @Test
+    public void testIfTrue() {
+        List<ScopedRatingInfluencer<Scope>> influencers =
+                ScopedRatingInfluencer.ifTrue(
+                        EnumSet.of(Scope.NEW_VERSION, Scope.VARIANT_A),
+                        RatingImpact.PENALTY_EPOCHAL,
+                        Property.NEW_VERSION_PROPERTY,
+                        Property.NEW_VERSION_A_PROPERTY);
+
+        assertEquals(2, influencers.size());
+        for (ScopedRatingInfluencer<Scope> influencer : influencers) {
+            assertEquals(EnumSet.of(Scope.NEW_VERSION, Scope.VARIANT_A), influencer.getScopes());
+            PropertyResultRatingInfluencer ifTrue =
+                    influencer.getInfluencer().getPropertyRatingInfluencer(TestResults.TRUE);
+            PropertyResultRatingInfluencer ifFalse =
+                    influencer.getInfluencer().getPropertyRatingInfluencer(TestResults.FALSE);
+            assertEquals(RatingImpact.PENALTY_EPOCHAL.getInfluence(), ifTrue.getInfluence());
+            assertEquals(RatingImpact.PENALTY_EPOCHAL.getScoreCap(), ifTrue.getScoreCap());
+            assertEquals(0, ifFalse.getInfluence());
+            assertEquals(null, ifFalse.getScoreCap());
+        }
+    }
+
+    @Test
+    public void testIfFalse() {
+        List<ScopedRatingInfluencer<Scope>> influencers =
+                ScopedRatingInfluencer.ifFalse(
+                        Scope.ANY, RatingImpact.PENALTY_MEDIUM, Property.ANY_PROPERTY);
+
+        assertEquals(1, influencers.size());
+        PropertyResultRatingInfluencer ifTrue =
+                influencers.get(0).getInfluencer().getPropertyRatingInfluencer(TestResults.TRUE);
+        PropertyResultRatingInfluencer ifFalse =
+                influencers.get(0).getInfluencer().getPropertyRatingInfluencer(TestResults.FALSE);
+        assertEquals(0, ifTrue.getInfluence());
+        assertEquals(RatingImpact.PENALTY_MEDIUM.getInfluence(), ifFalse.getInfluence());
+        assertEquals(RatingImpact.PENALTY_MEDIUM.getScoreCap(), ifFalse.getScoreCap());
+    }
 }
