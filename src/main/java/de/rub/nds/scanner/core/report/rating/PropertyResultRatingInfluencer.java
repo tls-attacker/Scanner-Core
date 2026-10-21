@@ -100,6 +100,17 @@ public class PropertyResultRatingInfluencer
     }
 
     /**
+     * Constructs a PropertyResultRatingInfluencer with the influence and score cap of the specified
+     * rating impact.
+     *
+     * @param result the test result that triggers this influence
+     * @param impact the rating impact defining the influence and score cap
+     */
+    public PropertyResultRatingInfluencer(TestResult result, RatingImpact impact) {
+        this(result, impact.getInfluence(), impact.getScoreCap());
+    }
+
+    /**
      * Gets the test result that triggers this rating influence.
      *
      * @return the test result
