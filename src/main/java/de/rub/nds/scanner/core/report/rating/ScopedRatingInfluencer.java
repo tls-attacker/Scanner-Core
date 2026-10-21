@@ -9,6 +9,7 @@
 package de.rub.nds.scanner.core.report.rating;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
+import de.rub.nds.scanner.core.probe.result.TestResults;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
@@ -95,6 +96,40 @@ public class ScopedRatingInfluencer<S extends Enum<S>> {
                                 new ScopedRatingInfluencer<>(
                                         scopes, property, propertyRatingInfluencers.clone()))
                 .toList();
+    }
+
+    /**
+     * Creates influencers for boolean properties whose results have impacts of the same level but
+     * opposite signs. The impact of {@link TestResults#FALSE} is the opposite of the given impact.
+     *
+     * @param <S> the enum type defining the available scopes
+     * @param scope the scope the influencers are applicable to
+     * @param impactIfTrue the impact if the property is {@link TestResults#TRUE}
+     * @param properties the analyzed properties
+     * @return a list containing one influencer per property
+     */
+    public static <S extends Enum<S>> List<ScopedRatingInfluencer<S>> symmetric(
+            S scope, RatingImpact impactIfTrue, AnalyzedProperty... properties) {
+        return symmetric(EnumSet.of(scope), impactIfTrue, properties);
+    }
+
+    /**
+     * Creates influencers for boolean properties whose results have impacts of the same level but
+     * opposite signs. The impact of {@link TestResults#FALSE} is the opposite of the given impact.
+     *
+     * @param <S> the enum type defining the available scopes
+     * @param scopes the scopes the influencers are applicable to, must not be empty
+     * @param impactIfTrue the impact if the property is {@link TestResults#TRUE}
+     * @param properties the analyzed properties
+     * @return a list containing one influencer per property
+     */
+    public static <S extends Enum<S>> List<ScopedRatingInfluencer<S>> symmetric(
+            Set<S> scopes, RatingImpact impactIfTrue, AnalyzedProperty... properties) {
+        return forProperties(
+                scopes,
+                Arrays.asList(properties),
+                new PropertyResultRatingInfluencer(TestResults.TRUE, impactIfTrue),
+                new PropertyResultRatingInfluencer(TestResults.FALSE, impactIfTrue.getOpposite()));
     }
 
     /**

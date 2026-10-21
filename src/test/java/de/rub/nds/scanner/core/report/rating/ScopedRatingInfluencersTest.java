@@ -202,4 +202,26 @@ public class ScopedRatingInfluencersTest {
                             .getInfluence());
         }
     }
+
+    @Test
+    public void testSymmetric() {
+        List<ScopedRatingInfluencer<Scope>> influencers =
+                ScopedRatingInfluencer.symmetric(
+                        Scope.ANY,
+                        RatingImpact.PENALTY_HIGH,
+                        Property.ANY_PROPERTY,
+                        Property.B_PROPERTY);
+
+        assertEquals(2, influencers.size());
+        for (ScopedRatingInfluencer<Scope> influencer : influencers) {
+            PropertyResultRatingInfluencer ifTrue =
+                    influencer.getInfluencer().getPropertyRatingInfluencer(TestResults.TRUE);
+            PropertyResultRatingInfluencer ifFalse =
+                    influencer.getInfluencer().getPropertyRatingInfluencer(TestResults.FALSE);
+            assertEquals(RatingImpact.PENALTY_HIGH.getInfluence(), ifTrue.getInfluence());
+            assertEquals(RatingImpact.PENALTY_HIGH.getScoreCap(), ifTrue.getScoreCap());
+            assertEquals(RatingImpact.BONUS_HIGH.getInfluence(), ifFalse.getInfluence());
+            assertEquals(null, ifFalse.getScoreCap());
+        }
+    }
 }

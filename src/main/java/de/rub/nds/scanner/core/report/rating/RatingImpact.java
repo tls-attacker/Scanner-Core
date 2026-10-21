@@ -62,4 +62,25 @@ public enum RatingImpact {
     public Integer getScoreCap() {
         return scoreCap;
     }
+
+    /**
+     * Returns the impact of the same level with the opposite sign, e.g., {@link #PENALTY_MEDIUM}
+     * for {@link #BONUS_MEDIUM}.
+     *
+     * @return the opposite impact
+     */
+    public RatingImpact getOpposite() {
+        return switch (this) {
+            case BONUS_EPOCHAL -> PENALTY_EPOCHAL;
+            case BONUS_VERY_HIGH -> PENALTY_VERY_HIGH;
+            case BONUS_HIGH -> PENALTY_HIGH;
+            case BONUS_MEDIUM -> PENALTY_MEDIUM;
+            case BONUS_LOW -> PENALTY_LOW;
+            case PENALTY_LOW -> BONUS_LOW;
+            case PENALTY_MEDIUM -> BONUS_MEDIUM;
+            case PENALTY_HIGH -> BONUS_HIGH;
+            case PENALTY_VERY_HIGH -> BONUS_VERY_HIGH;
+            case PENALTY_EPOCHAL -> BONUS_EPOCHAL;
+        };
+    }
 }
