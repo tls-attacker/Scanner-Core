@@ -9,8 +9,11 @@
 package de.rub.nds.scanner.core.report.rating;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
+import de.rub.nds.scanner.core.probe.result.TestResult;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +22,9 @@ import java.util.stream.Collectors;
 
 /**
  * A collection of scoped rating influencers from which the rating influencers of individual scanner
- * variants can be assembled using {@link RatingScopeSelection}s.
+ * variants can be assembled using {@link RatingScopeSelection}s. A property may have multiple
+ * influencers, e.g., one per score, which are merged into a single {@link RatingInfluencer} upon
+ * selection.
  *
  * @param <S> the enum type defining the available scopes
  */
@@ -55,17 +60,66 @@ public class ScopedRatingInfluencers<S extends Enum<S>> {
     }
 
     /**
-     * Assembles the rating influencers selected by the given selection.
+     * Assembles the rating influencers selected by the given selection. Selected influencers of the
+     * same property are merged by combining the score modifiers of identical results.
      *
      * @param selection the selection to apply
-     * @return the selected rating influencers in insertion order
+     * @return the selected rating influencers in insertion order of their properties
+     * @throws IllegalStateException if the merged influencers define multiple modifiers for the
+     *     same result and score, or different references for the same result
      */
     public RatingInfluencers select(RatingScopeSelection<S> selection) {
-        return new RatingInfluencers(
+        Map<AnalyzedProperty, List<RatingInfluencer>> influencersByProperty =
                 influencers.stream()
                         .filter(selection::selects)
                         .map(ScopedRatingInfluencer::getInfluencer)
+                        .collect(
+                                Collectors.groupingBy(
+                                        RatingInfluencer::getAnalyzedProperty,
+                                        LinkedHashMap::new,
+                                        Collectors.toList()));
+        return new RatingInfluencers(
+                influencersByProperty.entrySet().stream()
+                        .map(entry -> merge(entry.getKey(), entry.getValue()))
                         .collect(Collectors.toCollection(LinkedList::new)));
+    }
+
+    private static RatingInfluencer merge(
+            AnalyzedProperty property, List<RatingInfluencer> influencers) {
+        Map<TestResult, PropertyResultRatingInfluencer> mergedByResult = new LinkedHashMap<>();
+        for (RatingInfluencer influencer : influencers) {
+            for (PropertyResultRatingInfluencer resultInfluencer :
+                    influencer.getPropertyRatingInfluencers()) {
+                PropertyResultRatingInfluencer merged =
+                        mergedByResult.computeIfAbsent(
+                                resultInfluencer.getResult(), PropertyResultRatingInfluencer::new);
+                for (ScoreModifier modifier : resultInfluencer.getModifiers()) {
+                    if (merged.getModifier(modifier.getScoreType()).isPresent()) {
+                        throw new IllegalStateException(
+                                "Multiple modifiers of score "
+                                        + modifier.getScoreType()
+                                        + " for result "
+                                        + resultInfluencer.getResult()
+                                        + " of "
+                                        + property);
+                    }
+                    merged.addModifier(modifier);
+                }
+                if (resultInfluencer.getReferencedProperty() != null) {
+                    if (merged.getReferencedProperty() != null) {
+                        throw new IllegalStateException(
+                                "Multiple references for result "
+                                        + resultInfluencer.getResult()
+                                        + " of "
+                                        + property);
+                    }
+                    merged.setReferencedProperty(resultInfluencer.getReferencedProperty());
+                    merged.setReferencedPropertyResult(
+                            resultInfluencer.getReferencedPropertyResult());
+                }
+            }
+        }
+        return new RatingInfluencer(property, new LinkedList<>(mergedByResult.values()));
     }
 
     /**
@@ -104,5 +158,32 @@ public class ScopedRatingInfluencers<S extends Enum<S>> {
                 .filter(entry -> entry.getValue().size() > 1)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns all properties for which multiple modifiers of the same score are defined for the
+     * same result, regardless of their scopes.
+     *
+     * @return the properties with duplicate modifiers
+     */
+    public List<AnalyzedProperty> getPropertiesWithDuplicateModifiers() {
+        Map<AnalyzedProperty, Set<Map.Entry<TestResult, ScoreType>>> modifiersByProperty =
+                new LinkedHashMap<>();
+        Set<AnalyzedProperty> duplicates = new LinkedHashSet<>();
+        for (ScopedRatingInfluencer<S> influencer : influencers) {
+            Set<Map.Entry<TestResult, ScoreType>> seen =
+                    modifiersByProperty.computeIfAbsent(
+                            influencer.getAnalyzedProperty(), property -> new HashSet<>());
+            for (PropertyResultRatingInfluencer resultInfluencer :
+                    influencer.getInfluencer().getPropertyRatingInfluencers()) {
+                for (ScoreModifier modifier : resultInfluencer.getModifiers()) {
+                    if (!seen.add(
+                            Map.entry(resultInfluencer.getResult(), modifier.getScoreType()))) {
+                        duplicates.add(influencer.getAnalyzedProperty());
+                    }
+                }
+            }
+        }
+        return new LinkedList<>(duplicates);
     }
 }

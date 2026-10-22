@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.report.rating;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.rub.nds.scanner.core.TestAnalyzedProperty;
+import de.rub.nds.scanner.core.TestScoreType;
 import de.rub.nds.scanner.core.probe.result.FaultListResult;
 import de.rub.nds.scanner.core.probe.result.ListResult;
 import de.rub.nds.scanner.core.probe.result.TestResult;
@@ -25,12 +26,16 @@ class RatingInfluencerTest {
     private static final RatingInfluencer INFLUENCER =
             new RatingInfluencer(
                     TestAnalyzedProperty.TEST_ANALYZED_PROPERTY,
-                    new PropertyResultRatingInfluencer(TestResults.TRUE, -200),
-                    new PropertyResultRatingInfluencer(TestResults.FALSE, 50),
-                    new PropertyResultRatingInfluencer(TestResults.CANNOT_BE_TESTED, -10));
+                    new PropertyResultRatingInfluencer(
+                            TestResults.TRUE, new ScoreModifier(TestScoreType.SECURITY, -200)),
+                    new PropertyResultRatingInfluencer(
+                            TestResults.FALSE, new ScoreModifier(TestScoreType.SECURITY, 50)),
+                    new PropertyResultRatingInfluencer(
+                            TestResults.CANNOT_BE_TESTED,
+                            new ScoreModifier(TestScoreType.SECURITY, -10)));
 
     private static int influenceFor(TestResult result) {
-        return INFLUENCER.getPropertyRatingInfluencer(result).getInfluence();
+        return INFLUENCER.getPropertyRatingInfluencer(result).getInfluence(TestScoreType.SECURITY);
     }
 
     private static FaultListResult<String> faultsFor(List<String> faultyFeatures) {
@@ -93,6 +98,31 @@ class RatingInfluencerTest {
                                 Map.of(
                                         TestAnalyzedProperty.TEST_ANALYZED_PROPERTY,
                                         faultsFor(List.of("SECP256R1"))))
-                        .getScore());
+                        .getScore(TestScoreType.SECURITY));
+    }
+
+    @Test
+    void scoresAreComputedPerScoreType() {
+        RatingInfluencer capping =
+                new RatingInfluencer(
+                        TestAnalyzedProperty.TEST_ANALYZED_PROPERTY,
+                        new PropertyResultRatingInfluencer(
+                                TestResults.TRUE,
+                                new ScoreModifier(TestScoreType.SECURITY, 100, 50),
+                                new ScoreModifier(TestScoreType.INTEROPERABILITY, 100)));
+        SiteReportRater rater =
+                new SiteReportRater(
+                        new RatingInfluencers(new LinkedList<>(List.of(capping))),
+                        new Recommendations(List.of()));
+
+        ScoreReport report =
+                rater.getScoreReport(
+                        Map.of(TestAnalyzedProperty.TEST_ANALYZED_PROPERTY, TestResults.TRUE));
+
+        assertEquals(
+                List.of(TestScoreType.SECURITY, TestScoreType.INTEROPERABILITY),
+                List.copyOf(report.getScoreTypes()));
+        assertEquals(50, report.getScore(TestScoreType.SECURITY));
+        assertEquals(100, report.getScore(TestScoreType.INTEROPERABILITY));
     }
 }

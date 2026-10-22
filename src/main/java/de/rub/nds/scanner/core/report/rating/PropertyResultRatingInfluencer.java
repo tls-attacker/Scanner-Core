@@ -19,33 +19,30 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Represents a rating influencer for a specific property result. This class encapsulates how a
- * particular test result affects the overall rating score, including potential score caps and
- * references to other properties.
+ * particular test result affects the individual scores, using one {@link ScoreModifier} per
+ * affected score, and optional references to other properties.
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(
-        propOrder = {
-            "result",
-            "influence",
-            "scoreCap",
-            "referencedProperty",
-            "referencedPropertyResult"
-        })
-public class PropertyResultRatingInfluencer
-        implements Serializable, Comparable<PropertyResultRatingInfluencer> {
+@XmlType(propOrder = {"result", "modifiers", "referencedProperty", "referencedPropertyResult"})
+public class PropertyResultRatingInfluencer implements Serializable {
 
     @XmlElement(type = TestResults.class, name = "result")
     @JsonIgnore
     private TestResult result;
 
-    private Integer influence;
-
-    private Integer scoreCap;
+    @XmlElement(name = "modifier")
+    private List<ScoreModifier> modifiers = new LinkedList<>();
 
     @XmlAnyElement(lax = true)
     private AnalyzedProperty referencedProperty;
@@ -59,14 +56,26 @@ public class PropertyResultRatingInfluencer
     private PropertyResultRatingInfluencer() {}
 
     /**
-     * Constructs a PropertyResultRatingInfluencer with the specified result and influence.
+     * Constructs a PropertyResultRatingInfluencer with the specified result and score modifiers.
+     * Scores without a modifier are not influenced by the result.
      *
      * @param result the test result that triggers this influence
-     * @param influence the influence value (positive or negative) on the rating score
+     * @param modifiers the modifiers of the scores influenced by the result
      */
-    public PropertyResultRatingInfluencer(TestResult result, Integer influence) {
+    public PropertyResultRatingInfluencer(TestResult result, ScoreModifier... modifiers) {
+        this(result, Arrays.asList(modifiers));
+    }
+
+    /**
+     * Constructs a PropertyResultRatingInfluencer with the specified result and score modifiers.
+     * Scores without a modifier are not influenced by the result.
+     *
+     * @param result the test result that triggers this influence
+     * @param modifiers the modifiers of the scores influenced by the result
+     */
+    public PropertyResultRatingInfluencer(TestResult result, List<ScoreModifier> modifiers) {
         this.result = result;
-        this.influence = influence;
+        this.modifiers = new LinkedList<>(modifiers);
     }
 
     /**
@@ -86,28 +95,19 @@ public class PropertyResultRatingInfluencer
     }
 
     /**
-     * Constructs a PropertyResultRatingInfluencer with the specified result, influence, and score
-     * cap.
+     * Returns a comparator ordering influencers by their impact on the given score. Influencers
+     * capping the score are ordered before those without a cap, lower caps first. Among influencers
+     * with the same cap, they are ordered by their influence values.
      *
-     * @param result the test result that triggers this influence
-     * @param influence the influence value (positive or negative) on the rating score
-     * @param scoreCap the maximum score cap when this influencer is applied
+     * @param scoreType the score to compare the influencers by
+     * @return the comparator
      */
-    public PropertyResultRatingInfluencer(TestResult result, Integer influence, Integer scoreCap) {
-        this.result = result;
-        this.influence = influence;
-        this.scoreCap = scoreCap;
-    }
-
-    /**
-     * Constructs a PropertyResultRatingInfluencer with the influence and score cap of the specified
-     * rating impact.
-     *
-     * @param result the test result that triggers this influence
-     * @param impact the rating impact defining the influence and score cap
-     */
-    public PropertyResultRatingInfluencer(TestResult result, RatingImpact impact) {
-        this(result, impact.getInfluence(), impact.getScoreCap());
+    public static Comparator<PropertyResultRatingInfluencer> comparing(ScoreType scoreType) {
+        return Comparator.comparing(
+                        (PropertyResultRatingInfluencer influencer) ->
+                                influencer.getScoreCap(scoreType),
+                        Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparingInt(influencer -> influencer.getInfluence(scoreType));
     }
 
     /**
@@ -120,33 +120,6 @@ public class PropertyResultRatingInfluencer
     }
 
     /**
-     * Gets the influence value that this result has on the rating score.
-     *
-     * @return the influence value (positive or negative)
-     */
-    public Integer getInfluence() {
-        return influence;
-    }
-
-    /**
-     * Gets the score cap value. When applied, this caps the maximum possible score.
-     *
-     * @return the score cap value, or null if no cap is set
-     */
-    public Integer getScoreCap() {
-        return scoreCap;
-    }
-
-    /**
-     * Checks whether this influencer has a score cap defined.
-     *
-     * @return true if a score cap is set and is not zero, false otherwise
-     */
-    public boolean hasScoreCap() {
-        return scoreCap != null && scoreCap != 0;
-    }
-
-    /**
      * Sets the test result that triggers this rating influence.
      *
      * @param result the test result to set
@@ -156,21 +129,73 @@ public class PropertyResultRatingInfluencer
     }
 
     /**
-     * Sets the influence value that this result has on the rating score.
+     * Gets the modifiers of all scores influenced by the result.
      *
-     * @param influence the influence value to set (positive or negative)
+     * @return the score modifiers
      */
-    public void setInfluence(Integer influence) {
-        this.influence = influence;
+    public List<ScoreModifier> getModifiers() {
+        return modifiers;
     }
 
     /**
-     * Sets the score cap value. When applied, this caps the maximum possible score.
+     * Sets the modifiers of all scores influenced by the result.
      *
-     * @param scoreCap the score cap value to set
+     * @param modifiers the score modifiers to set
      */
-    public void setScoreCap(Integer scoreCap) {
-        this.scoreCap = scoreCap;
+    public void setModifiers(List<ScoreModifier> modifiers) {
+        this.modifiers = modifiers;
+    }
+
+    /**
+     * Adds a score modifier.
+     *
+     * @param modifier the score modifier to add
+     */
+    public void addModifier(ScoreModifier modifier) {
+        this.modifiers.add(modifier);
+    }
+
+    /**
+     * Gets the modifier of the given score.
+     *
+     * @param scoreType the score to get the modifier for
+     * @return the modifier of the score, or an empty optional if the score is not influenced
+     */
+    public Optional<ScoreModifier> getModifier(ScoreType scoreType) {
+        return modifiers.stream()
+                .filter(modifier -> Objects.equals(modifier.getScoreType(), scoreType))
+                .findFirst();
+    }
+
+    /**
+     * Gets the influence value that this result has on the given score.
+     *
+     * @param scoreType the score to get the influence for
+     * @return the influence value (positive or negative), or 0 if the score is not influenced
+     */
+    public int getInfluence(ScoreType scoreType) {
+        return getModifier(scoreType).map(ScoreModifier::getInfluence).orElse(0);
+    }
+
+    /**
+     * Gets the score cap value of the given score. When applied, this caps the maximum possible
+     * score.
+     *
+     * @param scoreType the score to get the cap for
+     * @return the score cap value, or null if no cap is set
+     */
+    public Integer getScoreCap(ScoreType scoreType) {
+        return getModifier(scoreType).map(ScoreModifier::getScoreCap).orElse(null);
+    }
+
+    /**
+     * Checks whether this influencer has a score cap defined for the given score.
+     *
+     * @param scoreType the score to check
+     * @return true if a score cap is set and is not zero, false otherwise
+     */
+    public boolean hasScoreCap(ScoreType scoreType) {
+        return getModifier(scoreType).map(ScoreModifier::hasScoreCap).orElse(false);
     }
 
     /**
@@ -210,37 +235,25 @@ public class PropertyResultRatingInfluencer
     }
 
     /**
-     * Determines whether this influencer has a negative impact on the rating. An influencer is
-     * considered bad if it has a negative influence value or if it sets a score cap.
+     * Determines whether this influencer has a negative impact on any score.
      *
-     * @return true if this is a bad influence, false otherwise
+     * @return true if at least one modifier is a bad influence, false otherwise
+     * @see ScoreModifier#isBadInfluence()
      */
     @JsonIgnore
     public boolean isBadInfluence() {
-        return influence != null && influence < 0 || scoreCap != null;
+        return modifiers.stream().anyMatch(ScoreModifier::isBadInfluence);
     }
 
     /**
-     * Compares this PropertyResultRatingInfluencer with another based on score cap and influence.
-     * Influencers with score caps are ordered before those without. Among influencers with the same
-     * score cap status, they are ordered by their influence values.
+     * Determines whether this influencer has a negative impact on the given score.
      *
-     * @param t the PropertyResultRatingInfluencer to compare to
-     * @return a negative integer, zero, or a positive integer as this object is less than, equal
-     *     to, or greater than the specified object
+     * @param scoreType the score to check
+     * @return true if the modifier of the score is a bad influence, false otherwise
+     * @see ScoreModifier#isBadInfluence()
      */
-    @Override
-    public int compareTo(PropertyResultRatingInfluencer t) {
-        if (Objects.equals(this.getScoreCap(), t.getScoreCap())) {
-            return Integer.compare(this.getInfluence(), t.getInfluence());
-        }
-        if (this.getScoreCap() != null && t.getScoreCap() == null) {
-            return -1;
-        }
-        if (t.getScoreCap() != null && this.getScoreCap() == null) {
-            return 1;
-        }
-        return this.getScoreCap().compareTo(t.getScoreCap());
+    public boolean isBadInfluence(ScoreType scoreType) {
+        return getModifier(scoreType).map(ScoreModifier::isBadInfluence).orElse(false);
     }
 
     @Override
@@ -252,12 +265,12 @@ public class PropertyResultRatingInfluencer
             return false;
         }
         PropertyResultRatingInfluencer that = (PropertyResultRatingInfluencer) obj;
-        return Objects.equals(scoreCap, that.scoreCap) && Objects.equals(influence, that.influence);
+        return Objects.equals(new HashSet<>(modifiers), new HashSet<>(that.modifiers));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(scoreCap, influence);
+        return new HashSet<>(modifiers).hashCode();
     }
 
     /**
@@ -270,10 +283,8 @@ public class PropertyResultRatingInfluencer
         return "PropertyResultRatingInfluencer{"
                 + "result="
                 + result
-                + ", influence="
-                + influence
-                + ", scoreCap="
-                + scoreCap
+                + ", modifiers="
+                + modifiers
                 + ", referencedProperty="
                 + referencedProperty
                 + ", referencedPropertyResult="

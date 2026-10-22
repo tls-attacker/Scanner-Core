@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.report.rating;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import de.rub.nds.scanner.core.TestScoreType;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
 import de.rub.nds.scanner.core.probe.result.TestResult;
@@ -112,7 +113,8 @@ public class SerializationTest {
         // Create test data with a mock TestResult implementation
         TestResult mockResult = new MockTestResult();
         PropertyResultRatingInfluencer influencer =
-                new PropertyResultRatingInfluencer(mockResult, 10);
+                new PropertyResultRatingInfluencer(
+                        mockResult, new ScoreModifier(TestScoreType.SECURITY, 10));
 
         // Test serialization
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -128,7 +130,7 @@ public class SerializationTest {
         ois.close();
 
         assertNotNull(deserialized);
-        assertEquals(10, deserialized.getInfluence());
+        assertEquals(10, deserialized.getInfluence(TestScoreType.SECURITY));
     }
 
     @Test
@@ -161,7 +163,8 @@ public class SerializationTest {
         // Create a complex hierarchy
         TestResult mockResult = new MockTestResult();
         PropertyResultRatingInfluencer propInfluencer =
-                new PropertyResultRatingInfluencer(mockResult, 5);
+                new PropertyResultRatingInfluencer(
+                        mockResult, new ScoreModifier(TestScoreType.SECURITY, 5));
         List<PropertyResultRatingInfluencer> propInfluencers = new LinkedList<>();
         propInfluencers.add(propInfluencer);
 

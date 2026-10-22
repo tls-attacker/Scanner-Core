@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import de.rub.nds.scanner.core.TestScoreType;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.AnalyzedPropertyCategory;
 import de.rub.nds.scanner.core.probe.result.TestResults;
@@ -65,22 +66,26 @@ public class ScopedRatingInfluencersTest {
                 new ScopedRatingInfluencer<>(
                         Scope.ANY,
                         Property.ANY_PROPERTY,
-                        new PropertyResultRatingInfluencer(TestResults.TRUE, 100)));
+                        new PropertyResultRatingInfluencer(
+                                TestResults.TRUE, new ScoreModifier(TestScoreType.SECURITY, 100))));
         influencers.add(
                 new ScopedRatingInfluencer<>(
                         Scope.NEW_VERSION,
                         Property.NEW_VERSION_PROPERTY,
-                        new PropertyResultRatingInfluencer(TestResults.TRUE, 100)));
+                        new PropertyResultRatingInfluencer(
+                                TestResults.TRUE, new ScoreModifier(TestScoreType.SECURITY, 100))));
         influencers.add(
                 new ScopedRatingInfluencer<>(
                         Scope.OLD_VERSION,
                         Property.OLD_VERSION_PROPERTY,
-                        new PropertyResultRatingInfluencer(TestResults.FALSE, 50)));
+                        new PropertyResultRatingInfluencer(
+                                TestResults.FALSE, new ScoreModifier(TestScoreType.SECURITY, 50))));
         influencers.add(
                 new ScopedRatingInfluencer<>(
                         EnumSet.of(Scope.NEW_VERSION, Scope.VARIANT_A),
                         Property.NEW_VERSION_A_PROPERTY,
-                        new PropertyResultRatingInfluencer(TestResults.TRUE, 100)));
+                        new PropertyResultRatingInfluencer(
+                                TestResults.TRUE, new ScoreModifier(TestScoreType.SECURITY, 100))));
         influencers.addAll(ScopedRatingInfluencer.neutral(Scope.VARIANT_B, Property.B_PROPERTY));
         return influencers;
     }
@@ -174,8 +179,11 @@ public class ScopedRatingInfluencersTest {
                 ScopedRatingInfluencer.forProperties(
                         EnumSet.of(Scope.NEW_VERSION, Scope.VARIANT_A),
                         List.of(Property.NEW_VERSION_PROPERTY, Property.NEW_VERSION_A_PROPERTY),
-                        new PropertyResultRatingInfluencer(TestResults.TRUE, -100, 500),
-                        new PropertyResultRatingInfluencer(TestResults.FALSE, 50));
+                        new PropertyResultRatingInfluencer(
+                                TestResults.TRUE,
+                                new ScoreModifier(TestScoreType.SECURITY, -100, 500)),
+                        new PropertyResultRatingInfluencer(
+                                TestResults.FALSE, new ScoreModifier(TestScoreType.SECURITY, 50)));
 
         assertEquals(2, influencers.size());
         assertEquals(Property.NEW_VERSION_PROPERTY, influencers.get(0).getAnalyzedProperty());
@@ -187,19 +195,19 @@ public class ScopedRatingInfluencersTest {
                     influencer
                             .getInfluencer()
                             .getPropertyRatingInfluencer(TestResults.TRUE)
-                            .getInfluence());
+                            .getInfluence(TestScoreType.SECURITY));
             assertEquals(
                     500,
                     influencer
                             .getInfluencer()
                             .getPropertyRatingInfluencer(TestResults.TRUE)
-                            .getScoreCap());
+                            .getScoreCap(TestScoreType.SECURITY));
             assertEquals(
                     50,
                     influencer
                             .getInfluencer()
                             .getPropertyRatingInfluencer(TestResults.FALSE)
-                            .getInfluence());
+                            .getInfluence(TestScoreType.SECURITY));
         }
     }
 
@@ -208,6 +216,7 @@ public class ScopedRatingInfluencersTest {
         List<ScopedRatingInfluencer<Scope>> influencers =
                 ScopedRatingInfluencer.symmetric(
                         Scope.ANY,
+                        TestScoreType.SECURITY,
                         RatingImpact.PENALTY_HIGH,
                         Property.ANY_PROPERTY,
                         Property.B_PROPERTY);
@@ -218,10 +227,16 @@ public class ScopedRatingInfluencersTest {
                     influencer.getInfluencer().getPropertyRatingInfluencer(TestResults.TRUE);
             PropertyResultRatingInfluencer ifFalse =
                     influencer.getInfluencer().getPropertyRatingInfluencer(TestResults.FALSE);
-            assertEquals(RatingImpact.PENALTY_HIGH.getInfluence(), ifTrue.getInfluence());
-            assertEquals(RatingImpact.PENALTY_HIGH.getScoreCap(), ifTrue.getScoreCap());
-            assertEquals(RatingImpact.BONUS_HIGH.getInfluence(), ifFalse.getInfluence());
-            assertEquals(null, ifFalse.getScoreCap());
+            assertEquals(
+                    RatingImpact.PENALTY_HIGH.getInfluence(),
+                    ifTrue.getInfluence(TestScoreType.SECURITY));
+            assertEquals(
+                    RatingImpact.PENALTY_HIGH.getScoreCap(),
+                    ifTrue.getScoreCap(TestScoreType.SECURITY));
+            assertEquals(
+                    RatingImpact.BONUS_HIGH.getInfluence(),
+                    ifFalse.getInfluence(TestScoreType.SECURITY));
+            assertEquals(null, ifFalse.getScoreCap(TestScoreType.SECURITY));
         }
     }
 
@@ -230,6 +245,7 @@ public class ScopedRatingInfluencersTest {
         List<ScopedRatingInfluencer<Scope>> influencers =
                 ScopedRatingInfluencer.ifTrue(
                         EnumSet.of(Scope.NEW_VERSION, Scope.VARIANT_A),
+                        TestScoreType.SECURITY,
                         RatingImpact.PENALTY_EPOCHAL,
                         Property.NEW_VERSION_PROPERTY,
                         Property.NEW_VERSION_A_PROPERTY);
@@ -241,10 +257,14 @@ public class ScopedRatingInfluencersTest {
                     influencer.getInfluencer().getPropertyRatingInfluencer(TestResults.TRUE);
             PropertyResultRatingInfluencer ifFalse =
                     influencer.getInfluencer().getPropertyRatingInfluencer(TestResults.FALSE);
-            assertEquals(RatingImpact.PENALTY_EPOCHAL.getInfluence(), ifTrue.getInfluence());
-            assertEquals(RatingImpact.PENALTY_EPOCHAL.getScoreCap(), ifTrue.getScoreCap());
-            assertEquals(0, ifFalse.getInfluence());
-            assertEquals(null, ifFalse.getScoreCap());
+            assertEquals(
+                    RatingImpact.PENALTY_EPOCHAL.getInfluence(),
+                    ifTrue.getInfluence(TestScoreType.SECURITY));
+            assertEquals(
+                    RatingImpact.PENALTY_EPOCHAL.getScoreCap(),
+                    ifTrue.getScoreCap(TestScoreType.SECURITY));
+            assertEquals(0, ifFalse.getInfluence(TestScoreType.SECURITY));
+            assertEquals(null, ifFalse.getScoreCap(TestScoreType.SECURITY));
         }
     }
 
@@ -252,15 +272,79 @@ public class ScopedRatingInfluencersTest {
     public void testIfFalse() {
         List<ScopedRatingInfluencer<Scope>> influencers =
                 ScopedRatingInfluencer.ifFalse(
-                        Scope.ANY, RatingImpact.PENALTY_MEDIUM, Property.ANY_PROPERTY);
+                        Scope.ANY,
+                        TestScoreType.SECURITY,
+                        RatingImpact.PENALTY_MEDIUM,
+                        Property.ANY_PROPERTY);
 
         assertEquals(1, influencers.size());
         PropertyResultRatingInfluencer ifTrue =
                 influencers.get(0).getInfluencer().getPropertyRatingInfluencer(TestResults.TRUE);
         PropertyResultRatingInfluencer ifFalse =
                 influencers.get(0).getInfluencer().getPropertyRatingInfluencer(TestResults.FALSE);
-        assertEquals(0, ifTrue.getInfluence());
-        assertEquals(RatingImpact.PENALTY_MEDIUM.getInfluence(), ifFalse.getInfluence());
-        assertEquals(RatingImpact.PENALTY_MEDIUM.getScoreCap(), ifFalse.getScoreCap());
+        assertEquals(0, ifTrue.getInfluence(TestScoreType.SECURITY));
+        assertEquals(
+                RatingImpact.PENALTY_MEDIUM.getInfluence(),
+                ifFalse.getInfluence(TestScoreType.SECURITY));
+        assertEquals(
+                RatingImpact.PENALTY_MEDIUM.getScoreCap(),
+                ifFalse.getScoreCap(TestScoreType.SECURITY));
+    }
+
+    @Test
+    public void testSelectMergesModifiersOfDifferentScores() {
+        ScopedRatingInfluencers<Scope> influencers = new ScopedRatingInfluencers<>();
+        influencers.addAll(
+                ScopedRatingInfluencer.symmetric(
+                        Scope.ANY,
+                        TestScoreType.SECURITY,
+                        RatingImpact.PENALTY_HIGH,
+                        Property.ANY_PROPERTY));
+        influencers.addAll(
+                ScopedRatingInfluencer.ifTrue(
+                        Scope.ANY,
+                        TestScoreType.INTEROPERABILITY,
+                        RatingImpact.BONUS_LOW,
+                        Property.ANY_PROPERTY));
+
+        List<RatingInfluencer> selected = influencers.select(VARIANT_A).getRatingInfluencers();
+
+        assertEquals(1, selected.size());
+        PropertyResultRatingInfluencer ifTrue =
+                selected.get(0).getPropertyRatingInfluencer(TestResults.TRUE);
+        PropertyResultRatingInfluencer ifFalse =
+                selected.get(0).getPropertyRatingInfluencer(TestResults.FALSE);
+        assertEquals(
+                RatingImpact.PENALTY_HIGH.getInfluence(),
+                ifTrue.getInfluence(TestScoreType.SECURITY));
+        assertEquals(
+                RatingImpact.BONUS_LOW.getInfluence(),
+                ifTrue.getInfluence(TestScoreType.INTEROPERABILITY));
+        assertEquals(
+                RatingImpact.BONUS_HIGH.getInfluence(),
+                ifFalse.getInfluence(TestScoreType.SECURITY));
+        assertTrue(ifFalse.getModifier(TestScoreType.INTEROPERABILITY).isEmpty());
+        assertTrue(influencers.getPropertiesWithDuplicateModifiers().isEmpty());
+    }
+
+    @Test
+    public void testDuplicateModifiers() {
+        ScopedRatingInfluencers<Scope> influencers = new ScopedRatingInfluencers<>();
+        influencers.addAll(
+                ScopedRatingInfluencer.ifTrue(
+                        Scope.ANY,
+                        TestScoreType.SECURITY,
+                        RatingImpact.PENALTY_HIGH,
+                        Property.ANY_PROPERTY));
+        influencers.addAll(
+                ScopedRatingInfluencer.symmetric(
+                        Scope.ANY,
+                        TestScoreType.SECURITY,
+                        RatingImpact.BONUS_LOW,
+                        Property.ANY_PROPERTY));
+
+        assertEquals(
+                List.of(Property.ANY_PROPERTY), influencers.getPropertiesWithDuplicateModifiers());
+        assertThrows(IllegalStateException.class, () -> influencers.select(VARIANT_A));
     }
 }
