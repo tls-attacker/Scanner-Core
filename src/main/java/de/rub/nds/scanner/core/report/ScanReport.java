@@ -562,7 +562,7 @@ public abstract class ScanReport {
      * @return the score value, or null if not calculated
      */
     public synchronized Integer getScore(ScoreType scoreType) {
-        if(scores != null) {
+        if (scores != null) {
             return scores.get(scoreType);
         } else {
             return null;

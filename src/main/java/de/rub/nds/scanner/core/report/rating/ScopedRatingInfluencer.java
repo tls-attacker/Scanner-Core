@@ -140,11 +140,9 @@ public class ScopedRatingInfluencer<S extends Enum<S>> {
         return forProperties(
                 scopes,
                 Arrays.asList(properties),
+                new PropertyResultRatingInfluencer(TestResults.TRUE, scoreType, impactIfTrue),
                 new PropertyResultRatingInfluencer(
-                        TestResults.TRUE, new ScoreModifier(scoreType, impactIfTrue)),
-                new PropertyResultRatingInfluencer(
-                        TestResults.FALSE,
-                        new ScoreModifier(scoreType, impactIfTrue.getOpposite())));
+                        TestResults.FALSE, scoreType, impactIfTrue.getOpposite()));
     }
 
     /**
@@ -187,8 +185,7 @@ public class ScopedRatingInfluencer<S extends Enum<S>> {
         return forProperties(
                 scopes,
                 Arrays.asList(properties),
-                new PropertyResultRatingInfluencer(
-                        TestResults.TRUE, new ScoreModifier(scoreType, impactIfTrue)),
+                new PropertyResultRatingInfluencer(TestResults.TRUE, scoreType, impactIfTrue),
                 new PropertyResultRatingInfluencer(TestResults.FALSE));
     }
 
@@ -233,8 +230,7 @@ public class ScopedRatingInfluencer<S extends Enum<S>> {
                 scopes,
                 Arrays.asList(properties),
                 new PropertyResultRatingInfluencer(TestResults.TRUE),
-                new PropertyResultRatingInfluencer(
-                        TestResults.FALSE, new ScoreModifier(scoreType, impactIfFalse)));
+                new PropertyResultRatingInfluencer(TestResults.FALSE, scoreType, impactIfFalse));
     }
 
     /**

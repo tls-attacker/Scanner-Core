@@ -9,6 +9,7 @@
 package de.rub.nds.scanner.core.report.rating;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.rub.nds.scanner.core.TestAnalyzedProperty;
 import de.rub.nds.scanner.core.TestScoreType;
@@ -99,6 +100,34 @@ class RatingInfluencerTest {
                                         TestAnalyzedProperty.TEST_ANALYZED_PROPERTY,
                                         faultsFor(List.of("SECP256R1"))))
                         .getScore(TestScoreType.SECURITY));
+    }
+
+    @Test
+    void totalInfluenceSumsAllScores() {
+        PropertyResultRatingInfluencer tradeOff =
+                new PropertyResultRatingInfluencer(
+                        TestResults.TRUE,
+                        new ScoreModifier(TestScoreType.SECURITY, RatingImpact.PENALTY_MEDIUM),
+                        new ScoreModifier(TestScoreType.INTEROPERABILITY, RatingImpact.BONUS_LOW));
+
+        assertEquals(-50, tradeOff.getTotalInfluence());
+        assertEquals(0, new PropertyResultRatingInfluencer(TestResults.TRUE).getTotalInfluence());
+    }
+
+    @Test
+    void noImpactAddsNoModifier() {
+        PropertyResultRatingInfluencer none =
+                new PropertyResultRatingInfluencer(
+                        TestResults.TRUE, TestScoreType.SECURITY, RatingImpact.NONE);
+        PropertyResultRatingInfluencer penalty =
+                new PropertyResultRatingInfluencer(
+                        TestResults.TRUE, TestScoreType.SECURITY, RatingImpact.PENALTY_HIGH);
+
+        assertTrue(none.getModifiers().isEmpty());
+        assertEquals(RatingImpact.NONE, RatingImpact.NONE.getOpposite());
+        assertEquals(
+                List.of(new ScoreModifier(TestScoreType.SECURITY, RatingImpact.PENALTY_HIGH)),
+                penalty.getModifiers());
     }
 
     @Test

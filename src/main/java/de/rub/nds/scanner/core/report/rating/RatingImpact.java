@@ -23,7 +23,12 @@ public enum RatingImpact {
     BONUS_MEDIUM(100),
     /** Following a mere best practice. */
     BONUS_LOW(50),
-    // ----------------------------------
+    /** A marginal improvement, e.g., supporting peers that are limited to a specific region. */
+    BONUS_VERY_LOW(25),
+    /** The result does not influence the score. */
+    NONE(0),
+    /** A marginal shortcoming, e.g., excluding peers that are limited to a specific region. */
+    PENALTY_VERY_LOW(-25),
     /** Missing a mere best practice. */
     PENALTY_LOW(-50),
     PENALTY_MEDIUM(-100),
@@ -65,7 +70,7 @@ public enum RatingImpact {
 
     /**
      * Returns the impact of the same level with the opposite sign, e.g., {@link #PENALTY_MEDIUM}
-     * for {@link #BONUS_MEDIUM}.
+     * for {@link #BONUS_MEDIUM}. The opposite of {@link #NONE} is {@link #NONE}.
      *
      * @return the opposite impact
      */
@@ -76,6 +81,9 @@ public enum RatingImpact {
             case BONUS_HIGH -> PENALTY_HIGH;
             case BONUS_MEDIUM -> PENALTY_MEDIUM;
             case BONUS_LOW -> PENALTY_LOW;
+            case BONUS_VERY_LOW -> PENALTY_VERY_LOW;
+            case NONE -> NONE;
+            case PENALTY_VERY_LOW -> BONUS_VERY_LOW;
             case PENALTY_LOW -> BONUS_LOW;
             case PENALTY_MEDIUM -> BONUS_MEDIUM;
             case PENALTY_HIGH -> BONUS_HIGH;

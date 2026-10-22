@@ -79,6 +79,23 @@ public class PropertyResultRatingInfluencer implements Serializable {
     }
 
     /**
+     * Constructs a PropertyResultRatingInfluencer with the specified impact on a single score. An
+     * impact of {@link RatingImpact#NONE} does not add a modifier, so the result does not influence
+     * any score.
+     *
+     * @param result the test result that triggers this influence
+     * @param scoreType the score influenced by the result
+     * @param impact the impact on the score
+     */
+    public PropertyResultRatingInfluencer(
+            TestResult result, ScoreType scoreType, RatingImpact impact) {
+        this.result = result;
+        if (impact != RatingImpact.NONE) {
+            modifiers.add(new ScoreModifier(scoreType, impact));
+        }
+    }
+
+    /**
      * Constructs a PropertyResultRatingInfluencer with a reference to another property.
      *
      * @param result the test result that triggers this influence
@@ -175,6 +192,21 @@ public class PropertyResultRatingInfluencer implements Serializable {
      */
     public int getInfluence(ScoreType scoreType) {
         return getModifier(scoreType).map(ScoreModifier::getInfluence).orElse(0);
+    }
+
+    /**
+     * Gets the sum of the influences on all scores. This weighs up the influences of a result that,
+     * for example, harms the security but improves the interoperability.
+     *
+     * @return the summed influence values (positive or negative), or 0 if no score is influenced
+     */
+    @JsonIgnore
+    public int getTotalInfluence() {
+        return modifiers.stream()
+                .map(ScoreModifier::getInfluence)
+                .filter(Objects::nonNull)
+                .mapToInt(Integer::intValue)
+                .sum();
     }
 
     /**
