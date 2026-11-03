@@ -11,6 +11,7 @@ package de.rub.nds.scanner.core.report.rating;
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.util.JaxbSerializer;
 import jakarta.xml.bind.JAXBException;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -21,19 +22,51 @@ import java.util.Set;
 public class RatingInfluencersIO extends JaxbSerializer<RatingInfluencers> {
 
     /**
-     * Constructs a RatingInfluencersIO serializer for the specified analyzed property class. This
-     * constructor initializes the JAXB context with all necessary classes for serialization.
+     * Constructs a RatingInfluencersIO serializer for the specified analyzed property and score
+     * type classes. This constructor initializes the JAXB context with all necessary classes for
+     * serialization.
      *
      * @param analyzedPropertyClass the class of analyzed properties to include in the JAXB context
+     * @param scoreTypeClass the class of score types to include in the JAXB context
      * @throws JAXBException if there is an error creating the JAXB context
      */
-    public RatingInfluencersIO(Class<? extends AnalyzedProperty> analyzedPropertyClass)
+    public RatingInfluencersIO(
+            Class<? extends AnalyzedProperty> analyzedPropertyClass,
+            Class<? extends ScoreType> scoreTypeClass)
             throws JAXBException {
-        super(
-                Set.of(
-                        RatingInfluencers.class,
-                        RatingInfluencer.class,
-                        PropertyResultRatingInfluencer.class,
-                        analyzedPropertyClass));
+        this(Set.of(analyzedPropertyClass), Set.of(scoreTypeClass));
+    }
+
+    /**
+     * Constructs a RatingInfluencersIO serializer for the specified analyzed property and score
+     * type classes. This allows mixing properties and score types of different classes in one file.
+     * Each class must use a distinct XML root element name, as the element name determines the
+     * class of a property or score type during deserialization.
+     *
+     * @param analyzedPropertyClasses the classes of analyzed properties to include in the JAXB
+     *     context
+     * @param scoreTypeClasses the classes of score types to include in the JAXB context
+     * @throws JAXBException if there is an error creating the JAXB context
+     */
+    public RatingInfluencersIO(
+            Set<Class<? extends AnalyzedProperty>> analyzedPropertyClasses,
+            Set<Class<? extends ScoreType>> scoreTypeClasses)
+            throws JAXBException {
+        super(getClassesToBeBound(analyzedPropertyClasses, scoreTypeClasses));
+    }
+
+    private static Set<Class<?>> getClassesToBeBound(
+            Set<Class<? extends AnalyzedProperty>> analyzedPropertyClasses,
+            Set<Class<? extends ScoreType>> scoreTypeClasses) {
+        Set<Class<?>> classesToBeBound =
+                new HashSet<>(
+                        Set.of(
+                                RatingInfluencers.class,
+                                RatingInfluencer.class,
+                                PropertyResultRatingInfluencer.class,
+                                ScoreModifier.class));
+        classesToBeBound.addAll(analyzedPropertyClasses);
+        classesToBeBound.addAll(scoreTypeClasses);
+        return classesToBeBound;
     }
 }

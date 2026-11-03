@@ -9,8 +9,10 @@
 package de.rub.nds.scanner.core.report.rating;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.rub.nds.scanner.core.TestAnalyzedProperty;
+import de.rub.nds.scanner.core.TestScoreType;
 import de.rub.nds.scanner.core.probe.result.FaultListResult;
 import de.rub.nds.scanner.core.probe.result.ListResult;
 import de.rub.nds.scanner.core.probe.result.TestResult;
@@ -25,12 +27,16 @@ class RatingInfluencerTest {
     private static final RatingInfluencer INFLUENCER =
             new RatingInfluencer(
                     TestAnalyzedProperty.TEST_ANALYZED_PROPERTY,
-                    new PropertyResultRatingInfluencer(TestResults.TRUE, -200),
-                    new PropertyResultRatingInfluencer(TestResults.FALSE, 50),
-                    new PropertyResultRatingInfluencer(TestResults.CANNOT_BE_TESTED, -10));
+                    new PropertyResultRatingInfluencer(
+                            TestResults.TRUE, new ScoreModifier(TestScoreType.SECURITY, -200)),
+                    new PropertyResultRatingInfluencer(
+                            TestResults.FALSE, new ScoreModifier(TestScoreType.SECURITY, 50)),
+                    new PropertyResultRatingInfluencer(
+                            TestResults.CANNOT_BE_TESTED,
+                            new ScoreModifier(TestScoreType.SECURITY, -10)));
 
     private static int influenceFor(TestResult result) {
-        return INFLUENCER.getPropertyRatingInfluencer(result).getInfluence();
+        return INFLUENCER.getPropertyRatingInfluencer(result).getInfluence(TestScoreType.SECURITY);
     }
 
     private static FaultListResult<String> faultsFor(List<String> faultyFeatures) {
@@ -93,6 +99,59 @@ class RatingInfluencerTest {
                                 Map.of(
                                         TestAnalyzedProperty.TEST_ANALYZED_PROPERTY,
                                         faultsFor(List.of("SECP256R1"))))
-                        .getScore());
+                        .getScore(TestScoreType.SECURITY));
+    }
+
+    @Test
+    void totalInfluenceSumsAllScores() {
+        PropertyResultRatingInfluencer tradeOff =
+                new PropertyResultRatingInfluencer(
+                        TestResults.TRUE,
+                        new ScoreModifier(TestScoreType.SECURITY, RatingImpact.PENALTY_MEDIUM),
+                        new ScoreModifier(TestScoreType.INTEROPERABILITY, RatingImpact.BONUS_LOW));
+
+        assertEquals(-50, tradeOff.getTotalInfluence());
+        assertEquals(0, new PropertyResultRatingInfluencer(TestResults.TRUE).getTotalInfluence());
+    }
+
+    @Test
+    void noImpactAddsNoModifier() {
+        PropertyResultRatingInfluencer none =
+                new PropertyResultRatingInfluencer(
+                        TestResults.TRUE, TestScoreType.SECURITY, RatingImpact.NONE);
+        PropertyResultRatingInfluencer penalty =
+                new PropertyResultRatingInfluencer(
+                        TestResults.TRUE, TestScoreType.SECURITY, RatingImpact.PENALTY_HIGH);
+
+        assertTrue(none.getModifiers().isEmpty());
+        assertEquals(RatingImpact.NONE, RatingImpact.NONE.getOpposite());
+        assertEquals(
+                List.of(new ScoreModifier(TestScoreType.SECURITY, RatingImpact.PENALTY_HIGH)),
+                penalty.getModifiers());
+    }
+
+    @Test
+    void scoresAreComputedPerScoreType() {
+        RatingInfluencer capping =
+                new RatingInfluencer(
+                        TestAnalyzedProperty.TEST_ANALYZED_PROPERTY,
+                        new PropertyResultRatingInfluencer(
+                                TestResults.TRUE,
+                                new ScoreModifier(TestScoreType.SECURITY, 100, 50),
+                                new ScoreModifier(TestScoreType.INTEROPERABILITY, 100)));
+        SiteReportRater rater =
+                new SiteReportRater(
+                        new RatingInfluencers(new LinkedList<>(List.of(capping))),
+                        new Recommendations(List.of()));
+
+        ScoreReport report =
+                rater.getScoreReport(
+                        Map.of(TestAnalyzedProperty.TEST_ANALYZED_PROPERTY, TestResults.TRUE));
+
+        assertEquals(
+                List.of(TestScoreType.SECURITY, TestScoreType.INTEROPERABILITY),
+                List.copyOf(report.getScoreTypes()));
+        assertEquals(50, report.getScore(TestScoreType.SECURITY));
+        assertEquals(100, report.getScore(TestScoreType.INTEROPERABILITY));
     }
 }

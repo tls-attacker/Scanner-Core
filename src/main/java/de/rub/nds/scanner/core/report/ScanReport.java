@@ -29,6 +29,7 @@ import de.rub.nds.scanner.core.probe.result.StringResult;
 import de.rub.nds.scanner.core.probe.result.TestResult;
 import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.rating.ScoreReport;
+import de.rub.nds.scanner.core.report.rating.ScoreType;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.OutputStream;
@@ -60,7 +61,7 @@ public abstract class ScanReport {
     private final Map<TrackableValue, ExtractedValueContainer<?>> extractedValueContainerMap;
 
     private final List<GuidelineReport> guidelineReports;
-    private Integer score;
+    private Map<ScoreType, Integer> scores;
     private ScoreReport scoreReport;
 
     @JsonIgnore private final Set<ScannerProbe<?, ?>> executedProbes;
@@ -555,21 +556,35 @@ public abstract class ScanReport {
     }
 
     /**
-     * Returns the overall security score for the scan.
+     * Returns the score of the given score type for the scan.
      *
+     * @param scoreType the score type
      * @return the score value, or null if not calculated
      */
-    public synchronized Integer getScore() {
-        return score;
+    public synchronized Integer getScore(ScoreType scoreType) {
+        if (scores != null) {
+            return scores.get(scoreType);
+        } else {
+            return null;
+        }
     }
 
     /**
-     * Sets the overall security score for the scan.
+     * Returns all scores for the scan.
      *
-     * @param score the score value
+     * @return the map of score types to their score values, or null if not calculated
      */
-    public synchronized void setScore(Integer score) {
-        this.score = score;
+    public synchronized Map<ScoreType, Integer> getScores() {
+        return scores;
+    }
+
+    /**
+     * Sets all scores for the scan.
+     *
+     * @param scores the map of score types to their score values
+     */
+    public synchronized void setScores(Map<ScoreType, Integer> scores) {
+        this.scores = scores;
     }
 
     /**

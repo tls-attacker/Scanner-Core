@@ -239,9 +239,9 @@ public abstract class Scanner<
         LOGGER.debug("Retrieving site report rater for score evaluation");
         SiteReportRater rater = getSiteReportRater();
         if (rater != null) {
-            LOGGER.debug("Site report rater set, computing score");
+            LOGGER.debug("Site report rater set, computing scores");
             ScoreReport scoreReport = rater.getScoreReport(report.getResultMap());
-            report.setScore(scoreReport.getScore());
+            report.setScores(scoreReport.getScores());
             report.setScoreReport(scoreReport);
         }
 

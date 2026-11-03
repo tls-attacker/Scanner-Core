@@ -10,20 +10,18 @@ package de.rub.nds.scanner.core.report.rating;
 
 import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.result.TestResult;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.Set;
 
 /**
  * Calculates rating scores for site reports based on property test results and configured rating
- * influencers. This class evaluates how different property results affect the overall security
- * rating of a site.
+ * influencers. This class evaluates how different property results affect the individual scores of
+ * a site. A score is computed for each {@link ScoreType} for which at least one modifier is
+ * configured.
  */
 public class SiteReportRater {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final RatingInfluencers influencers;
 
@@ -42,11 +40,11 @@ public class SiteReportRater {
 
     /**
      * Generates a score report based on the provided property test results. This method evaluates
-     * each property result against the configured rating influencers and calculates the overall
-     * score.
+     * each property result against the configured rating influencers and calculates the score of
+     * each score type.
      *
      * @param resultMap a map of analyzed properties to their test results
-     * @return a ScoreReport containing the calculated score and applied influencers
+     * @return a ScoreReport containing the calculated scores and applied influencers
      */
     public ScoreReport getScoreReport(Map<AnalyzedProperty, TestResult> resultMap) {
         LinkedHashMap<AnalyzedProperty, PropertyResultRatingInfluencer> ratingInfluencers =
@@ -62,23 +60,42 @@ public class SiteReportRater {
             }
         }
 
-        int score = computeScore(ratingInfluencers);
-        return new ScoreReport(score, ratingInfluencers);
+        LinkedHashMap<ScoreType, Integer> scores = new LinkedHashMap<>();
+        for (ScoreType scoreType : getScoreTypes()) {
+            scores.put(scoreType, computeScore(scoreType, ratingInfluencers));
+        }
+        return new ScoreReport(scores, ratingInfluencers);
+    }
+
+    /**
+     * Gets all score types for which at least one modifier is configured.
+     *
+     * @return the score types in order of their first occurrence
+     */
+    public Set<ScoreType> getScoreTypes() {
+        Set<ScoreType> scoreTypes = new LinkedHashSet<>();
+        for (RatingInfluencer ratingInfluencer : influencers.getRatingInfluencers()) {
+            for (PropertyResultRatingInfluencer propertyRatingInfluencer :
+                    ratingInfluencer.getPropertyRatingInfluencers()) {
+                for (ScoreModifier modifier : propertyRatingInfluencer.getModifiers()) {
+                    scoreTypes.add(modifier.getScoreType());
+                }
+            }
+        }
+        return scoreTypes;
     }
 
     private static int computeScore(
-            HashMap<AnalyzedProperty, PropertyResultRatingInfluencer> influencers) {
+            ScoreType scoreType,
+            Map<AnalyzedProperty, PropertyResultRatingInfluencer> influencers) {
         int score = 0;
         for (PropertyResultRatingInfluencer influencer : influencers.values()) {
-            if (influencer.getInfluence() != null) {
-                score += influencer.getInfluence();
-            } else {
-                LOGGER.warn("Influencer has 'null' influence");
-            }
+            score += influencer.getInfluence(scoreType);
         }
         for (PropertyResultRatingInfluencer influencer : influencers.values()) {
-            if (influencer.getScoreCap() != null && score >= influencer.getScoreCap()) {
-                score = influencer.getScoreCap();
+            Integer scoreCap = influencer.getScoreCap(scoreType);
+            if (scoreCap != null && score >= scoreCap) {
+                score = scoreCap;
             }
         }
         return score;

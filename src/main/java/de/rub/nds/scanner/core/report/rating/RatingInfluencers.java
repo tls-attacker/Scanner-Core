@@ -62,12 +62,12 @@ public class RatingInfluencers implements Serializable {
 
     /**
      * Gets the property rating influencer for a specific analyzed property and test result. If no
-     * matching rating influencer is found, returns a new influencer with zero influence.
+     * matching rating influencer is found, returns a new influencer with no influence on any score.
      *
      * @param property the analyzed property to search for
      * @param result the test result to match
-     * @return the matching property rating influencer, or a new one with zero influence if not
-     *     found
+     * @return the matching property rating influencer, or a new one with no influence on any score
+     *     if not found
      */
     public PropertyResultRatingInfluencer getPropertyRatingInfluencer(
             AnalyzedProperty property, TestResult result) {
@@ -76,6 +76,6 @@ public class RatingInfluencers implements Serializable {
                 return ri.getPropertyRatingInfluencer(result);
             }
         }
-        return new PropertyResultRatingInfluencer(result, 0);
+        return new PropertyResultRatingInfluencer(result);
     }
 }
