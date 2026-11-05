@@ -233,6 +233,17 @@ public abstract class ScannerProbe<ReportT extends ScanReport, StateT>
         return getType().getName();
     }
 
+    /**
+     * Scheduling priority. When several probes can be executed, the one with the highest priority
+     * starts first; ties keep the order in which the probes were registered. Probes that send many
+     * connections should return a negative value so that cheap probes are not delayed behind them.
+     *
+     * @return the priority, 0 by default
+     */
+    public int getSchedulingPriority() {
+        return 0;
+    }
+
     public StatsWriter<StateT> getWriter() {
         return writer;
     }

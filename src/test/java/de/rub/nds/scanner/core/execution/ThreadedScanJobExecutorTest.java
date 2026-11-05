@@ -643,4 +643,91 @@ public class ThreadedScanJobExecutorTest {
             assertTrue(probeNames.contains("probe2"));
         }
     }
+
+    static class OrderedProbe extends TestProbe {
+        private final int priority;
+        private final List<String> order;
+        private final java.util.concurrent.atomic.AtomicInteger running;
+        private final java.util.concurrent.atomic.AtomicInteger maxRunning;
+
+        OrderedProbe(
+                String name,
+                int priority,
+                List<String> order,
+                java.util.concurrent.atomic.AtomicInteger running,
+                java.util.concurrent.atomic.AtomicInteger maxRunning) {
+            super(new TestProbeType(name));
+            this.priority = priority;
+            this.order = order;
+            this.running = running;
+            this.maxRunning = maxRunning;
+        }
+
+        @Override
+        public int getSchedulingPriority() {
+            return priority;
+        }
+
+        @Override
+        public void executeTest() {
+            maxRunning.accumulateAndGet(running.incrementAndGet(), Math::max);
+            synchronized (order) {
+                order.add(getProbeName());
+            }
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            running.decrementAndGet();
+        }
+    }
+
+    @Test
+    public void testSchedulingPriorityAndRegistrationOrder() throws InterruptedException {
+        List<String> order = new ArrayList<>();
+        java.util.concurrent.atomic.AtomicInteger running =
+                new java.util.concurrent.atomic.AtomicInteger();
+        java.util.concurrent.atomic.AtomicInteger maxRunning =
+                new java.util.concurrent.atomic.AtomicInteger();
+        List<TestProbe> probeList =
+                Arrays.asList(
+                        new OrderedProbe("heavy", -10, order, running, maxRunning),
+                        new OrderedProbe("cheap1", 0, order, running, maxRunning),
+                        new OrderedProbe("medium", -5, order, running, maxRunning),
+                        new OrderedProbe("cheap2", 0, order, running, maxRunning));
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, new ArrayList<>());
+
+        try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, 1, "Test")) {
+            executor.execute(new TestReport());
+        }
+        assertEquals(List.of("cheap1", "cheap2", "medium", "heavy"), order);
+        assertEquals(1, maxRunning.get());
+    }
+
+    @Test
+    public void testNoMoreProbesSubmittedThanThreads() throws InterruptedException {
+        List<String> order = new ArrayList<>();
+        java.util.concurrent.atomic.AtomicInteger running =
+                new java.util.concurrent.atomic.AtomicInteger();
+        java.util.concurrent.atomic.AtomicInteger maxRunning =
+                new java.util.concurrent.atomic.AtomicInteger();
+        List<TestProbe> probeList = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            probeList.add(new OrderedProbe("p" + i, 0, order, running, maxRunning));
+        }
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, new ArrayList<>());
+
+        try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, 2, "Test")) {
+            TestReport report = new TestReport();
+            executor.execute(report);
+            assertEquals(6, report.getExecutedProbeTypes().size());
+        }
+        assertEquals(6, order.size());
+        assertTrue(maxRunning.get() <= 2);
+    }
 }

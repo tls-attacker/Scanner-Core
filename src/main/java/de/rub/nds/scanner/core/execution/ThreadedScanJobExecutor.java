@@ -282,20 +282,32 @@ public class ThreadedScanJobExecutor<
      * execution. This method is called whenever the report state changes to re-evaluate probe
      * eligibility.
      *
+     * <p>Only as many probes are submitted as the pool has threads, so that a probe never waits in
+     * the pool queue (where its timeout would already run) and the next probe is chosen when a
+     * thread becomes free: the executable probe with the highest {@link
+     * ScannerProbe#getSchedulingPriority()}, ties in registration order.
+     *
      * @param report the current scan report
      */
     public synchronized void checkExecutableProbesAndSchedule(ReportT report) {
-        List<ProbeT> newNotSchedulesTasksList = new LinkedList<>();
-        for (ProbeT probe : notScheduledTasks) {
-            if (probe.canBeExecuted(report)) {
-                probe.adjustConfig(report);
-                LOGGER.debug("Scheduling: {}", probe.getProbeName());
-                Future<ScannerProbe<ReportT, StateT>> future = executor.submit(probe);
-                futureResults.add(future);
-            } else {
-                newNotSchedulesTasksList.add(probe);
+        int freeThreads = Math.max(1, executor.getCorePoolSize()) - futureResults.size();
+        while (freeThreads > 0) {
+            ProbeT next = null;
+            for (ProbeT probe : notScheduledTasks) {
+                if ((next == null || probe.getSchedulingPriority() > next.getSchedulingPriority())
+                        && probe.canBeExecuted(report)) {
+                    next = probe;
+                }
             }
+            if (next == null) {
+                return;
+            }
+            notScheduledTasks.remove(next);
+            next.adjustConfig(report);
+            LOGGER.debug("Scheduling: {}", next.getProbeName());
+            Future<ScannerProbe<ReportT, StateT>> future = executor.submit(next);
+            futureResults.add(future);
+            freeThreads--;
         }
-        this.notScheduledTasks = newNotSchedulesTasksList;
     }
 }
