@@ -12,7 +12,9 @@ import de.rub.nds.scanner.core.afterprobe.AfterProbe;
 import de.rub.nds.scanner.core.config.ExecutorConfig;
 import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
 import de.rub.nds.scanner.core.passive.TrackableValue;
+import de.rub.nds.scanner.core.probe.AnalyzedProperty;
 import de.rub.nds.scanner.core.probe.ScannerProbe;
+import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.logging.log4j.LogManager;
@@ -51,6 +54,9 @@ public class ThreadedScanJobExecutor<
     private List<ProbeT> notScheduledTasks;
 
     private final List<Future<ScannerProbe<ReportT, StateT>>> futureResults;
+
+    private final Map<Future<ScannerProbe<ReportT, StateT>>, ProbeT> scheduledProbes =
+            new HashMap<>();
 
     private final ThreadPoolExecutor executor;
 
@@ -158,6 +164,7 @@ public class ThreadedScanJobExecutor<
                 if (result.isDone()) {
                     int currentFinishedProbes = finishedProbes.incrementAndGet();
                     ScannerProbe<ReportT, StateT> probeResult = null;
+                    ProbeT scheduledProbe = scheduledProbes.remove(result);
                     try {
                         probeResult = result.get();
                         LOGGER.info(
@@ -166,6 +173,16 @@ public class ThreadedScanJobExecutor<
                                 String.format("%2d", currentFinishedProbes),
                                 String.format("%2d", probeCount),
                                 probeResult.getType().getName());
+                    } catch (CancellationException e) {
+                        LOGGER.error(
+                                "[{}] [{}/{}] {} probe was cancelled, its results are missing",
+                                report.getRemoteName(),
+                                String.format("%2d", currentFinishedProbes),
+                                String.format("%2d", probeCount),
+                                scheduledProbe.getProbeName());
+                        finishedFutures.add(result);
+                        markProbeAsTimedOut(scheduledProbe, report);
+                        continue;
                     } catch (ExecutionException e) {
                         LOGGER.error("Some probe execution failed", e);
                         throw new RuntimeException(e);
@@ -194,6 +211,18 @@ public class ThreadedScanJobExecutor<
                 semaphore.acquire();
             }
         }
+    }
+
+    /**
+     * Marks a probe whose future was cancelled (e.g., after the probe timeout) as unexecuted and
+     * sets its properties to {@link TestResults#TIMEOUT}. The probe's own data is not merged, as
+     * its thread may still be running.
+     */
+    private void markProbeAsTimedOut(ProbeT probe, ReportT report) {
+        for (AnalyzedProperty property : new ArrayList<>(probe.getAnalyzedProperties())) {
+            report.putResult(property, TestResults.TIMEOUT);
+        }
+        report.markProbeAsUnexecuted(probe);
     }
 
     private void reportAboutNotExecutedProbes() {
@@ -307,6 +336,7 @@ public class ThreadedScanJobExecutor<
             LOGGER.debug("Scheduling: {}", next.getProbeName());
             Future<ScannerProbe<ReportT, StateT>> future = executor.submit(next);
             futureResults.add(future);
+            scheduledProbes.put(future, next);
             freeThreads--;
         }
     }

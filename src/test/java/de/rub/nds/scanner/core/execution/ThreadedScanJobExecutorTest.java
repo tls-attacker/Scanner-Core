@@ -10,6 +10,7 @@ package de.rub.nds.scanner.core.execution;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import de.rub.nds.scanner.core.TestAnalyzedProperty;
 import de.rub.nds.scanner.core.afterprobe.AfterProbe;
 import de.rub.nds.scanner.core.config.ExecutorConfig;
 import de.rub.nds.scanner.core.passive.ExtractedValueContainer;
@@ -20,6 +21,7 @@ import de.rub.nds.scanner.core.probe.ScannerProbe;
 import de.rub.nds.scanner.core.probe.requirements.FulfilledRequirement;
 import de.rub.nds.scanner.core.probe.requirements.Requirement;
 import de.rub.nds.scanner.core.probe.requirements.UnfulfillableRequirement;
+import de.rub.nds.scanner.core.probe.result.TestResults;
 import de.rub.nds.scanner.core.report.ScanReport;
 import java.beans.PropertyChangeEvent;
 import java.io.OutputStream;
@@ -294,6 +296,48 @@ public class ThreadedScanJobExecutorTest {
             TestReport report = new TestReport();
 
             assertThrows(RuntimeException.class, () -> executor.execute(report));
+        }
+    }
+
+    static class HangingProbe extends TestProbe {
+        HangingProbe(ProbeType type) {
+            super(type);
+            register(TestAnalyzedProperty.TEST_ANALYZED_PROPERTY);
+        }
+
+        @Override
+        public void executeTest() {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    @Test
+    public void testCancelledProbeKeepsReport() throws InterruptedException {
+        executorConfig.setProbeTimeout(200);
+        TestProbe normalProbe = new TestProbe(new TestProbeType("normal"));
+        TestProbe hangingProbe = new HangingProbe(new TestProbeType("hanging"));
+        List<TestProbe> probeList = Arrays.asList(normalProbe, hangingProbe);
+        List<TestAfterProbe> afterList = List.of(new TestAfterProbe());
+
+        ScanJob<TestReport, TestProbe, TestAfterProbe, TestState> scanJob =
+                new ScanJob<>(probeList, afterList);
+
+        try (ThreadedScanJobExecutor<TestReport, TestProbe, TestAfterProbe, TestState> executor =
+                new ThreadedScanJobExecutor<>(executorConfig, scanJob, 2, "Test")) {
+
+            TestReport report = new TestReport();
+            executor.execute(report);
+
+            assertTrue(report.getExecutedProbeTypes().contains(normalProbe.getType()));
+            assertTrue(report.getUnexecutedProbeTypes().contains(hangingProbe.getType()));
+            assertEquals(
+                    TestResults.TIMEOUT,
+                    report.getResult(TestAnalyzedProperty.TEST_ANALYZED_PROPERTY));
+            assertTrue(afterList.getFirst().isAnalyzed());
         }
     }
 
